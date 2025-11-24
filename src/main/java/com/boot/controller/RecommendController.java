@@ -2,60 +2,32 @@ package com.boot.controller;
 
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
+import org.springframework.web.bind.annotation.*;
 import com.boot.dto.RecommendDTO;
 import com.boot.service.RecommendService;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Controller
+@RestController // 화면(JSP) 대신 데이터(JSON) 반환
+@RequestMapping("/api/recommend")
+@CrossOrigin(origins = "http://localhost:3000") // React 포트 허용
 public class RecommendController {
 
     @Autowired
     private RecommendService recommendService;
 
-    // ==============================
-    // 가이드 페이지
-    // ==============================
-    @GetMapping("/gaide") public String gaide() { return "gaide"; }
-    @GetMapping("/gaide-1") public String gaide1() { return "gaide-1"; }
-    @GetMapping("/gaide-2") public String gaide2() { return "gaide-2"; }
-    @GetMapping("/gaide-3") public String gaide3() { return "gaide-3"; }
-    @GetMapping("/gaide-4") public String gaide4() { return "gaide-4"; }
-
-    // ==============================
-    // 지도 페이지
-    // ==============================
-    @GetMapping("/recommend")
-    public String showRecommendPage() {
-        return "recommend";
-    }
-
-    // ==============================
-    // JSON API (지역 필터 + 동적 제한)
-    // ==============================
-    @GetMapping("/api/recommend")
-    @ResponseBody
-    public List<RecommendDTO> getRecommendData(
-            @RequestParam(value = "region", required = false) String region) {
-
+    @GetMapping
+    public List<RecommendDTO> getRecommendData(@RequestParam(value = "region", required = false) String region) {
+        
+        // 1. DB에서 모든 데이터 가져오기
         List<RecommendDTO> list = recommendService.selectMapList();
-        int maxCount = 0;
-        String limitReason = "";
 
-        // 지역 필터링
+        // 2. 지역 필터링 로직 (기존 로직 유지)
         if (region != null && !region.isEmpty()) {
             String r = region.trim();
-
-            // 매핑 딕셔너리 (축약형 + 정식 명칭 + 자치도/자치시 포함)
+            
+            // 지역명 매핑 (축약어 -> 전체 명칭)
             Map<String, List<String>> regionMap = Map.ofEntries(
                 Map.entry("서울", List.of("서울", "서울특별시")),
                 Map.entry("부산", List.of("부산", "부산광역시")),
@@ -78,32 +50,20 @@ public class RecommendController {
 
             List<String> variants = regionMap.getOrDefault(r, List.of(r));
 
+            // 주소에 해당 지역명이 포함되지 않으면 리스트에서 제거
             list.removeIf(dto -> {
                 String addr = dto.getAddress();
                 if (addr == null) return true;
-                // variants 중 하나라도 포함되면 통과
-                boolean match = variants.stream().anyMatch(addr::contains);
-                return !match;
+                return variants.stream().noneMatch(addr::contains);
             });
-
-            log.info("[RecommendController] 지역 필터 적용됨: {} / 결과 수: {}", region, list.size());
-
-            // 데이터 과다 시 제한
-            if (list.size() > 2000) {
-                maxCount = 2000;
-                list = list.subList(0, maxCount);
-                limitReason = " (지역 데이터 과다로 2000개 제한)";
-            }
-        } else {
-            // 전체 보기 시 제한 (1000개)
-            if (list.size() > 1000) {
-                maxCount = 1000;
-                list = list.subList(0, maxCount);
-                limitReason = " (전체 로딩 시 1000개 제한)";
-            }
         }
 
-        log.info("API 호출 완료: 총 {}개 반환{}", list.size(), limitReason);
-        return list;
+        // 3. 데이터 개수 제한 (기존 로직 유지)
+        int maxCount = (region != null && !region.isEmpty()) ? 2000 : 1000;
+        if (list.size() > maxCount) {
+            list = list.subList(0, maxCount);
+        }
+
+        return list; // JSON 데이터 반환
     }
 }
