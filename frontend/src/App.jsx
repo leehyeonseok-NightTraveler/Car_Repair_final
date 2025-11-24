@@ -18,6 +18,9 @@ import FaqView from "./pages/faq/faq_view";
 import FaqWrite from "./pages/faq/faq_write";
 import FaqModify from "./pages/faq/faq_modify";
 
+import Register from './Register/Register.jsx'
+import RegisterStore from './Register/RegisterStore.jsx'
+
 function App() {
   return (
     <Router>
@@ -44,6 +47,9 @@ function App() {
             <Route path="/faq/view/:faqNo" element={<FaqView />} />
             <Route path="/faq/write" element={<FaqWrite />} />
             <Route path="/faq/modify/:faqNo" element={<FaqModify />} />
+              
+            <Route path="/register" element={<Register />} />
+            <Route path="/registerstore" element={<RegisterStore />} />
           </Routes>
         </main>
 
