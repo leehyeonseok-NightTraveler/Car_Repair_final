@@ -1,0 +1,109 @@
+/* ============================
+   1. 전체 컨테이너 및 테이블
+   ============================ */
+.faq-container {
+  width: 80%;
+  margin: 50px auto; /* 화면 중앙 정렬 */
+  text-align: center;
+  min-height: 500px; /* 컨텐츠가 적어도 너무 납작해지지 않게 */
+}
+
+/* 제목(h2) 스타일 */
+.faq-container h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* 테이블 디자인 */
+.faq-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05); /* 은은한 그림자 */
+  background-color: white;
+}
+
+.faq-table th, .faq-table td {
+  border-bottom: 1px solid #ddd; /* 가로선만 표시 (깔끔하게) */
+  padding: 15px;
+  text-align: center;
+  font-size: 15px;
+}
+
+/* 테이블 헤더 */
+.faq-table th {
+  background-color: #f8f9fa;
+  color: #333;
+  font-weight: bold;
+  border-top: 2px solid #333; /* 상단 진한 선 */
+}
+
+/* 마우스 올렸을 때 행 강조 */
+.faq-table tr:hover {
+  background-color: #f9fbfc;
+}
+
+/* 제목 링크 스타일 */
+.faq-table td a {
+  text-decoration: none;
+  color: #333;
+  display: block; /* 클릭 영역 확대 */
+  transition: color 0.2s;
+}
+
+.faq-table td a:hover {
+  color: #007bff; /* 파란색으로 변경 */
+  text-decoration: underline;
+}
+
+/* ============================
+   2. 페이징 버튼 (중앙 정렬 & 모던 디자인)
+   ============================ */
+.pagination {
+  display: flex;
+  justify-content: center; /* ★ 가로 중앙 정렬 핵심 */
+  align-items: center;
+  gap: 8px;                /* 버튼 사이 간격 */
+  margin: 40px 0;          /* 위아래 여백 */
+  width: 100%;
+}
+
+/* 버튼 기본 모양 */
+.pagination button {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #ddd;
+  background-color: white;
+  color: #555;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 4px;      /* 둥근 모서리 */
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* 버튼 호버 효과 */
+.pagination button:hover {
+  background-color: #f1f1f1;
+  border-color: #bbb;
+  color: #333;
+}
+
+/* 현재 페이지 (Active) - 헤더 색상과 맞춤 */
+.pagination button.active {
+  background-color: #333; /* 진한 회색 */
+  color: white;
+  border-color: #333;
+  font-weight: bold;
+  transform: scale(1.05); /* 살짝 커짐 */
+}
+
+/* 이전/다음 버튼 비활성화 시 */
+.pagination button:disabled {
+  background-color: #fafafa;
+  color: #ccc;
+  cursor: not-allowed;
+  border-color: #eee;
+}
