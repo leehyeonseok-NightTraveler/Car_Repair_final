@@ -122,7 +122,7 @@ body {
     min-height: 100vh;
 }
 main {
-
+    
     flex: 1;
 
     /* (선택 사항) 콘텐츠 영역에 여백과 너비를 줍니다. */
@@ -154,7 +154,7 @@ main {
     color: white;
     line-height: 1.6;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6); /* 글자가 잘 보이도록 그림자 추가 */
-}
+} 
 
 /* 플로팅 아이콘 전체 컨테이너 */
 .floating-icons {
@@ -237,7 +237,7 @@ section.features .inner .wrap article p {
     font: 14px/1.4 "arial";
     color: #777;
 }
-
+        
 /* ----- 드롭다운 게시판 메뉴 스타일 ----- */
 
 /* 1. 하위 메뉴를 포함할 부모 li 요소 (기준점 역할) */
@@ -256,7 +256,7 @@ section.features .inner .wrap article p {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 은은한 그림자 */
     list-style: none;     /* 목록 점 제거 */
     padding: 0;
-
+    
     display: none;        /* 핵심: 평소에는 메뉴를 숨김 */
     z-index: 10;          /* 다른 요소 위에 보이도록 설정 */
 }
