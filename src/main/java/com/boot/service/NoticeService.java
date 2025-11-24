@@ -3,6 +3,7 @@ package com.boot.service;
 import com.boot.dto.AccountDTO;
 import com.boot.dto.Criteria;
 import com.boot.dto.NoticeDTO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 public interface NoticeService {
 
     // 1. 공지사항 목록 조회 (페이징 포함)
-    List<NoticeDTO> noticeList(HashMap<String, String> param, Criteria cri);
+    List<NoticeDTO> noticeList(Criteria cri);
 
     // 2. 공지사항 상세 조회
     NoticeDTO noticeView(HashMap<String, String> param);
@@ -28,7 +29,7 @@ public interface NoticeService {
     void increaseViews(HashMap<String, String> param);
 
     // 7. 전체 공지사항 수 조회 (페이징용)
-    int getTotalCount();
+    int getTotalCount(Criteria cri);
 
     // 8. 사용자 정보 조회
     AccountDTO getUserInfo(String accountId);

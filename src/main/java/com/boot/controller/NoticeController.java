@@ -9,20 +9,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 공지사항 관련 컨트롤러
  */
-@Controller
 @Slf4j
-@RequestMapping("/notice")
+@RestController
+@RequestMapping("/api")
 public class NoticeController {
 
     @Autowired
@@ -31,26 +34,14 @@ public class NoticeController {
     /**
      * 1. 공지사항 목록 페이지
      */
-    @RequestMapping("/notice_list")
-    public String noticeList(@RequestParam HashMap<String, String> param, Criteria cri,
-                             Model model, HttpSession session) {
-        log.info("noticeList()");
-
-        // 사용자 역할 확인 (관리자 여부)
-        String Role = (String) session.getAttribute("ROLE");
-        if ("ADMIN".equals(Role)) {
-            model.addAttribute("role", Role);
-        }
-
-        // 공지사항 목록 조회
-        List<NoticeDTO> noticeList = noticeService.noticeList(param, cri);
-        model.addAttribute("list", noticeList);
-
-        // 페이징 처리 정보 추가
-        int total = noticeService.getTotalCount();
-        model.addAttribute("pageMaker", new PagingDTO(total, cri));
-
-        return "notice/notice_list";
+    @GetMapping("/notice_list")
+    public Map<String, Object> noticeList(Criteria cri) {
+        List<NoticeDTO> noticeList = noticeService.noticeList(cri);
+        int total = noticeService.getTotalCount(cri);
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", noticeList);
+        result.put("pageMaker", new PagingDTO(total, cri));
+        return result;
     }
 
     /**
@@ -72,7 +63,7 @@ public class NoticeController {
 
         // 공지사항 상세 정보 조회
         NoticeDTO noticeView = noticeService.noticeView(param);
-        int total = noticeService.getTotalCount();
+        int total = noticeService.getTotalCount(cri);
 
         // 모델에 데이터 추가
         model.addAttribute("view", noticeView);
@@ -129,7 +120,7 @@ public class NoticeController {
         model.addAttribute("modify", noticeModify);
 
         // 페이징 정보 추가
-        int total = noticeService.getTotalCount();
+        int total = noticeService.getTotalCount(cri);
         model.addAttribute("pageMaker", new PagingDTO(total, cri));
 
         return "notice/notice_modify";

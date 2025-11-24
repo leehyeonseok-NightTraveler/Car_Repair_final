@@ -5,19 +5,21 @@
 
     <!-- 검색 조건 (type, keyword 포함) -->
     <sql id="criteria">
-        <if test='param.type == "T"'>
-            WHERE notice_title LIKE '%' || #{param.keyword} || '%'
-        </if>
-        <if test='param.type == "C"'>
-            WHERE notice_content LIKE '%' || #{param.keyword} || '%'
-        </if>
-        <if test='param.type == "TC"'>
-            WHERE notice_title LIKE '%' || #{param.keyword} || '%'
-            OR notice_content LIKE '%' || #{param.keyword} || '%'
-        </if>
+        <where>
+            <if test="cri.type == 'T'">
+                notice_title LIKE '%' || #{cri.keyword} || '%'
+            </if>
+            <if test="cri.type == 'C'">
+                notice_content LIKE '%' || #{cri.keyword} || '%'
+            </if>
+            <if test="cri.type == 'TC'">
+                (notice_title LIKE '%' || #{cri.keyword} || '%'
+                OR notice_content LIKE '%' || #{cri.keyword} || '%')
+            </if>
+        </where>
     </sql>
 
-    <!-- 1. 공지사항 목록 조회 (페이징 포함) -->
+
     <select id="noticeList" resultType="com.boot.dto.NoticeDTO">
         <![CDATA[
         SELECT *
@@ -32,9 +34,9 @@
                     TO_CHAR(notice_created, 'YYYY"년" MM"월" DD"일" HH24"시"MI"분"') AS notice_created,
                     notice_views
                 FROM tbl_notice
-        ]]>
+                ]]>
                 <include refid="criteria"/>
-        <![CDATA[
+                <![CDATA[
                 ORDER BY notice_no DESC
             ) inner_query
             WHERE rownum <= #{cri.pageNum} * #{cri.amount}
@@ -42,6 +44,7 @@
         WHERE rn > (#{cri.pageNum} - 1) * #{cri.amount}
         ]]>
     </select>
+
 
     <!-- 2. 공지사항 상세 조회 -->
     <select id="noticeView" resultType="com.boot.dto.NoticeDTO">
@@ -85,10 +88,13 @@
         WHERE notice_no = #{param.notice_no}
     </delete>
 
-    <!-- 6. 전체 공지사항 수 조회 (페이징용) -->
+    <!-- 6. 검색 조건에 맞는 전체 공지사항 수 조회 -->
     <select id="getTotalCount" resultType="int">
-        SELECT COUNT(*) FROM tbl_notice
+        SELECT COUNT(*)
+        FROM tbl_notice
+        <include refid="criteria"/>
     </select>
+
 
     <!-- 7. 공지사항 조회수 증가 -->
     <update id="increaseViews">

@@ -11,10 +11,7 @@ import java.util.List;
 public interface NoticeDAO {
 
     // 1. 공지사항 목록 조회 (페이징 포함)
-    List<NoticeDTO> noticeList(
-            @Param("param") HashMap<String, String> param,
-            @Param("cri") Criteria cri
-    );
+    List<NoticeDTO> noticeList(@Param("cri") Criteria cri);
 
     // 2. 공지사항 상세 조회
     NoticeDTO noticeView(@Param("param") HashMap<String, String> param);
@@ -29,7 +26,7 @@ public interface NoticeDAO {
     void deleteProcess(@Param("param") HashMap<String, String> param);
 
     // 6. 전체 공지사항 수 조회 (페이징용)
-    int getTotalCount();
+    int getTotalCount(@Param("cri") Criteria cri);
 
     // 7. 공지사항 조회수 증가
     void increaseViews(@Param("param") HashMap<String, String> param);
