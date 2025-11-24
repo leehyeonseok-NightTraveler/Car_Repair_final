@@ -1,0 +1,146 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boot.dao.InquiryDAO">
+
+    <sql id="criteria">
+        <if test='cri.type != null and cri.type == "W"'>
+            AND inquiry_status = '답변대기'
+        </if>
+        <if test='cri.type != null and cri.type == "C"'>
+            AND inquiry_status = '답변완료'
+        </if>
+    </sql>
+
+    <insert id="writeProcess">
+        INSERT INTO tbl_inquiry (
+        inquiry_no, customer_id, customer_name, customer_phone,
+        customer_email, inquiry_title, inquiry_content
+        )
+        VALUES (
+        SEQ_INQUIRY_NO.NEXTVAL,
+        #{param.customer_id}, #{param.customer_name}, #{param.customer_phone},
+        #{param.customer_email}, #{param.inquiry_title}, #{param.inquiry_content}
+        )
+    </insert>
+
+    <select id="inquiryList" resultType="com.boot.dto.InquiryDTO">
+        <![CDATA[
+        SELECT *
+        FROM (
+            SELECT rownum AS rn, inner_query.*
+            FROM (
+                SELECT
+                    inquiry_no,
+                    inquiry_title,
+                    TO_CHAR(inquiry_created, 'YYYY"년" MM"월" DD"일" HH24"시"MI"분"') AS inquiry_created,
+                    inquiry_status
+                FROM tbl_inquiry
+                WHERE customer_id = #{param.customer_id}
+        ]]>
+        <include refid="criteria"/>
+        <![CDATA[
+                ORDER BY inquiry_no DESC
+            ) inner_query
+            WHERE rownum <= #{cri.pageNum} * #{cri.amount}
+        )
+        WHERE rn > (#{cri.pageNum} - 1) * #{cri.amount}
+        ]]>
+    </select>
+
+    <select id="inquiryManageList" resultType="com.boot.dto.InquiryDTO">
+        <![CDATA[
+        SELECT *
+        FROM (
+            SELECT rownum AS rn, inner_query.*
+            FROM (
+                SELECT
+                    inquiry_no,
+                    inquiry_title,
+                    customer_id,
+                    TO_CHAR(inquiry_created, 'YYYY"년" MM"월" DD"일" HH24"시"MI"분"') AS inquiry_created,
+                    inquiry_status
+                FROM tbl_inquiry
+                WHERE 1=1  /* 👈 안전한 검색 시작을 위한 WHERE 1=1 추가 */
+        ]]>
+        <include refid="criteria"/>
+        <![CDATA[
+                ORDER BY inquiry_no DESC
+            ) inner_query
+            WHERE rownum <= #{cri.pageNum} * #{cri.amount}
+        )
+        WHERE rn > (#{cri.pageNum} - 1) * #{cri.amount}
+        ]]>
+    </select>
+
+    <select id="inquiryView" resultType="com.boot.dto.InquiryDTO">
+        SELECT
+        inquiry_no,
+        customer_id,
+        customer_name,
+        customer_phone,
+        customer_email,
+        inquiry_title,
+        inquiry_content,
+        TO_CHAR(inquiry_created, 'YYYY"년" MM"월" DD"일" HH24"시"MI"분"') AS inquiry_created,
+        reply_content,
+        reply_created,
+        inquiry_status
+        FROM tbl_inquiry
+        WHERE inquiry_no = #{param.inquiry_no}
+    </select>
+
+    <select id="getUserInfo" resultType="com.boot.dto.AccountDTO">
+        SELECT
+        user_name AS userName,
+        account_id AS accountId,
+        email,
+        phone_number AS phoneNumber,
+        account_role AS accountRole,
+        reg_date AS regDate
+        FROM tbl_account
+        WHERE account_id = #{accountId}
+    </select>
+
+    <update id="replyProcess">
+        UPDATE tbl_inquiry
+        SET
+        reply_content = #{param.reply_content},
+        reply_created = SYSDATE,
+        inquiry_status = '답변완료'
+        WHERE inquiry_no = #{param.inquiry_no, jdbcType=INTEGER}
+    </update>
+
+    <select id="selectByAccountId" resultType="com.boot.dto.InquiryDTO">
+        SELECT
+        inquiry_no,
+        inquiry_title,
+        inquiry_status,
+        TO_CHAR(inquiry_created, 'YYYY"년" MM"월" DD"일" HH24"시"MI"분"') AS inquiry_created
+        FROM tbl_inquiry
+        WHERE customer_id = #{accountId}
+        ORDER BY inquiry_no DESC
+    </select>
+
+    <select id="TotalInquiryUser" resultType="int">
+        SELECT COUNT(*)
+        FROM tbl_inquiry
+        WHERE customer_id = #{loginId}
+    </select>
+
+    <select id="TotalInquiry" resultType="int">
+        SELECT COUNT(*) FROM tbl_inquiry
+        WHERE 1=1 /* 👈 검색 조건 안전하게 적용 */
+        <include refid="criteria"/>
+    </select>
+
+    <delete id="deleteInquiries">
+        DELETE FROM tbl_inquiry
+        WHERE inquiry_no IN
+        <foreach item="no" collection="inquiryIds" open="(" separator="," close=")">
+            #{no}
+        </foreach>
+    </delete>
+
+
+</mapper>

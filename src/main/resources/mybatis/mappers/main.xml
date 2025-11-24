@@ -1,0 +1,15 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boot.dao.MemDAO">
+
+    <select id="loginYn" resultType="com.boot.dto.MemDTO">
+    	select mem_pwd from mvc_member where mem_uid=#{mem_uid}
+    </select>
+        
+    <insert id="write">
+	    insert into mvc_member(mem_uid, mem_pwd, mem_name) values(#{mem_uid},#{mem_pwd},#{mem_name})
+    </insert>
+
+</mapper>

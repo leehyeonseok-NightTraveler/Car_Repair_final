@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boot.dao.StoreDAO">
+
+    <insert id="registerStore" parameterType="com.boot.dto.StoreDTO">
+        INSERT INTO tbl_store (
+            store_id, 
+            password, 
+            email, 
+            phone_number,
+            address,
+            opening_hours,
+            description
+            
+            -- reg_date는 DB DEFAULT로 자동 삽입
+            -- latitude, longitude는 주소 변환 API로 나중에 따로 UPDATE 필요
+        )
+        VALUES (
+            #{storeId},
+            #{password},  -- 서비스에서 암호화된 비밀번호가 넘어올 것
+            #{email},
+            #{phoneNumber},
+            #{address},
+            #{openingHours},
+            #{description}
+        )
+    </insert>
+
+</mapper>

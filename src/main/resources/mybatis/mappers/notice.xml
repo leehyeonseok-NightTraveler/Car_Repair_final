@@ -1,0 +1,113 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boot.dao.NoticeDAO">
+
+    <!-- 검색 조건 (type, keyword 포함) -->
+    <sql id="criteria">
+        <if test='param.type == "T"'>
+            WHERE notice_title LIKE '%' || #{param.keyword} || '%'
+        </if>
+        <if test='param.type == "C"'>
+            WHERE notice_content LIKE '%' || #{param.keyword} || '%'
+        </if>
+        <if test='param.type == "TC"'>
+            WHERE notice_title LIKE '%' || #{param.keyword} || '%'
+            OR notice_content LIKE '%' || #{param.keyword} || '%'
+        </if>
+    </sql>
+
+    <!-- 1. 공지사항 목록 조회 (페이징 포함) -->
+    <select id="noticeList" resultType="com.boot.dto.NoticeDTO">
+        <![CDATA[
+        SELECT *
+        FROM (
+            SELECT rownum AS rn, inner_query.*
+            FROM (
+                SELECT
+                    notice_no,
+                    notice_title,
+                    notice_writer,
+                    notice_content,
+                    TO_CHAR(notice_created, 'YYYY"년" MM"월" DD"일" HH24"시"MI"분"') AS notice_created,
+                    notice_views
+                FROM tbl_notice
+        ]]>
+                <include refid="criteria"/>
+        <![CDATA[
+                ORDER BY notice_no DESC
+            ) inner_query
+            WHERE rownum <= #{cri.pageNum} * #{cri.amount}
+        )
+        WHERE rn > (#{cri.pageNum} - 1) * #{cri.amount}
+        ]]>
+    </select>
+
+    <!-- 2. 공지사항 상세 조회 -->
+    <select id="noticeView" resultType="com.boot.dto.NoticeDTO">
+        SELECT
+            notice_no,
+            notice_title,
+            notice_writer,
+            notice_content,
+            TO_CHAR(notice_created, 'YYYY"년" MM"월" DD"일" HH24"시"MI"분"') AS notice_created,
+            notice_views
+        FROM tbl_notice
+        WHERE notice_no = #{param.notice_no}
+    </select>
+
+    <!-- 3. 공지사항 작성 -->
+    <insert id="writeProcess">
+        INSERT INTO tbl_notice (
+            notice_no,
+            notice_title,
+            notice_content
+        )
+        VALUES (
+            SEQ_NOTICE_NO.NEXTVAL,
+            #{param.notice_title},
+            #{param.notice_content}
+        )
+    </insert>
+
+    <!-- 4. 공지사항 수정 -->
+    <update id="modifyProcess">
+        UPDATE tbl_notice
+        SET
+            notice_title = #{param.notice_title},
+            notice_content = #{param.notice_content}
+        WHERE notice_no = #{param.notice_no}
+    </update>
+
+    <!-- 5. 공지사항 삭제 -->
+    <delete id="deleteProcess">
+        DELETE FROM tbl_notice
+        WHERE notice_no = #{param.notice_no}
+    </delete>
+
+    <!-- 6. 전체 공지사항 수 조회 (페이징용) -->
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*) FROM tbl_notice
+    </select>
+
+    <!-- 7. 공지사항 조회수 증가 -->
+    <update id="increaseViews">
+        UPDATE tbl_notice
+        SET notice_views = notice_views + 1
+        WHERE notice_no = #{param.notice_no}
+    </update>
+
+    <!-- 8. 회원 정보 조회 -->
+    <select id="getUserInfo" parameterType="string" resultType="com.boot.dto.AccountDTO">
+        SELECT
+            user_name AS userName,
+            account_id AS accountId,
+            email,
+            phone_number AS phoneNumber,
+            account_role AS accountRole,
+            reg_date AS regDate
+        FROM tbl_account
+        WHERE account_id = #{param}
+    </select>
+
+</mapper>
