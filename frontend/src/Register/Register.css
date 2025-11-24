@@ -1,0 +1,123 @@
+/* src/Register.css */
+
+/* 전체 컨테이너 (흰색 박스) */
+.register-container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 40px;
+    border: 1px solid #e1e1e1;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* 탭 메뉴 영역 */
+.register-tabs {
+    display: flex;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #eee;
+}
+
+/* 탭 링크 스타일 */
+.register-tabs a {
+    flex: 1;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: #888;
+    font-size: 16px;
+}
+
+/* 활성화된 탭 (파란색) */
+.register-tabs a.active {
+    font-weight: bold;
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+    margin-bottom: -2px; /* 선 겹치기 */
+}
+
+/* 제목 */
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 24px;
+    color: #333;
+}
+
+/* 입력 그룹 (라벨 + 인풋) */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box; /* 패딩 포함 너비 계산 */
+}
+
+/* 영업시간 그룹 (가로 배치) */
+.form-time-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.time-select {
+    width: 100px !important; /* 강제 너비 지정 */
+}
+
+.time-input {
+    width: 70px !important;
+    text-align: center;
+}
+
+.time-unit {
+    font-size: 14px;
+    color: #666;
+    white-space: nowrap; /* 줄바꿈 방지 */
+}
+
+/* 가입하기 버튼 */
+.submit-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+}
+
+/* 하단 링크 */
+.link-text {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+}
+
+.link-text a {
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: none;
+}
