@@ -21,6 +21,8 @@ import FaqModify from "./pages/faq/faq_modify";
 import Register from './Register/Register.jsx'
 import RegisterStore from './Register/RegisterStore.jsx'
 
+import AdminMypage from './pages/Mypage/AdminMypage.jsx'
+
 function App() {
   return (
     <Router>
@@ -50,6 +52,9 @@ function App() {
               
             <Route path="/register" element={<Register />} />
             <Route path="/registerstore" element={<RegisterStore />} />
+              
+            {/* 관리자 마이페이지 */}
+            <Route path="/admin/mypage" element={<AdminMypage />} />
           </Routes>
         </main>
 
