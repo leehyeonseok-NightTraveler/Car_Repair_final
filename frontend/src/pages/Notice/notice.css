@@ -1,0 +1,202 @@
+@charset "utf-8";
+
+body {
+    font-family: "Noto Sans KR", "Malgun Gothic", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    color: #333;
+    line-height: 1.6;
+}
+
+.notice-list-container {
+    width: 80%;
+    padding: 60px 20px 100px;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+/* 제목 - 가운데 */
+.notice-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.notice-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 20px;
+    position: relative;
+    display: inline-block;
+}
+
+.notice-title::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 5px;
+    background: linear-gradient(90deg, #007acc, #00c3ff);
+    border-radius: 3px;
+}
+
+/* 테이블 전체 가운데 정렬 */
+.notice-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    background: #fff;
+    margin-bottom: 60px;
+}
+
+.notice-table {
+    width: 100%;
+    min-width: 800px;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 15px;
+    text-align: center;               /* ← 모든 셀 가운데 정렬 */
+}
+
+.notice-table th {
+    background: linear-gradient(135deg, #007acc, #005b9f);
+    color: #fff;
+    padding: 20px 12px;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.8px;
+}
+
+.notice-table td {
+    padding: 18px 12px;
+    border-bottom: 1px solid #eee;
+    transition: background 0.25s;
+}
+
+/* 제목만 왼쪽 정렬 → 가운데로 통일 */
+.notice-title-cell,
+.notice-link {
+    text-align: center !important;
+    padding-left: 0 !important;
+}
+
+.notice-link {
+    display: block;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.25s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notice-link:hover {
+    color: #007acc;
+    font-weight: 700;
+}
+
+.notice-row:hover {
+    background-color: #f8fdff;
+}
+
+/* 컬럼 너비 조정 (가운데 정렬이라 균등하게) */
+.col-no     { width: 10%; }
+.col-title  { width: 40%; }
+.col-writer { width: 15%; }
+.col-date   { width: 20%; }
+.col-views  { width: 15%; }
+
+/* 페이징 - 가운데 */
+.pagination-container {
+    text-align: center;
+    margin: 70px 0;
+}
+
+.pagination-list {
+    display: inline-flex;
+    list-style: none;
+    padding: 0;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.pagination-item button {
+    min-width: 48px;
+    height: 48px;
+    padding: 0 14px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    background: #fff;
+    color: #444;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pagination-item button:hover {
+    background: #007acc;
+    color: #fff;
+    border-color: #007acc;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,122,204,0.3);
+}
+
+.pagination-item.active button {
+    background: #007acc;
+    color: #fff;
+    border-color: #007acc;
+    font-weight: 800;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,122,204,0.4);
+}
+
+.pagination-item.prev button,
+.pagination-item.next button {
+    min-width: 110px;
+    font-size: 15px;
+}
+
+/* 관리자 글쓰기 버튼 - 가운데 */
+.notice-actions {
+    text-align: center;               /* ← 가운데 정렬 */
+    margin-bottom: 50px;
+}
+
+.btn-submit {
+    display: inline-block;
+    padding: 16px 40px;
+    font-size: 17px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #1a1a1a, #000);
+    color: #fff !important;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-submit:hover {
+    background: linear-gradient(135deg, #000, #111);
+    transform: translateY(-6px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.35);
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .notice-list-container { padding: 40px 15px 80px; }
+    .notice-title { font-size: 28px; }
+    .notice-title::after { width: 60px; height: 4px; }
+    .notice-table th,
+    .notice-table td { padding: 14px 8px; font-size: 14px; }
+    .btn-submit { padding: 14px 32px; font-size: 16px; }
+}

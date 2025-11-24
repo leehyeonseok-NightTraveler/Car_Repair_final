@@ -1,0 +1,86 @@
+// src/common/Header.jsx
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import "./mainpage.css";   // ← 이 파일이 당신이 준 그 CSS 맞습니다!
+
+const Header = () => {
+    const location = useLocation();
+    const role = sessionStorage.getItem("ROLE") || "";
+
+    return (
+        <>
+            {/* 플로팅 아이콘 */}
+            <div className="floating-icons">
+                <a href="https://www.instagram.com/khieiorkr/" target="_blank" rel="noopener noreferrer">
+                    <img src="https://img.icons8.com/fluent/48/000000/instagram-new.png" alt="인스타그램" />
+                </a>
+                <a href="https://www.youtube.com/@KH_academy" target="_blank" rel="noopener noreferrer">
+                    <img src="https://img.icons8.com/color/48/youtube-play.png" alt="유튜브" />
+                </a>
+            </div>
+
+            <header>
+                <div className="inner">
+                    {/* 로고 */}
+                    <h1>
+                        <Link to="/main">MY CAR 정비소</Link>
+                    </h1>
+
+                    {/* 메인 네비게이션 */}
+                    <ul id="gnb">
+                        <li><Link to="/guide">꿀팁 가이드</Link></li>
+                        <li><Link to="/recommend">주변 정비소</Link></li>
+
+                        <li className="dropdown-parent">
+                            <Link to="#">고객센터</Link>
+                            <ul className="submenu">
+                                <li>
+                                    {role === "USER" || role === "STORE" ? (
+                                        <Link to="/inquiry/history">1:1 문의</Link>
+                                    ) : role === "ADMIN" ? (
+                                        <Link to="/inquiry/manage">문의 관리</Link>
+                                    ) : (
+                                        <Link to="/login">1:1 문의</Link>
+                                    )}
+                                </li>
+                                <li><Link to="/notice">공지사항</Link></li>
+                                <li><Link to="/faq">FAQ</Link></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    {/* 우측 유틸 메뉴 */}
+                    <ul className="util">
+                        {role === "USER" && (
+                            <>
+                                <li><Link to="/mypage_user">마이페이지</Link></li>
+                                <li><Link to="/logout">로그아웃</Link></li>
+                                <li className="admin-enter"><Link to="/promote_admin">관리자 전환</Link></li>
+                            </>
+                        )}
+                        {role === "STORE" && (
+                            <>
+                                <li><Link to="/mypage_store">업체 마이페이지</Link></li>
+                                <li><Link to="/logout">로그아웃</Link></li>
+                            </>
+                        )}
+                        {role === "ADMIN" && (
+                            <>
+                                <li><Link to="/mypage_admin">관리자 페이지</Link></li>
+                                <li className="admin-enter"><Link to="/admin/exit">관리자 모드 해제</Link></li>
+                            </>
+                        )}
+                        {!role && (
+                            <>
+                                <li><Link to="/login">로그인</Link></li>
+                                <li><Link to="/register">회원가입</Link></li>
+                            </>
+                        )}
+                    </ul>
+                </div>
+            </header>
+        </>
+    );
+};
+
+export default Header;

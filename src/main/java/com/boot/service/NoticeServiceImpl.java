@@ -21,9 +21,9 @@ public class NoticeServiceImpl implements NoticeService {
      * 1. 공지사항 목록 조회 (페이징 포함)
      */
     @Override
-    public List<NoticeDTO> noticeList(HashMap<String, String> param, Criteria cri) {
+    public List<NoticeDTO> noticeList(Criteria cri) {
         NoticeDAO dao = sqlSession.getMapper(NoticeDAO.class);
-        return dao.noticeList(param, cri);
+        return dao.noticeList(cri);
     }
 
     /**
@@ -75,9 +75,9 @@ public class NoticeServiceImpl implements NoticeService {
      * 7. 전체 공지사항 수 조회 (페이징용)
      */
     @Override
-    public int getTotalCount() {
+    public int getTotalCount(Criteria cri) {
         NoticeDAO dao = sqlSession.getMapper(NoticeDAO.class);
-        return dao.getTotalCount();
+        return dao.getTotalCount(cri);
     }
 
     /**
