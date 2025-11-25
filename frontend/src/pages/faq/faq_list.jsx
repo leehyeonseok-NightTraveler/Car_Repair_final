@@ -1,9 +1,11 @@
-	import React, { useEffect, useState } from 'react';
+// src/pages/faq/FaqList.jsx (혹은 faq_list.jsx)
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getFaqList } from '../../api/faqApi'; // 경로 확인(../faq/FaqList.jsx라면 ../../api)
+import { getFaqList } from '../../api/faqApi'; // 경로 확인 필요
 import './faq.css';
 
 const FaqList = () => {
+  // ⭐️ [수정 1] faqs를 반드시 빈 배열 []로 초기화합니다. (undefined 오류 방지)
   const [faqs, setFaqs] = useState([]);
   const [pageMaker, setPageMaker] = useState({
     prev: false,
@@ -11,7 +13,7 @@ const FaqList = () => {
     startPage: 1,
     endPage: 1,
     cri: { pageNum: 1 }
-  }); // 초기값 설정 (에러 방지)
+  }); 
   
   const navigate = useNavigate();
 
@@ -26,28 +28,31 @@ const FaqList = () => {
       // 백엔드에 pageNum을 보냄
       const data = await getFaqList(pageNum, 10);
       
-      console.log("받은 데이터:", data); // 확인용 로그
-      setFaqs(data.list);       // 게시글 리스트 저장
-      setPageMaker(data.pageMaker); // 페이징 정보 저장
+      console.log("받은 데이터:", data); // 데이터 구조 확인용 로그
+      
+      // data.list나 data.pageMaker가 undefined일 경우를 대비해 OR 연산자로 기본값 지정
+      setFaqs(data.list || []);       // 게시글 리스트 저장 (null/undefined이면 []로 설정)
+      setPageMaker(data.pageMaker || { prev: false, next: false, startPage: 1, endPage: 1, cri: { pageNum: 1 } }); // 페이징 정보 저장
     } catch (err) {
-      console.error(err);
+      console.error("API 호출 오류:", err); // API 호출 실패 시 에러 로그
       alert("데이터를 불러오지 못했습니다.");
+      setFaqs([]); // 에러 시 빈 배열로 설정하여 화면 깨짐 방지
     }
   };
 
   // 페이지 번호 버튼을 만드는 함수
   const renderPagination = () => {
-    if (!pageMaker) return null;
+    // pageMaker가 유효하지 않으면 null 반환
+    if (!pageMaker || !pageMaker.cri) return null;
 
     const pageNumbers = [];
-    // startPage부터 endPage까지 숫자를 배열에 담음 (예: [1, 2, 3, 4, 5])
     for (let i = pageMaker.startPage; i <= pageMaker.endPage; i++) {
       pageNumbers.push(i);
     }
 
     return (
       <div className="pagination">
-        {/* 1. 이전 버튼 (prev가 true일 때만 보임) */}
+        {/* 1. 이전 버튼 */}
         {pageMaker.prev && (
           <button onClick={() => fetchData(pageMaker.startPage - 1)}>
             &lt; 이전
@@ -58,15 +63,14 @@ const FaqList = () => {
         {pageNumbers.map((num) => (
           <button
             key={num}
-            // 현재 페이지(cri.pageNum)와 같으면 'active' 클래스 추가 (파란색)
-            className={pageMaker.cri && pageMaker.cri.pageNum === num ? 'active' : ''}
+            className={pageMaker.cri.pageNum === num ? 'active' : ''}
             onClick={() => fetchData(num)}
           >
             {num}
           </button>
         ))}
 
-        {/* 3. 다음 버튼 (next가 true일 때만 보임) */}
+        {/* 3. 다음 버튼 */}
         {pageMaker.next && (
           <button onClick={() => fetchData(pageMaker.endPage + 1)}>
             다음 &gt;
@@ -93,8 +97,8 @@ const FaqList = () => {
           </tr>
         </thead>
         <tbody>
-          {/* 리스트가 비어있을 경우 처리 */}
-          {faqs.length === 0 ? (
+          {/* ⭐️ [수정 2] faqs가 undefined이거나 빈 배열일 때 처리 (97행 오류 방지) */}
+          {!faqs || faqs.length === 0 ? (
             <tr>
               <td colSpan="3">게시글이 없습니다.</td>
             </tr>
@@ -107,14 +111,15 @@ const FaqList = () => {
                     {faq.faqTitle}
                   </Link>
                 </td>
-                <td>{faq.faqContent}</td>
+                {/* ⚠️ faqContent를 테이블에 그대로 보여주는 것은 보안상, UI상 좋지 않으니 작성자 등으로 변경을 고려해보세요. */}
+                <td>{faq.faqContent}</td> 
               </tr>
             ))
           )}
         </tbody>
       </table>
 
-      {/* ★ 페이징 버튼 렌더링 함수 호출 */}
+      {/* 페이징 버튼 렌더링 함수 호출 */}
       {renderPagination()}
 
     </div>
