@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 
 // 1. 공통 컴포넌트
@@ -34,6 +34,10 @@ import Register from './pages/Register/Register.jsx';
 import RegisterStore from './pages/Register/RegisterStore.jsx';
 import AdminMypage from './pages/Mypage/AdminMypage.jsx';
 
+//7. 로그인
+import NoticeList from './pages/Notice/notice_list.jsx'
+import Login from './pages/Login/login.jsx'
+import StoreLogin from './pages/Login/storeLogin.jsx'
 
 function App() {
     return (
@@ -77,7 +81,11 @@ function App() {
                         <Route path="/register" element={<Register />} />
                         <Route path="/registerstore" element={<RegisterStore />} />
                         <Route path="/admin/mypage" element={<AdminMypage />} />
-
+                        
+                        {/* --- [로그인] --- */}
+                        <Route path="/notice_list" element={<NoticeList />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/storeLogin" element={<StoreLogin />} />
                     </Routes>
                 </main>
 
