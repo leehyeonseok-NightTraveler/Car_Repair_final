@@ -35,7 +35,6 @@ import RegisterStore from './pages/Register/RegisterStore.jsx';
 import AdminMypage from './pages/Mypage/AdminMypage.jsx';
 
 //7. 로그인
-import NoticeList from './pages/Notice/notice_list.jsx'
 import Login from './pages/Login/login.jsx'
 import StoreLogin from './pages/Login/storeLogin.jsx'
 
