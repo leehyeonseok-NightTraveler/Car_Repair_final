@@ -37,6 +37,9 @@ import AdminMypage from './pages/Mypage/AdminMypage.jsx';
 //7. 로그인
 import Login from './pages/Login/login.jsx'
 import StoreLogin from './pages/Login/storeLogin.jsx'
+import FindAccount from './pages/FindAccount/findAccount.jsx'
+import FindPW from './pages/FindAccount/findPW.jsx'
+import FindOK from './pages/FindAccount/findOK.jsx'
 
 function App() {
     return (
@@ -81,10 +84,16 @@ function App() {
                         <Route path="/registerstore" element={<RegisterStore />} />
                         <Route path="/admin/mypage" element={<AdminMypage />} />
                         
-                        {/* --- [로그인] --- */}
-                        <Route path="/notice_list" element={<NoticeList />} />
+                        {/* --- [로그인] --- */}                 
                         <Route path="/login" element={<Login />} />
                         <Route path="/storeLogin" element={<StoreLogin />} />
+                        
+                        {/* --- [아이디/비밀번호 찾기] --- */}                        
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/storeLogin" element={<StoreLogin />} />
+                        <Route path="/findAccount" element={<FindAccount />} />
+                        <Route path="/findPW" element={<FindPW />} />
+                        <Route path="/findOK" element={<FindOK />} /> 
                     </Routes>
                 </main>
 
