@@ -20,6 +20,10 @@ import FaqModify from "./pages/faq/faq_modify";
 
 // 메인 페이지
 import MainPage from './pages/main/mainpage';
+import Register from './Register/Register.jsx'
+import RegisterStore from './Register/RegisterStore.jsx'
+
+import AdminMypage from './pages/Mypage/AdminMypage.jsx'
 
 function App() {
   return (
@@ -48,6 +52,12 @@ function App() {
             <Route path="/faq/view/:faqNo" element={<FaqView />} />
             <Route path="/faq/write" element={<FaqWrite />} />
             <Route path="/faq/modify/:faqNo" element={<FaqModify />} />
+              
+            <Route path="/register" element={<Register />} />
+            <Route path="/registerstore" element={<RegisterStore />} />
+              
+            {/* 관리자 마이페이지 */}
+            <Route path="/admin/mypage" element={<AdminMypage />} />
           </Routes>
         </main>
 
