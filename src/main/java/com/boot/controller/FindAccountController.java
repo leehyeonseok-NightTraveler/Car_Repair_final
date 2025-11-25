@@ -10,59 +10,53 @@ import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.boot.dto.FindAccountDTO;
 import com.boot.service.FindAccountService;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Controller
+@RestController
+@RequestMapping("/api")
 @Slf4j
 public class FindAccountController {
 
-	@Autowired
-	private FindAccountService service;
-	
-	//이메일 전송 객체[디펜던시에 추가됨]
-	@Autowired
-	private JavaMailSender mailSender;
-	
-	
-	@RequestMapping("findAccount")
-	public String findAccount() {
-				
-		return "findAccount";
-	}
-	
-	
-	@RequestMapping("/findAccountOK")
-	public String findAccountOK(@RequestParam("email") String email,
-	                          @RequestParam("phone") String phone,
-	                          @RequestParam HashMap<String, String> param,
-	                          RedirectAttributes redirectAttributes) {
+    @Autowired
+    private FindAccountService service;
 
-	    ArrayList<FindAccountDTO> dtos = service.findAccount(param);
+    @Autowired
+    private JavaMailSender mailSender;
 
-	    if (dtos != null && !dtos.isEmpty()) {
-	        FindAccountDTO dbDto = dtos.get(0);
 
-	        // 이메일, 전화번호 일치 여부 확인
-	        if (phone.equals(dbDto.getPhoneNumber()) && email.equals(dbDto.getEmail())) {
-	            try {
-	                // HTML 메일 생성
-	                MimeMessage message = mailSender.createMimeMessage();
-	                MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+    @PostMapping("findAccount")
+    public HashMap<String, Object> findAccount(@RequestBody HashMap<String, String> param) {
 
-	                helper.setFrom("carrepair3team@gmail.com");
-	                helper.setTo(email);
-	                helper.setSubject("[MY CAR 정비소] 회원님의 아이디 정보입니다.");
+        HashMap<String, Object> result = new HashMap<>();
 
-	                // HTML 본문
-	                String htmlContent =
+        String email = param.get("email");
+        String phone = param.get("phone");
+
+        ArrayList<FindAccountDTO> dtos = service.findAccount(param);
+
+        if (dtos != null && !dtos.isEmpty()) {
+            FindAccountDTO dbDto = dtos.get(0);
+
+            if (phone.equals(dbDto.getPhoneNumber()) && email.equals(dbDto.getEmail())) {
+
+                try {
+                    // HTML 이메일 발송
+                    MimeMessage message = mailSender.createMimeMessage();
+                    MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+                    helper.setFrom("carrepair3team@gmail.com");
+                    helper.setTo(email);
+                    helper.setSubject("[MY CAR 정비소] 아이디 안내");
+
+                    String htmlContent =
 	                        """
 	                        <html>
 	                        <body style="font-family: '맑은 고딕', sans-serif; background-color:#f5f5f5; padding:20px;">
@@ -80,70 +74,60 @@ public class FindAccountController {
 	                        </html>
 	                        """.formatted(dbDto.getAccountId());
 
-	                // true → HTML 허용
-	                helper.setText(htmlContent, true);
+                    helper.setText(htmlContent, true);
+                    mailSender.send(message);
 
-	                // 메일 전송
-	                mailSender.send(message);
+                    result.put("success", true);
+                    result.put("message", "이메일 발송 완료");
+                    return result;
 
-	                
-	                return "findOK";
-	            } catch (MessagingException e) {
-	                e.printStackTrace();
-	                
-	                redirectAttributes.addFlashAttribute("findFail", true);
-	        	    return "redirect:/findAccount";
-	            }
-	        }
-	    }
-	    
-	    redirectAttributes.addFlashAttribute("findFail", true);
-	    return "redirect:/findAccount";
-	}
-	
-	
-	@RequestMapping("/findPW")
-	public String findPW() {
+                } catch (MessagingException e) {
+                    result.put("success", false);
+                    result.put("message", "메일 전송 실패");
+                    return result;
+                }
+            }
+        }
 
-		return "findPW";
-	}
-	
-	
-//	계정 존재 여부 확인 후 해당 계정 임시 비밀번호로 변경 후 메일 전송
-	@RequestMapping("/findPwYn")
-	public String findPwYn(@RequestParam("email") String email,
-						 @RequestParam("phone") String phone,
-						 @RequestParam("accountId")String accountId,
-						 @RequestParam HashMap<String, String> param,
-						 RedirectAttributes redirectAttributes) {
-					
-		ArrayList<FindAccountDTO> dtos = service.findPW(param);
-		
-		if (dtos != null && !dtos.isEmpty()) {
-			FindAccountDTO dbDto = dtos.get(0);
-			
-			// 이메일, 전화번호, 아이디 일치 여부 확인
-			if (phone.equals(dbDto.getPhoneNumber()) && email.equals(dbDto.getEmail()) && accountId.equals(dbDto.getAccountId())) {
-				try {
-					
-					String tempPw = UUID.randomUUID().toString().substring(0, 10);
-					
-					service.newPW(accountId, tempPw, dbDto.getRole());
-					
-					log.info("@# accountId =>"+accountId);
-					log.info("@# tempPw =>"+tempPw);
-					log.info("@# role =>"+dbDto.getRole());
-					
-					// HTML 메일 생성
-					MimeMessage message = mailSender.createMimeMessage();
-					MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-					
-					helper.setFrom("carrepair3team@gmail.com");
-					helper.setTo(email);
-					helper.setSubject("[MY CAR 정비소] 회원님의 임시 비밀번호를 발송 해드렸습니다.");
-			
-					// HTML 본문
-					String htmlContent = """
+        result.put("success", false);
+        result.put("message", "입력 정보가 일치하지 않음");
+        return result;
+    }
+
+
+
+    // 🔐 비밀번호 찾기 API
+    @PostMapping("/findPW")
+    public HashMap<String, Object> findPw(@RequestBody HashMap<String, String> param) {
+
+        HashMap<String, Object> result = new HashMap<>();
+
+        String email = param.get("email");
+        String phone = param.get("phone");
+        String accountId = param.get("accountId");
+
+        ArrayList<FindAccountDTO> dtos = service.findPW(param);
+
+        if (dtos != null && !dtos.isEmpty()) {
+
+            FindAccountDTO dbDto = dtos.get(0);
+
+            if (phone.equals(dbDto.getPhoneNumber()) && email.equals(dbDto.getEmail())
+                    && accountId.equals(dbDto.getAccountId())) {
+
+                try {
+                    // 임시 비밀번호 생성
+                    String tempPw = UUID.randomUUID().toString().substring(0, 10);
+                    service.newPW(accountId, tempPw, dbDto.getRole());
+
+                    MimeMessage message = mailSender.createMimeMessage();
+                    MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+                    helper.setFrom("carrepair3team@gmail.com");
+                    helper.setTo(email);
+                    helper.setSubject("[MY CAR 정비소] 임시 비밀번호 발급");
+
+                    String htmlContent = """
 						    <html>
 						    <body style="font-family: Arial, sans-serif; background-color:#f9f9f9; padding:20px;">
 						        <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; padding:30px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
@@ -167,53 +151,26 @@ public class FindAccountController {
 						    </body>
 						    </html>
 						    """.formatted(dbDto.getAccountId(), tempPw);
-					
-					// true → HTML 허용
-					helper.setText(htmlContent, true);
-					
-					// 메일 전송
-					mailSender.send(message);
-					
-					
-					return "findOK";
-				} catch (MessagingException e) {
-					e.printStackTrace();
-					redirectAttributes.addFlashAttribute("findFail", true);
-					
-					return "redirect:/findPW";
-				}
-			}
-		}
-		
-		redirectAttributes.addFlashAttribute("findFail", true);
-		
-		return "redirect:/findPW";
-	}
-	
-	
-	@RequestMapping("/findOK")
-	public String infdOK() {
-		
-		return "findOK";
-	}
+
+                    helper.setText(htmlContent, true);
+                    mailSender.send(message);
+
+                    result.put("success", true);
+                    result.put("message", "임시 비밀번호 발송 완료");
+                    return result;
+
+                } catch (MessagingException e) {
+                    result.put("success", false);
+                    result.put("message", "메일 전송 실패");
+                    return result;
+                }
+            }
+        }
+
+        result.put("success", false);
+        result.put("message", "입력 정보가 일치하지 않음");
+        return result;
+    }
+
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

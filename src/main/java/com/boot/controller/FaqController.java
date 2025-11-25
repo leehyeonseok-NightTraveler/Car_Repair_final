@@ -2,15 +2,19 @@ package com.boot.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.DeleteMapping; // DELETE 요청
+import org.springframework.web.bind.annotation.GetMapping; // GET 요청
+import org.springframework.web.bind.annotation.PathVariable; // 경로 변수
+import org.springframework.web.bind.annotation.PostMapping; // POST 요청
+import org.springframework.web.bind.annotation.PutMapping; // PUT 요청
+import org.springframework.web.bind.annotation.RequestBody; // JSON 본문
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.boot.dto.FaQDTO;
 import com.boot.dto.Criteria;
@@ -19,110 +23,101 @@ import com.boot.service.FaqService;
 
 import lombok.extern.slf4j.Slf4j;
 
-@RestController
+@RestController // JSON 응답을 위해 사용
 @Slf4j
-@CrossOrigin(origins = "http://localhost:5173")
+// React 개발 서버 포트 5173에 대한 CORS 허용
+@CrossOrigin(origins = "http://localhost:5173") 
 public class FaqController {
 	
 	@Autowired
 	private FaqService service;
 	
-	@RequestMapping("/faq")
-	// 🚨 [수정 필요] 반환 타입을 String에서 Map으로 변경
-	public HashMap<String, Object> faq(Criteria cri) { 
-	    log.info("@# faq()");
+    // 1. FAQ 목록 조회 (LIST)
+    // 기존 경로 유지: GET /faq?pageNum=...
+	@GetMapping("/faq") 
+	public Map<String, Object> getFaqList(Criteria cri) {
+	    log.info("@# getFaqList() with criteria: {}", cri);
 	    
 	    ArrayList<FaQDTO> list = service.listWithPaging(cri);
 	    int total = service.getTotalCount(cri);
 	    
-	    // JSON 응답을 위한 Map 생성
-	    HashMap<String, Object> response = new HashMap<>();
-	    
-	    // Map에 데이터를 담습니다.
+	    Map<String, Object> response = new HashMap<>();
 	    response.put("list", list); 
 	    response.put("pageMaker", new PageDTO(total, cri)); 
 	    
-	    return response; // 👈 JSON 객체로 자동 변환되어 전송됩니다.
+	    return response; // JSON 응답 (목록과 페이징 정보)
 	}
-	@RequestMapping("/faq_view")
-	public String faq_view(@RequestParam("faq_no") int faq_no, Model model) {
-	    log.info("@# faq_view() with no: " + faq_no);
-	    FaQDTO faqDto = service.contentView(faq_no);
+	
+    // 2. FAQ 상세 조회 (READ)
+    // 프론트엔드 URL 경로에 맞춤: GET /faq/view/{faqNo}
+	@GetMapping("/faq/view/{faqNo}") 
+	public ResponseEntity<FaQDTO> getFaqDetail(@PathVariable("faqNo") int faqNo) {
+	    log.info("@# getFaqDetail() with faqNo: {}", faqNo);
 	    
+	    // 기존 서비스 메서드 호출
+	    FaQDTO faqDto = service.contentView(faqNo); 
 	    
-	    model.addAttribute("faq", faqDto);
-	    return "faq_view"; 
+	    if (faqDto == null) {
+	        return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 데이터가 없으면 404
+	    }
+	    
+	    return new ResponseEntity<>(faqDto, HttpStatus.OK); // 200 OK와 함께 데이터 반환
 	}
-	@RequestMapping("/faq_write")
-    public String faq_write(@RequestParam HashMap<String, String> param) {
-        log.info("faq_write()");
+
+    // 3. FAQ 등록 (CREATE)
+    // 새로운 RESTful 경로: POST /faq (Body에 JSON 데이터)
+    @PostMapping("/faq")
+    public ResponseEntity<String> registerFaq(@RequestBody Map<String, String> param) {
+        log.info("@# registerFaq - DB 저장 요청 param: {}", param);
         
-        return "faq_write";
+        try {
+            // 기존 서비스 메서드 시그니처 유지: HashMap<String, String> 사용
+            service.writeFaq((HashMap<String, String>) param); 
+            return new ResponseEntity<>("SUCCESS", HttpStatus.CREATED); // 201 Created
+        } catch (Exception e) {
+            log.error("FAQ 등록 중 오류 발생", e);
+            return new ResponseEntity<>("FAIL: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR); // 500 Error
+        }
     }
 	
-	@RequestMapping(value="/faq_write_action", method=RequestMethod.POST)
-	public String faq_write_action(@RequestParam HashMap<String, String> param, RedirectAttributes rttr) {
-	    log.info("@# faq_write_action - DB 저장 요청");
-	    
-	    // ... (기존 DB 처리 로직) ...
-	    service.writeFaq(param); 
-	    
-	    return "redirect:faq";
-	}
-	
-	@RequestMapping(value="/faq_write", method=RequestMethod.GET)
-	public String faq_write_view() {
-	    log.info("@# faq_write_view()");
-	    return "faq_write"; // faq_write.jsp 반환
-	}
-	
-   @RequestMapping("/faq_modify_action")
-    public String faq_modify_action(@RequestParam HashMap<String, String> param, RedirectAttributes rttr) {
-	   log.info("@# faq_modify_action()");
-		
-		service.modifyFaq(param);
-		
-		rttr.addAttribute("pageNum", param.get("pageNum"));
-		rttr.addAttribute("amount", param.get("amount"));
-		
-		return "redirect:faq";
-    }
-   @RequestMapping("/faq_modify") 
-   public String faq_modify_view(@RequestParam("faq_no") int faq_no, Model model) {
-       log.info("@# faq_modify_view()" + faq_no);
+    // 4. FAQ 수정 (UPDATE)
+    // 새로운 RESTful 경로: PUT /faq/{faqNo}
+    // 기존 서비스 메서드는 HashMap을 받으므로, 파라미터와 경로 변수를 합친 Map을 만듭니다.
+	@PutMapping("/faq/{faqNo}")
+    public ResponseEntity<String> modifyFaq(@PathVariable("faqNo") String faqNo, @RequestBody Map<String, String> requestBody) {
+	   log.info("@# modifyFaq() with faqNo: {}", faqNo);
+	   
+       // JSON 본문과 경로 변수를 하나의 HashMap으로 합치기
+       HashMap<String, String> param = new HashMap<>(requestBody);
+       param.put("faq_no", faqNo); // 기존 서비스가 요구하는 faq_no 키 추가
 
-       FaQDTO faqDto = service.contentView(faq_no); 
-
-       model.addAttribute("faq", faqDto);
-
-       return "faq_modify"; 
-   }
-   @RequestMapping(value="/faq_delete", method=RequestMethod.POST) 
-   public String faq_delete(
-           @RequestParam HashMap<String, String> param, 
-           RedirectAttributes rttr) {
-   	
-   	log.info("@# faq_delete() with param: " + param);
-   	
-       String faqNoStr = param.get("faq_no");
-       if (faqNoStr == null || faqNoStr.isEmpty()) {
-           rttr.addAttribute("pageNum", param.get("pageNum"));
-           rttr.addAttribute("amount", param.get("amount"));
-           return "redirect:faq"; 
+       try {
+           service.modifyFaq(param); // 기존 서비스 메서드 호출
+           return new ResponseEntity<>("SUCCESS", HttpStatus.OK); // 200 OK
+       } catch (Exception e) {
+           log.error("FAQ 수정 중 오류 발생", e);
+           return new ResponseEntity<>("FAIL: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
        }
+    }
+   
+    // 5. FAQ 삭제 (DELETE)
+    // 새로운 RESTful 경로: DELETE /faq/{faqNo}
+    // 기존 서비스 메서드는 HashMap을 받으므로, faq_no를 담은 Map을 생성합니다.
+	@DeleteMapping("/faq/{faqNo}") 
+    public ResponseEntity<String> deleteFaq(@PathVariable("faqNo") String faqNo) {
+   	
+   	log.info("@# deleteFaq() with faqNo: {}", faqNo);
+   	
+        // 기존 서비스가 요구하는 HashMap 생성 및 faq_no 추가
+        HashMap<String, String> param = new HashMap<>();
+        param.put("faq_no", faqNo); 
        
-   	service.deleteFaq(param);
-   	
-   	
-   	return "redirect:faq";
-   }
+        try {
+           service.deleteFaq(param); // 기존 서비스 메서드 호출
+           return new ResponseEntity<>("SUCCESS", HttpStatus.OK); // 200 OK
+       } catch (Exception e) {
+           log.error("FAQ 삭제 중 오류 발생", e);
+           return new ResponseEntity<>("FAIL: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+       }
+    }
 }
-
-
-
-
-
-
-
-
-

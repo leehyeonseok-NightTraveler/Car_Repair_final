@@ -1,0 +1,518 @@
+/* ==================== 0. 공통 및 레이아웃 (일반 게시판 스타일: #007acc 통일) ==================== */
+.inquiry-history-container,
+.inquiry-view-container,
+.content { /* InquiryWrite.jsx 컨테이너 */
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #ffffff;
+}
+
+.inquiry-header {
+    margin-bottom: 30px;
+}
+
+.inquiry-title,
+.form-title { /* InquiryWrite의 form-title도 통일 */
+    font-size: 28px;
+    font-weight: 700;
+    color: #222;
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    position: relative;
+}
+
+/* 목록/작성 제목 스타일 (중앙 밑줄) */
+.inquiry-history-container .inquiry-title::after,
+.content > #inquiry-form .form-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: #007acc; /* 메인 색상 */
+    border-radius: 2px;
+}
+
+/* 상세보기/답변 제목 스타일 (좌측 정렬) */
+.inquiry-view-container .inquiry-title {
+    text-align: left;
+    font-size: 26px;
+    margin-bottom: 10px;
+}
+.inquiry-view-container .inquiry-title::after {
+    content: none; /* View 페이지에서는 중앙 밑줄 제거 */
+}
+
+.inquiry-divider {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 20px 0;
+}
+
+/* --- 로딩 & 빈 상태 --- */
+.loading,
+.empty,
+.inquiry-history-container > .content > div:not(.inquiry-actions) {
+    text-align: center;
+    padding: 80px 20px;
+    color: #888;
+    font-size: 18px;
+}
+
+/* ==================== 1. 목록 및 관리 스타일 (List & Manage) ==================== */
+
+/* --- 검색 폼 --- */
+.inquiry-search-form,
+.inquiry-history-container > .content > form {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.inquiry-search-form select,
+.inquiry-history-container > .content > form select,
+.inquiry-search-form button,
+.inquiry-history-container > .content > form button {
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.inquiry-search-form select,
+.inquiry-history-container > .content > form select {
+    border: 1px solid #ddd;
+    background: #fff;
+}
+
+.inquiry-search-form button,
+.inquiry-history-container > .content > form button {
+    background: #007acc;
+    color: white;
+    border: none;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.inquiry-search-form button:hover,
+.inquiry-history-container > .content > form button:hover {
+    background: #005b9f;
+}
+
+/* --- 목록 테이블 --- */
+.inquiry-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.inquiry-table th {
+    background: #007acc;
+    color: white;
+    padding: 15px 10px;
+    text-align: center;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.inquiry-table td {
+    padding: 15px 10px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    font-size: 15px;
+}
+
+.inquiry-table tbody tr:hover {
+    background: #f8fbff; /* 연한 파란색 호버 */
+}
+
+.inquiry-table a {
+    color: #222;
+    text-decoration: none;
+}
+
+.inquiry-table a:hover {
+    color: #007acc;
+    text-decoration: underline;
+}
+
+.inquiry-table .title-cell,
+.inquiry-table td:nth-child(2) {
+    text-align: left;
+}
+
+/* --- 상태 표시 --- */
+.inquiry-table .status,
+.inquiry-table .status-cell {
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    font-size: 13px;
+}
+
+.inquiry-table .status.waiting,
+.inquiry-table .status-cell.N { /* 답변대기 (빨간색) */
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.inquiry-table .status.completed,
+.inquiry-table .status-cell.Y { /* 답변완료 (파란색) */
+    background: #d9edf7;
+    color: #31708f;
+}
+
+/* --- 액션 버튼 그룹 --- */
+.inquiry-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* 공통 버튼 스타일 */
+.inquiry-actions button,
+.reply-submit button.btn-primary,
+.reply-button a.btn-primary {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 15px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-outline {
+    background: #fff;
+    border: 1px solid #ccc;
+    color: #555;
+}
+
+.btn-outline:hover {
+    background: #f0f0f0;
+}
+
+.btn-danger {
+    background: #e74c3c;
+    color: white;
+    border: 1px solid #e74c3c;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+}
+
+/* --- 체크박스 스타일링 --- */
+.inquiry-table input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(1.1);
+}
+
+/* ==================== 2. 상세보기/답변 스타일 (View/Reply) ==================== */
+
+.inquiry-body {
+    min-height: 200px;
+    padding: 20px;
+    line-height: 1.8;
+    font-size: 16px;
+    color: #333;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: #fff;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.inquiry-content {
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin-bottom: 15px;
+}
+
+.inquiry-meta {
+    text-align: right;
+    font-size: 14px;
+    color: #888;
+    padding-top: 10px;
+    border-top: 1px dashed #ddd;
+}
+
+/* --- 답변 영역 (InquiryView & ReplyWrite) --- */
+.inquiry-reply {
+    margin-top: 40px;
+    padding: 30px;
+    background: #f9fbfd;
+    border: 1px solid #e0eaf3;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.reply-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #007acc;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #007acc;
+    display: inline-block;
+}
+
+/* --- 답변 내용 (View) --- */
+.inquiry-reply .reply-content {
+    padding: 15px;
+    line-height: 1.7;
+    font-size: 15px;
+    color: #555;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* --- 답변 없음 텍스트 (View) --- */
+.inquiry-reply p {
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    padding: 10px;
+}
+
+/* --- 답변 작성/수정 폼 (Write) --- */
+.reply-content-area {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    line-height: 1.6;
+    resize: vertical;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.reply-content-area:focus {
+    outline: none;
+    border-color: #007acc;
+    box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.15);
+}
+
+/* --- 답변 버튼 그룹 (Write & View) --- */
+.reply-submit,
+.reply-button {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.reply-submit button.btn-primary,
+.reply-button a.btn-primary {
+    background: linear-gradient(135deg, #007acc, #005b9f);
+    color: white;
+    font-weight: 700;
+    padding: 12px 40px;
+    border-radius: 50px;
+}
+
+.reply-submit button.btn-primary:hover,
+.reply-button a.btn-primary:hover {
+    background: linear-gradient(135deg, #0066aa, #004a87);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 122, 204, 0.3);
+}
+
+/* ==================== 3. 문의 등록/작성 스타일 (InquiryWrite) ==================== */
+
+#inquiry-form {
+    background: #fff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+}
+
+.form-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #007acc;
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 15px;
+    display: inline-block;
+    width: auto;
+    left: 50%;
+    position: relative;
+    transform: translateX(-50%);
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    flex-basis: 120px;
+    font-weight: 600;
+    color: #333;
+    font-size: 16px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="tel"],
+.form-group input[type="email"],
+.form-group textarea {
+    flex-grow: 1;
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s;
+    width: 100%;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 200px;
+    font-family: inherit;
+    line-height: 1.6;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #007acc;
+    box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.15);
+}
+
+.form-actions {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.submit-button {
+    background: linear-gradient(135deg, #007acc, #005b9f);
+    color: white;
+    font-weight: 700;
+    padding: 14px 60px;
+    border: none;
+    border-radius: 50px;
+    font-size: 17px;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-width: 180px;
+}
+
+.submit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 122, 204, 0.3);
+}
+
+/* ==================== 5. 반응형 (768px 이하) ==================== */
+@media (max-width: 768px) {
+    .inquiry-history-container,
+    .inquiry-view-container,
+    .content {
+        padding: 0 15px;
+        margin: 20px auto;
+    }
+
+    .inquiry-view-container .inquiry-title {
+        font-size: 22px;
+    }
+
+    /* --- 목록/관리 테이블 --- */
+    .inquiry-table th,
+    .inquiry-table td {
+        padding: 10px 5px;
+        font-size: 13px;
+    }
+
+    .inquiry-search-form,
+    .inquiry-history-container > .content > form {
+        justify-content: space-between;
+    }
+
+    .inquiry-search-form select,
+    .inquiry-history-container > .content > form select,
+    .inquiry-search-form button,
+    .inquiry-history-container > .content > form button {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+
+    .inquiry-actions {
+        justify-content: center;
+    }
+
+    .inquiry-actions button {
+        padding: 8px 15px;
+    }
+
+    /* --- 문의 작성 폼 --- */
+    #inquiry-form {
+        padding: 20px;
+    }
+
+    .form-title {
+        font-size: 22px;
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        flex-basis: auto;
+        margin-bottom: 8px;
+        font-size: 15px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="tel"],
+    .form-group input[type="email"],
+    .form-group textarea {
+        padding: 12px;
+        font-size: 15px;
+    }
+
+    .submit-button {
+        width: 100%;
+        max-width: 250px;
+        padding: 12px 0;
+    }
+
+    /* --- 답변 영역 --- */
+    .inquiry-reply {
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    .reply-title {
+        font-size: 18px;
+    }
+
+    .reply-submit button.btn-primary,
+    .reply-button a.btn-primary {
+        padding: 10px 30px;
+        width: 100%;
+        max-width: 250px;
+    }
+
+}

@@ -1,36 +1,32 @@
 package com.boot.dao;
 
-import com.boot.dto.AccountDTO;
 import com.boot.dto.Criteria;
 import com.boot.dto.NoticeDTO;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Mapper;
 
-import java.util.HashMap;
 import java.util.List;
 
+@Mapper
 public interface NoticeDAO {
 
-    // 1. 공지사항 목록 조회 (페이징 포함)
-    List<NoticeDTO> noticeList(@Param("cri") Criteria cri);
+    // 1. 목록 (Oracle 11g rownum 방식)
+    List<NoticeDTO> getNoticeList(Criteria cri);
 
-    // 2. 공지사항 상세 조회
-    NoticeDTO noticeView(@Param("param") HashMap<String, String> param);
+    // 2. 전체 개수
+    int getTotalCount(Criteria cri);
 
-    // 3. 공지사항 작성
-    void writeProcess(@Param("param") HashMap<String, String> param);
+    // 3. 상세 조회
+    NoticeDTO getNoticeById(Long noticeNo);
 
-    // 4. 공지사항 수정
-    void modifyProcess(@Param("param") HashMap<String, String> param);
+    // 4. 등록
+    void insertNotice(NoticeDTO notice);
 
-    // 5. 공지사항 삭제
-    void deleteProcess(@Param("param") HashMap<String, String> param);
+    // 5. 수정
+    int updateNotice(NoticeDTO notice);
 
-    // 6. 전체 공지사항 수 조회 (페이징용)
-    int getTotalCount(@Param("cri") Criteria cri);
+    // 6. 삭제
+    int deleteNotice(Long noticeNo);
 
-    // 7. 공지사항 조회수 증가
-    void increaseViews(@Param("param") HashMap<String, String> param);
-
-    // 8. 사용자 정보 조회
-    AccountDTO getUserInfo(@Param("param") String accountId);
+    // 7. 조회수 증가
+    void increaseViews(Long noticeNo);
 }
