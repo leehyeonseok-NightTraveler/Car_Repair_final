@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import './Gaide.css';
-import imgGaide2 from '../assets/images/gaide-2.png';
+import imgGaide2 from '../../assets/images/gaide-2.png';
 
 function Gaide2() {
     return (
