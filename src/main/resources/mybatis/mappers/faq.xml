@@ -25,7 +25,7 @@
 
 	<update id="modifyFaq">
     	update TBL_FAQ set FAQ_TITLE=#{faqTitle}, FAQ_CONTENT=#{faqContent} 
-    	 where FAQ_NO=#{faqNo}
+    	 where FAQ_NO=#{faq_no}
     </update>
     
     <delete id="deleteFaq">
