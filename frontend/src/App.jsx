@@ -18,6 +18,9 @@ import FaqView from "./pages/faq/faq_view";
 import FaqWrite from "./pages/faq/faq_write";
 import FaqModify from "./pages/faq/faq_modify";
 
+// 메인 페이지
+import MainPage from './pages/main/mainpage';
+
 function App() {
   return (
     <Router>
@@ -30,9 +33,10 @@ function App() {
         {/* 본문 영역: flex-grow를 주면 내용이 적어도 푸터가 바닥에 붙습니다 */}
         <main className="flex-grow">
           <Routes>
-            {/* --- [메인 페이지 제거됨] --- */}
-            {/* 이제 '/' 경로로 접속하면 빈 화면(헤더+푸터만)이 뜹니다. */}
-            
+          
+            {/* [메인 페이지 추가] */}
+            <Route path="/" element={<MainPage />} /> 
+
             {/* 지도는 '/recommend'를 입력해야 접근 가능 */}
             <Route path="/recommend" element={<RecommendMap />} />
 
