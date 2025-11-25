@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Header from "../../components/common/Header.jsx";
-import Footer from "../../components/common/Footer.jsx";
 import "../../components/common/mainpage.css";
 import "./storeLogin.css";
 
@@ -69,7 +67,6 @@ function StoreLogin() {
 
     return (
         <>
-            <Header />
 
             <main className="store-login-main">
                 <form onSubmit={handleSubmit} className="store-login-form">
@@ -158,7 +155,6 @@ function StoreLogin() {
                 </form>
             </main>
 
-            <Footer />
         </>
     );
 }

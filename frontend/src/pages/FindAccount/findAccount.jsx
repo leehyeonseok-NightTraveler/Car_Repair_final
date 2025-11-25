@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import Header from "../../components/common/Header.jsx";
-import Footer from "../../components/common/Footer.jsx";
 import "../../components/common/mainpage.css";
 import "./findAccount.css";
 
@@ -48,7 +46,6 @@ function FindAccount() {
 	
     return (
         <>
-            <Header />
 
             <main>
                 <form onSubmit={handleSubmit}>
@@ -121,7 +118,6 @@ function FindAccount() {
                 </form>
             </main>
 
-            <Footer />
         </>
     );
 }
