@@ -30,8 +30,8 @@ import InquiryManage from './pages/inquiry/inquiry_manage.jsx';
 import ReplyWrite from './pages/Inquiry/reply_write.jsx';
 
 // 6. 회원/관리
-import Register from './Register/Register.jsx';
-import RegisterStore from './Register/RegisterStore.jsx';
+import Register from './pages/Register/Register.jsx';
+import RegisterStore from './pages/Register/RegisterStore.jsx';
 import AdminMypage from './pages/Mypage/AdminMypage.jsx';
 
 

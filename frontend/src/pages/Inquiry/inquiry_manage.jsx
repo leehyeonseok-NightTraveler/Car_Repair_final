@@ -96,7 +96,7 @@ export default function InquiryManage() {
                                 <tr key={item.inquiry_no}>
                                     <td>{item.inquiry_no}</td>
                                     <td>
-                                        <Link to={`/inquiry/inquiry_view?inquiry_no=${item.inquiry_no}`}>
+                                        <Link to={`/inquiry_view?inquiry_no=${item.inquiry_no}`}>
                                             {item.inquiry_title}
                                         </Link>
                                     </td>
