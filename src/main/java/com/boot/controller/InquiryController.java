@@ -1,216 +1,111 @@
+// src/main/java/com/boot/controller/InquiryController.java
 package com.boot.controller;
 
-import com.boot.dto.AccountDTO;
 import com.boot.dto.Criteria;
 import com.boot.dto.InquiryDTO;
-import com.boot.dto.PagingDTO;
 import com.boot.service.InquiryService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@Controller
-@Slf4j
-@RequestMapping("/inquiry")
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api")
 public class InquiryController {
 
-    @Autowired
-    private InquiryService service;
+    private final InquiryService inquiryService;
 
-    /**
-     * 1. 문의 작성 페이지 진입
-     */
-    @RequestMapping("/inquiry_write")
-    public String inquiry_write(HttpSession session, Model model) {
-        log.info("inquiryWrite()");
-
-        // 로그인 여부 확인
-        String userId = (String) session.getAttribute("accountId");
-        String storeId = (String) session.getAttribute("storeId");
-        String Role = (String) session.getAttribute("ROLE");
-
-        if (userId == null && storeId == null) return "redirect:/login";
-
-        // 사용자 역할 전달
-        model.addAttribute("role", Role);
-
-        return "inquiry/inquiry_write";
+    // 1. 내 문의 내역
+    @GetMapping("/inquiry_history")
+    public Map<String, Object> inquiry_history(Criteria cri, HttpSession session) {
+        String customer_id = (String) session.getAttribute("customer_id");
+        if (customer_id == null) {
+            return Map.of("redirect", "/login");
+        }
+        return inquiryService.inquiryHistory(cri, customer_id);
     }
 
-    /**
-     * 2. 문의 작성 처리
-     */
-    @RequestMapping("/writeProcess")
-    public String writeProcess(@RequestParam HashMap<String, String> param, HttpSession session) {
-        log.info("writeProcess()");
+    // 2. 관리자 문의 관리
+    @GetMapping("/inquiry_manage")
+    public Map<String, Object> inquiry_manage(Criteria cri, HttpSession session) {
+        String role = (String) session.getAttribute("ROLE");
+        if (!"ADMIN".equals(role)) {
+            return Map.of("redirect", "/login");
+        }
+        return inquiryService.inquiryManage(cri);
+    }
 
-        // 로그인 정보 확인
-        String userId = (String) session.getAttribute("accountId");
-        String storeId = (String) session.getAttribute("storeId");
-        String Role = (String) session.getAttribute("ROLE");
-
-        if (userId == null && storeId == null) return "redirect:/login";
-
-        // 사용자 유형에 따라 customer_id 설정
-        if ("USER".equals(Role)) {
-            param.put("customer_id", userId);
-        } else {
-            param.put("customer_id", storeId);
+    // 3. 문의 상세보기
+    @GetMapping("/inquiry_view")
+    public Map<String, Object> inquiry_view(@RequestParam Long inquiry_no, HttpSession session) {
+        String customer_id = (String) session.getAttribute("customer_id");
+        if (customer_id == null) {
+            return Map.of("redirect", "/login");
         }
 
-        // 문의 등록 처리
-        service.writeProcess(param);
+        InquiryDTO inquiry = inquiryService.inquiryView(inquiry_no);
+        String role = (String) session.getAttribute("ROLE");
 
-        return "redirect:/inquiry/inquiry_history";
+        Map<String, Object> response = new HashMap<>();
+        response.put("inquiryView", inquiry);
+        response.put("role", role != null ? role : "USER");
+        return response;
     }
 
-    /**
-     * 3. 사용자 문의 내역 조회
-     */
-    @RequestMapping("/inquiry_history")
-    public String inquiry_history(@RequestParam HashMap<String, String> param, Model model,
-                                  HttpSession session, Criteria cri) {
-        log.info("inquiryHistory()");
-
-        // 로그인 및 권한 확인
-        String userId = (String) session.getAttribute("accountId");
-        String storeId = (String) session.getAttribute("storeId");
-        String Role = (String) session.getAttribute("ROLE");
-
-        if (userId == null && storeId == null) return "redirect:/login";
-        if ("ADMIN".equals(Role)) return "redirect:/inquiry/inquiry_manage";
-
-        // 사용자 유형에 따라 customer_id 설정
-        String loginId;
-        if ("USER".equals(Role)) {
-            param.put("customer_id", userId);
-            loginId = userId;
-        } else {
-            param.put("customer_id", storeId);
-            loginId = storeId;
+    // 4. 문의 작성 페이지
+    @GetMapping("/inquiry_write")
+    public Map<String, Object> inquiry_write(HttpSession session) {
+        if (session.getAttribute("customer_id") == null) {
+            return Map.of("redirect", "/login");
         }
-
-        // 문의 목록 조회
-        List<InquiryDTO> inquiryList = service.inquiryList(param, cri);
-        model.addAttribute("inquiryList", inquiryList);
-
-        // 페이징 처리
-        int total = service.TotalInquiryUser(loginId, cri);
-        model.addAttribute("pageMaker", new PagingDTO(total, cri));
-
-        model.addAttribute("role", Role);
-
-        return "inquiry/inquiry_history";
+        return Map.of("role", session.getAttribute("ROLE"));
     }
 
-    /**
-     * 4. 문의 상세 조회
-     */
-    @RequestMapping("/inquiry_view")
-    public String inquiry_view(@RequestParam HashMap<String, String> param, Model model, HttpSession session) {
-        log.info("inquiryView()");
-
-        // 로그인 정보 확인
-        String userId = (String) session.getAttribute("accountId");
-        String storeId = (String) session.getAttribute("storeId");
-        String Role = (String) session.getAttribute("ROLE");
-
-        if (userId == null && storeId == null) return "redirect:/login";
-
-        // 사용자 유형에 따라 customer_id 설정
-        String loginId;
-        if ("USER".equals(Role)) {
-            param.put("customer_id", userId);
-            loginId = userId;
-        } else {
-            param.put("customer_id", storeId);
-            loginId = storeId;
+    // 5. 문의 등록
+    @PostMapping("/writeProcess")
+    public ResponseEntity<String> writeProcess(@RequestParam Map<String, String> param, HttpSession session) {
+        if (session.getAttribute("customer_id") == null) {
+            return ResponseEntity.status(401).body("로그인 필요");
         }
-
-        // 문의 상세 조회
-        InquiryDTO inquiryView = service.inquiryView(param);
-        model.addAttribute("inquiryView", inquiryView);
-        model.addAttribute("role", Role);
-
-        return "inquiry/inquiry_view";
+        inquiryService.writeProcess(param, (String) session.getAttribute("customer_id"));
+        return ResponseEntity.ok("success");
     }
 
-    /**
-     * 5. 관리자 답변 작성 페이지 진입
-     */
-    @RequestMapping("/reply_write")
-    public String reply_write(@RequestParam HashMap<String, String> param, HttpSession session, Model model) {
-        log.info("replyWrite()");
-
-        // 관리자 권한 확인
-        String Role = (String) session.getAttribute("ROLE");
-        if (!"ADMIN".equals(Role)) return "redirect:/login";
-
-        // 문의 정보 조회 후 답변 작성 페이지로 이동
-        InquiryDTO inquiryView = service.inquiryView(param);
-        model.addAttribute("reply", inquiryView);
-        model.addAttribute("role", Role);
-
-        return "inquiry/reply_write";
+    // 6. 답변 작성 페이지
+    @GetMapping("/reply_write")
+    public Map<String, Object> reply_write(@RequestParam Long inquiry_no, HttpSession session) {
+        if (!"ADMIN".equals(session.getAttribute("ROLE"))) {
+            return Map.of("redirect", "/login");
+        }
+        return Map.of(
+                "reply", inquiryService.inquiryView(inquiry_no),
+                "role", "ADMIN"
+        );
     }
 
-    /**
-     * 6. 관리자 답변 등록 처리
-     */
-    @RequestMapping("/replyProcess")
-    public String replyProcess(@RequestParam HashMap<String, String> param, HttpSession session, RedirectAttributes attr) {
-        log.info("replyProcess()");
-
-        // 관리자 권한 확인
-        String Role = (String) session.getAttribute("ROLE");
-        if (!"ADMIN".equals(Role)) return "redirect:/login";
-
-        // 답변 등록 처리
-        service.replyProcess(param);
-
-        // 상세 페이지로 리다이렉트
-        attr.addAttribute("inquiry_no", param.get("inquiry_no"));
-
-        return "redirect:/inquiry/inquiry_view";
+    // 7. 답변 저장
+    @PostMapping("/replyProcess")
+    public ResponseEntity<String> replyProcess(@RequestParam Map<String, String> param, HttpSession session) {
+        if (!"ADMIN".equals(session.getAttribute("ROLE"))) {
+            return ResponseEntity.status(403).body("권한 없음");
+        }
+        inquiryService.replyProcess(param);
+        return ResponseEntity.ok("success");
     }
 
-    /**
-     * 7. 관리자 문의 관리 페이지
-     */
-    @RequestMapping("/inquiry_manage")
-    public String inquiry_manage(@RequestParam HashMap<String, String> param, Model model,
-                                 HttpSession session, Criteria cri) {
-        log.info("inquiryManage()");
-
-        // 관리자 권한 확인
-        String Role = (String) session.getAttribute("ROLE");
-        if (!"ADMIN".equals(Role)) return "redirect:/login";
-
-        // 전체 문의 목록 조회
-        List<InquiryDTO> inquiryManageList = service.inquiryManageList(param, cri);
-        model.addAttribute("ManageList", inquiryManageList);
-
-        // 페이징 처리
-        // ⚠️ 수정: TotalInquiry 메서드에 Criteria 객체를 전달하여 검색 조건이 적용된 총 개수를 얻도록 합니다.
-        int total = service.TotalInquiry(cri);
-        model.addAttribute("pageMaker", new PagingDTO(total, cri));
-
-        model.addAttribute("role", Role);
-
-        return "inquiry/inquiry_manage";
-    }
-
-    @RequestMapping("/deleteProcess")
-    public String deleteProcess(@RequestParam("deleteIds") List<Long> deleteIds) {
-        service.deleteInquiries(deleteIds);
-        return "redirect:/inquiry/inquiry_history";
+    // 8. 문의 삭제
+    @PostMapping("/deleteProcess")
+    public ResponseEntity<String> deleteProcess(@RequestBody Map<String, List<Long>> request, HttpSession session) {
+        String role = (String) session.getAttribute("ROLE");
+        if (role == null) {
+            return ResponseEntity.status(401).body("로그인 필요");
+        }
+        inquiryService.deleteInquiries(request.get("inquiryIds"));
+        return ResponseEntity.ok("success");
     }
 }

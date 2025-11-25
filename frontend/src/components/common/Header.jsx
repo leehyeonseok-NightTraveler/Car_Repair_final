@@ -23,7 +23,7 @@ const Header = () => {
                 <div className="inner">
                     {/* 로고 */}
                     <h1>
-                        <Link to="/main">MY CAR 정비소</Link>
+                        <Link to="/">MY CAR 정비소</Link>
                     </h1>
 
                     {/* 메인 네비게이션 */}

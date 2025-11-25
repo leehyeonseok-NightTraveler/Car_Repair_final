@@ -79,13 +79,13 @@ public class Mypage_UserController {
         List<MypageDTO> carList = carService.selectCarList(accountId);
         model.addAttribute("carList", carList);
         
-        // 3. 1:1 문의 내역 조회
-        List<InquiryDTO> inquiryList = inquiryService.selectByAccountId(accountId);
-        model.addAttribute("inquiryList", inquiryList);
+//        // 3. 1:1 문의 내역 조회
+//        List<InquiryDTO> inquiryList = inquiryService.selectByAccountId(accountId);
+//        model.addAttribute("inquiryList", inquiryList);
 
-        // 페이징 처리
-        int total = inquiryService.TotalInquiryUser(loginId, cri);
-        model.addAttribute("pageMaker", new PagingDTO(total, cri));
+//        // 페이징 처리
+//        int total = inquiryService.TotalInquiryUser(loginId, cri);
+//        model.addAttribute("pageMaker", new PagingDTO(total, cri));
 
         return "mypage/mypage_user";
     }
