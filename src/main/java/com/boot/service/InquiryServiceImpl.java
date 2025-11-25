@@ -1,104 +1,71 @@
+// src/main/java/com/boot/service/InquiryServiceImpl.java
 package com.boot.service;
 
 import com.boot.dao.InquiryDAO;
-import com.boot.dao.NoticeDAO;
-import com.boot.dto.AccountDTO;
 import com.boot.dto.Criteria;
 import com.boot.dto.InquiryDTO;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.boot.dto.PagingDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class InquiryServiceImpl implements InquiryService {
 
-    @Autowired
-    private SqlSession sqlSession;
+    private final InquiryDAO dao;
 
-    /**
-     * 1. 문의 등록 처리
-     */
     @Override
-    public void writeProcess(HashMap<String, String> param) {
-        InquiryDAO dao = sqlSession.getMapper(InquiryDAO.class);
+    public void writeProcess(Map<String, String> param, String customer_id) {
+        param.put("customer_id", customer_id);
         dao.writeProcess(param);
     }
 
-    /**
-     * 2. 사용자 문의 목록 조회
-     */
     @Override
-    public List<InquiryDTO> inquiryList(HashMap<String, String> param, Criteria cri) {
-        InquiryDAO dao = sqlSession.getMapper(InquiryDAO.class);
-        return dao.inquiryList(param, cri);
+    public Map<String, Object> inquiryHistory(Criteria cri, String customer_id) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("customer_id", customer_id);
+        param.put("cri", cri);
+
+        List<InquiryDTO> inquiryList = dao.inquiryList(param);
+        int total = dao.TotalInquiryUser(customer_id);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("inquiryList", inquiryList);
+        result.put("pageMaker", new PagingDTO(total, cri));
+        result.put("role", "USER");  // 실제 세션에서 가져오도록 수정 예정
+        return result;
     }
 
-    /**
-     * 3. 관리자 문의 목록 조회
-     */
     @Override
-    public List<InquiryDTO> inquiryManageList(HashMap<String, String> param, Criteria cri) {
-        InquiryDAO dao = sqlSession.getMapper(InquiryDAO.class);
-        return dao.inquiryManageList(param, cri);
+    public Map<String, Object> inquiryManage(Criteria cri) {
+        List<InquiryDTO> ManageList = dao.inquiryManageList(cri);
+        int total = dao.TotalInquiry(cri);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("ManageList", ManageList);
+        result.put("pageMaker", new PagingDTO(total, cri));
+        result.put("role", "ADMIN");
+        return result;
     }
 
-    /**
-     * 4. 문의 상세 조회
-     */
     @Override
-    public InquiryDTO inquiryView(HashMap<String, String> param) {
-        InquiryDAO dao = sqlSession.getMapper(InquiryDAO.class);
-        return dao.inquiryView(param);
+    public InquiryDTO inquiryView(Long inquiry_no) {
+        return dao.inquiryView(inquiry_no);
     }
 
-    /**
-     * 5. 사용자 정보 조회
-     */
     @Override
-    public AccountDTO getUserInfo(String accountId) {
-        InquiryDAO dao = sqlSession.getMapper(InquiryDAO.class);
-        return dao.getUserInfo(accountId);
-    }
-
-    /**
-     * 6. 관리자 답변 등록 처리
-     */
-    @Override
-    public void replyProcess(HashMap<String, String> param) {
-        InquiryDAO dao = sqlSession.getMapper(InquiryDAO.class);
+    public void replyProcess(Map<String, String> param) {
         dao.replyProcess(param);
-    }
-   
-    /**
-     * 7. 사용자 문의 총 개수
-     */
-    @Override
-    public int TotalInquiryUser(String loginId, Criteria cri) {
-        InquiryDAO dao = sqlSession.getMapper(InquiryDAO.class);
-        return dao.TotalInquiryUser(loginId, cri);
-    }
-
-    /**
-     * 8. 전체 문의 총 개수 (관리자용)
-     */
-    @Override
-    public int TotalInquiry(Criteria cri) {
-        InquiryDAO dao = sqlSession.getMapper(InquiryDAO.class);
-        return dao.TotalInquiry(cri);
     }
 
     @Override
     public void deleteInquiries(List<Long> inquiryIds) {
-        InquiryDAO dao = sqlSession.getMapper(InquiryDAO.class);
-        dao.deleteInquiries(inquiryIds);
-    }
-
-    @Override
-    public List<InquiryDTO> selectByAccountId(String accountId) {
-        InquiryDAO dao = sqlSession.getMapper(InquiryDAO.class);
-        return dao.selectByAccountId(accountId);
+        if (inquiryIds != null && !inquiryIds.isEmpty()) {
+            dao.deleteInquiries(inquiryIds);
+        }
     }
 }
