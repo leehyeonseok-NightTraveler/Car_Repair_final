@@ -1,72 +1,92 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css'; // 본인 작업: 전역 스타일
+import './App.css';
 
 // 1. 공통 컴포넌트
-import Header from './components/common/Header'; // 확장자(.jsx)는 자동 처리되므로 생략 가능
-import Footer from "./components/common/Footer"; // 본인 작업: 푸터 추가
+import Header from './components/common/Header';
+import Footer from "./components/common/Footer";
 
 // 2. [팀원] 지도 및 메인 관련 컴포넌트
-import RecommendMap from './pages/Map/RecommendMap'; 
+import RecommendMap from './pages/Map/RecommendMap';
+import MainPage from './pages/main/mainpage'; // 메인 페이지
 
-// 3. [팀원] 공지사항
+// 3. [공지사항]
 import NoticeList from './pages/Notice/notice_list';
+import NoticeWrite from "./pages/Notice/notice_write.jsx";
+import NoticeView from "./pages/Notice/notice_view.jsx";
+import NoticeModify from "./pages/Notice/notice_modify.jsx";
 
-// 4. [본인] FAQ 관련 페이지들
+// 4. [FAQ]
 import FaqList from "./pages/faq/faq_list";
 import FaqView from "./pages/faq/faq_view";
 import FaqWrite from "./pages/faq/faq_write";
 import FaqModify from "./pages/faq/faq_modify";
 
-// 메인 페이지
-import MainPage from './pages/main/mainpage';
-import Register from './Register/Register.jsx'
-import RegisterStore from './Register/RegisterStore.jsx'
+// 5. [1:1 문의] (새로 추가된 항목)
+import InquiryWrite from './pages/inquiry/inquiry_write.jsx';
+import InquiryHistory from './pages/inquiry/Inquiry_history.jsx';
+import InquiryView from './pages/inquiry/inquiry_view.jsx';
+import InquiryManage from './pages/inquiry/inquiry_manage.jsx';
+import ReplyWrite from './pages/Inquiry/reply_write.jsx';
 
-import AdminMypage from './pages/Mypage/AdminMypage.jsx'
+// 6. 회원/관리
+import Register from './Register/Register.jsx';
+import RegisterStore from './Register/RegisterStore.jsx';
+import AdminMypage from './pages/Mypage/AdminMypage.jsx';
+
 
 function App() {
-  return (
-    <Router>
-      {/* 팀원 작업: 전체 레이아웃 스타일 (Tailwind CSS) */}
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        
-        {/* 헤더 */}
-        <Header />
+    return (
+        <Router>
+            <div className="min-h-screen bg-gray-50 flex flex-col">
 
-        {/* 본문 영역: flex-grow를 주면 내용이 적어도 푸터가 바닥에 붙습니다 */}
-        <main className="flex-grow">
-          <Routes>
-          
-            {/* [메인 페이지 추가] */}
-            <Route path="/" element={<MainPage />} /> 
+                {/* 헤더 */}
+                <Header />
 
-            {/* 지도는 '/recommend'를 입력해야 접근 가능 */}
-            <Route path="/recommend" element={<RecommendMap />} />
+                {/* 본문 영역 */}
+                <main className="flex-grow">
+                    <Routes>
 
-            {/* --- [공지사항] --- */}
-            <Route path="/notice_list" element={<NoticeList />} />
+                        {/* --- [메인 페이지] --- */}
+                        <Route path="/" element={<MainPage />} />
 
-            {/* --- [FAQ 기능 (본인 작업)] --- */}
-            <Route path="/faq" element={<FaqList />} />
-            <Route path="/faq/view/:faqNo" element={<FaqView />} />
-            <Route path="/faq/write" element={<FaqWrite />} />
-            <Route path="/faq/modify/:faqNo" element={<FaqModify />} />
-              
-            <Route path="/register" element={<Register />} />
-            <Route path="/registerstore" element={<RegisterStore />} />
-              
-            {/* 관리자 마이페이지 */}
-            <Route path="/admin/mypage" element={<AdminMypage />} />
-          </Routes>
-        </main>
+                        {/* --- [지도] --- */}
+                        <Route path="/recommend" element={<RecommendMap />} />
 
-        {/* 푸터 (본인 작업) */}
-        <Footer />
-        
-      </div>
-    </Router>
-  );
+                        {/* --- [공지사항] --- */}
+                        <Route path="/notice_list" element={<NoticeList />} />
+                        <Route path="/notice_write" element={<NoticeWrite />} />
+                        <Route path="/notice_view/:notice_no" element={<NoticeView />} />
+                        <Route path="/notice_modify/:notice_no" element={<NoticeModify />} />
+
+                        {/* --- [FAQ 기능] --- */}
+                        <Route path="/faq" element={<FaqList />} />
+                        <Route path="/faq/view/:faqNo" element={<FaqView />} />
+                        <Route path="/faq/write" element={<FaqWrite />} />
+                        <Route path="/faq/modify/:faqNo" element={<FaqModify />} />
+
+                        {/* --- [1:1 문의 기능] --- */}
+                        <Route path="/inquiry_write" element={<InquiryWrite />} />
+                        <Route path="/inquiry_history" element={<InquiryHistory />} />
+                        {/* 참고: 상세보기와 답변 작성은 파라미터를 받을 수 있도록 수정하는 것을 권장합니다. */}
+                        <Route path="/inquiry_view/:inquiryNo" element={<InquiryView />} />
+                        <Route path="/inquiry_manage" element={<InquiryManage />} />
+                        <Route path="/reply_write/:inquiryNo" element={<ReplyWrite />} />
+
+                        {/* --- [회원/관리] --- */}
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/registerstore" element={<RegisterStore />} />
+                        <Route path="/admin/mypage" element={<AdminMypage />} />
+
+                    </Routes>
+                </main>
+
+                {/* 푸터 */}
+                <Footer />
+
+            </div>
+        </Router>
+    );
 }
 
 export default App;
