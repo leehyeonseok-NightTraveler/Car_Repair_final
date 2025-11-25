@@ -40,7 +40,7 @@ export default function InquiryWrite() {
                 withCredentials: true,
             });
             alert("문의가 등록되었습니다.");
-            navigate("/inquiry/inquiry_history");
+            navigate("/inquiry_history");
         } catch (err) {
             alert("등록 실패");
         }

@@ -49,7 +49,7 @@ export default function ReplyWrite() {
                 withCredentials: true,
             });
             alert("답변이 저장되었습니다.");
-            navigate(`/inquiry/inquiry_view?inquiry_no=${inquiry_no}`);
+            navigate(`/inquiry_view?inquiry_no=${inquiry_no}`);
         } catch (err) {
             alert("저장 실패");
         }

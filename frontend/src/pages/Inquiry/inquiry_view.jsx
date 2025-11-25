@@ -1,6 +1,6 @@
 // src/pages/inquiry/InquiryView.jsx
 import React, { useEffect, useState, useCallback } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // useLocation 제거, useParams 추가
 import axios from "axios";
 import InquiryFloating from "../../components/common/InquiryFloating";
 import "./Inquiry.css"
@@ -10,18 +10,22 @@ export default function InquiryView() {
     const [role, setRole] = useState("");
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-    const location = useLocation();
-    const inquiry_no = new URLSearchParams(location.search).get("inquiry_no");
+
+    // ⭐️ 수정: useParams를 사용하여 URL 파라미터에서 inquiryNo를 가져옵니다.
+    // App.js 라우팅이 /inquiry_view/:inquiryNo 라고 가정합니다.
+    const { inquiryNo } = useParams();
 
     const fetchView = useCallback(async () => {
-        if (!inquiry_no) {
-            navigate("/inquiry/inquiry_history");
+        // ⭐️ 수정: inquiry_no 대신 inquiryNo 사용
+        if (!inquiryNo) {
+            navigate("/inquiry_history");
             return;
         }
 
         try {
             const res = await axios.get("/api/inquiry_view", {
-                params: { inquiry_no },
+                // ⭐️ 수정: 파라미터 이름 inquiryNo로 변경
+                params: { inquiry_no: inquiryNo },
                 withCredentials: true,
             });
 
@@ -37,13 +41,14 @@ export default function InquiryView() {
         } finally {
             setLoading(false);
         }
-    }, [inquiry_no, navigate]);
+    }, [inquiryNo, navigate]); // 의존성 배열도 inquiryNo로 변경
 
     useEffect(() => {
         fetchView();
     }, [fetchView]);
 
     if (loading) return <div>로딩 중...</div>;
+    // URL 파라미터가 유효하지 않은 경우를 대비해 inquiryNo를 확인하는 로직을 추가해도 좋습니다.
     if (!inquiry.inquiry_no) return <div>문의가 존재하지 않습니다.</div>;
 
     return (
@@ -65,6 +70,7 @@ export default function InquiryView() {
                 </div>
             </article>
 
+            {/* 관리자 답변 영역 */}
             {role === "ADMIN" ? (
                 <section className="inquiry-reply">
                     <h3 className="reply-title">관리자 답변</h3>
@@ -77,8 +83,9 @@ export default function InquiryView() {
                         <p>아직 답변이 없습니다.</p>
                     )}
                     <div className="reply-button">
+                        {/* ⭐️ 수정: 답변 작성 링크를 URL 파라미터 방식으로 변경 */}
                         <a
-                            href={`/inquiry/reply_write?inquiry_no=${inquiry.inquiry_no}`}
+                            href={`/reply_write/${inquiry.inquiry_no}`}
                             className="btn btn-primary"
                         >
                             {inquiry.reply_content ? "답변 수정" : "답변 작성"}
