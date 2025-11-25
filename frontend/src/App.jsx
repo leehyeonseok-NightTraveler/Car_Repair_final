@@ -6,7 +6,7 @@ import './App.css';
 import Header from './components/common/Header';
 import Footer from "./components/common/Footer";
 
-// 2. [팀원] 지도 및 메인 관련 컴포넌트
+// 2. [메인/지도]
 import RecommendMap from './pages/Map/RecommendMap';
 import MainPage from './pages/main/mainpage'; // 메인 페이지
 
@@ -22,24 +22,32 @@ import FaqView from "./pages/faq/faq_view";
 import FaqWrite from "./pages/faq/faq_write";
 import FaqModify from "./pages/faq/faq_modify";
 
-// 5. [1:1 문의] (새로 추가된 항목)
+// 5. [1:1 문의]
 import InquiryWrite from './pages/inquiry/inquiry_write.jsx';
 import InquiryHistory from './pages/inquiry/Inquiry_history.jsx';
 import InquiryView from './pages/inquiry/inquiry_view.jsx';
 import InquiryManage from './pages/inquiry/inquiry_manage.jsx';
 import ReplyWrite from './pages/Inquiry/reply_write.jsx';
 
-// 6. 회원/관리
+// 6. [회원/관리]
 import Register from './pages/Register/Register.jsx';
 import RegisterStore from './pages/Register/RegisterStore.jsx';
 import AdminMypage from './pages/Mypage/AdminMypage.jsx';
 
-//7. 로그인
+// 7. [꿀팁 가이드] (SCRUM-27 추가)
+import Guide from './pages/Gaide/Gaide.jsx'; // 폴더명 Gaide로 수정했습니다.
+import Guide1 from './pages/Gaide/Gaide-1.jsx';
+import Guide2 from './pages/Gaide/Gaide-2.jsx';
+import Guide3 from './pages/Gaide/Gaide-3.jsx';
+import Guide4 from './pages/Gaide/Gaide-4.jsx';
+
+// 8. [로그인/계정 찾기]
 import Login from './pages/Login/login.jsx'
 import StoreLogin from './pages/Login/storeLogin.jsx'
 import FindAccount from './pages/FindAccount/findAccount.jsx'
 import FindPW from './pages/FindAccount/findPW.jsx'
 import FindOK from './pages/FindAccount/findOK.jsx'
+
 
 function App() {
     return (
@@ -55,8 +63,6 @@ function App() {
 
                         {/* --- [메인 페이지] --- */}
                         <Route path="/" element={<MainPage />} />
-
-                        {/* --- [지도] --- */}
                         <Route path="/recommend" element={<RecommendMap />} />
 
                         {/* --- [공지사항] --- */}
@@ -65,6 +71,13 @@ function App() {
                         <Route path="/notice_view/:notice_no" element={<NoticeView />} />
                         <Route path="/notice_modify/:notice_no" element={<NoticeModify />} />
 
+                        {/* --- [꿀팁 가이드] (SCRUM-27) --- */}
+                        <Route path="/guide" element={<Guide />} />    
+                        <Route path="/guide-1" element={<Guide1 />} />    
+                        <Route path="/guide-2" element={<Guide2 />} />
+                        <Route path="/guide-3" element={<Guide3 />} />
+                        <Route path="/guide-4" element={<Guide4 />} />
+                        
                         {/* --- [FAQ 기능] --- */}
                         <Route path="/faq" element={<FaqList />} />
                         <Route path="/faq/view/:faqNo" element={<FaqView />} />
@@ -74,26 +87,22 @@ function App() {
                         {/* --- [1:1 문의 기능] --- */}
                         <Route path="/inquiry_write" element={<InquiryWrite />} />
                         <Route path="/inquiry_history" element={<InquiryHistory />} />
-                        {/* 참고: 상세보기와 답변 작성은 파라미터를 받을 수 있도록 수정하는 것을 권장합니다. */}
                         <Route path="/inquiry_view/:inquiryNo" element={<InquiryView />} />
                         <Route path="/inquiry_manage" element={<InquiryManage />} />
                         <Route path="/reply_write/:inquiryNo" element={<ReplyWrite />} />
 
-                        {/* --- [회원/관리] --- */}
+                        {/* --- [회원가입/관리] --- */}
                         <Route path="/register" element={<Register />} />
                         <Route path="/registerstore" element={<RegisterStore />} />
                         <Route path="/admin/mypage" element={<AdminMypage />} />
                         
-                        {/* --- [로그인] --- */}                 
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/storeLogin" element={<StoreLogin />} />
-                        
-                        {/* --- [아이디/비밀번호 찾기] --- */}                        
+                        {/* --- [로그인/계정찾기] --- */}
                         <Route path="/login" element={<Login />} />
                         <Route path="/storeLogin" element={<StoreLogin />} />
                         <Route path="/findAccount" element={<FindAccount />} />
                         <Route path="/findPW" element={<FindPW />} />
-                        <Route path="/findOK" element={<FindOK />} /> 
+                        <Route path="/findOK" element={<FindOK />} />
+                        
                     </Routes>
                 </main>
 
