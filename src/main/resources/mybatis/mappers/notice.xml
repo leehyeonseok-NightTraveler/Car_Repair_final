@@ -3,117 +3,107 @@
 
 <mapper namespace="com.boot.dao.NoticeDAO">
 
-    <!-- 검색 조건 (type, keyword 포함) -->
-    <sql id="criteria">
+    <sql id="searchWhere">
         <where>
-            <if test="cri.type == 'T'">
-                notice_title LIKE '%' || #{cri.keyword} || '%'
-            </if>
-            <if test="cri.type == 'C'">
-                notice_content LIKE '%' || #{cri.keyword} || '%'
-            </if>
-            <if test="cri.type == 'TC'">
-                (notice_title LIKE '%' || #{cri.keyword} || '%'
-                OR notice_content LIKE '%' || #{cri.keyword} || '%')
+            <if test="type != null and type != '' and keyword != null and keyword != ''">
+                <choose>
+                    <when test="type == 'T'">
+                        AND notice_title LIKE '%' || #{keyword} || '%'
+                    </when>
+                    <when test="type == 'C'">
+                        AND notice_content LIKE '%' || #{keyword} || '%'
+                    </when>
+                    <otherwise>
+                        AND (notice_title LIKE '%' || #{keyword} || '%'
+                        OR notice_content LIKE '%' || #{keyword} || '%')
+                    </otherwise>
+                </choose>
             </if>
         </where>
     </sql>
 
-
-    <select id="noticeList" resultType="com.boot.dto.NoticeDTO">
+    <select id="getNoticeList" resultType="com.boot.dto.NoticeDTO">
         <![CDATA[
-        SELECT *
+        SELECT
+            notice_no,
+            notice_title,
+            notice_content,
+            notice_writer,
+            TO_CHAR(notice_created, 'YYYY"년" MM"월" DD"일" HH24"시"MI"분"') AS notice_created,
+            notice_views
         FROM (
-            SELECT rownum AS rn, inner_query.*
+            SELECT
+                notice_no,
+                notice_title,
+                notice_content,
+                notice_writer,
+                notice_created,
+                notice_views,
+                ROWNUM AS rn
             FROM (
                 SELECT
                     notice_no,
                     notice_title,
-                    notice_writer,
                     notice_content,
-                    TO_CHAR(notice_created, 'YYYY"년" MM"월" DD"일" HH24"시"MI"분"') AS notice_created,
+                    notice_writer,
+                    notice_created,
                     notice_views
                 FROM tbl_notice
-                ]]>
-                <include refid="criteria"/>
-                <![CDATA[
+    ]]>
+        <include refid="searchWhere"/>
+        <![CDATA[
                 ORDER BY notice_no DESC
-            ) inner_query
-            WHERE rownum <= #{cri.pageNum} * #{cri.amount}
+            )
+            WHERE ROWNUM <= #{pageNum} * #{amount}
         )
-        WHERE rn > (#{cri.pageNum} - 1) * #{cri.amount}
-        ]]>
+        WHERE rn > (#{pageNum} - 1) * #{amount}
+    ]]>
     </select>
 
+    <!-- 2. 전체 개수 -->
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*) FROM tbl_notice
+        <include refid="searchWhere"/>
+    </select>
 
-    <!-- 2. 공지사항 상세 조회 -->
-    <select id="noticeView" resultType="com.boot.dto.NoticeDTO">
+    <!-- 3. 상세 조회 -->
+    <select id="getNoticeById" parameterType="long" resultType="com.boot.dto.NoticeDTO">
         SELECT
-            notice_no,
-            notice_title,
-            notice_writer,
-            notice_content,
-            TO_CHAR(notice_created, 'YYYY"년" MM"월" DD"일" HH24"시"MI"분"') AS notice_created,
-            notice_views
+        notice_no,
+        notice_title,
+        notice_writer,
+        notice_content,
+        TO_CHAR(notice_created, 'YYYY"년" MM"월" DD"일" HH24"시"MI"분"') AS notice_created,
+        notice_views
         FROM tbl_notice
-        WHERE notice_no = #{param.notice_no}
+        WHERE notice_no = #{noticeNo}
     </select>
 
-    <!-- 3. 공지사항 작성 -->
-    <insert id="writeProcess">
+    <!-- 4. 등록 -->
+    <insert id="insertNotice" parameterType="com.boot.dto.NoticeDTO">
         INSERT INTO tbl_notice (
-            notice_no,
-            notice_title,
-            notice_content
-        )
-        VALUES (
-            SEQ_NOTICE_NO.NEXTVAL,
-            #{param.notice_title},
-            #{param.notice_content}
+        notice_no, notice_title, notice_content, notice_writer, notice_created
+        ) VALUES (
+        SEQ_NOTICE_NO.NEXTVAL, #{notice_title}, #{notice_content}, #{notice_writer}, SYSDATE
         )
     </insert>
 
-    <!-- 4. 공지사항 수정 -->
-    <update id="modifyProcess">
+    <!-- 5. 수정 -->
+    <update id="updateNotice" parameterType="com.boot.dto.NoticeDTO">
         UPDATE tbl_notice
-        SET
-            notice_title = #{param.notice_title},
-            notice_content = #{param.notice_content}
-        WHERE notice_no = #{param.notice_no}
+        SET notice_title = #{noticeTitle},
+        notice_content = #{noticeContent}
+        WHERE notice_no = #{noticeNo}
     </update>
 
-    <!-- 5. 공지사항 삭제 -->
-    <delete id="deleteProcess">
-        DELETE FROM tbl_notice
-        WHERE notice_no = #{param.notice_no}
+    <!-- 6. 삭제 -->
+    <delete id="deleteNotice" parameterType="long">
+        DELETE FROM tbl_notice WHERE notice_no = #{noticeNo}
     </delete>
 
-    <!-- 6. 검색 조건에 맞는 전체 공지사항 수 조회 -->
-    <select id="getTotalCount" resultType="int">
-        SELECT COUNT(*)
-        FROM tbl_notice
-        <include refid="criteria"/>
-    </select>
-
-
-    <!-- 7. 공지사항 조회수 증가 -->
-    <update id="increaseViews">
-        UPDATE tbl_notice
-        SET notice_views = notice_views + 1
-        WHERE notice_no = #{param.notice_no}
+    <!-- 7. 조회수 증가 -->
+    <update id="increaseViews" parameterType="long">
+        UPDATE tbl_notice SET notice_views = notice_views + 1 WHERE notice_no = #{noticeNo}
     </update>
-
-    <!-- 8. 회원 정보 조회 -->
-    <select id="getUserInfo" parameterType="string" resultType="com.boot.dto.AccountDTO">
-        SELECT
-            user_name AS userName,
-            account_id AS accountId,
-            email,
-            phone_number AS phoneNumber,
-            account_role AS accountRole,
-            reg_date AS regDate
-        FROM tbl_account
-        WHERE account_id = #{param}
-    </select>
 
 </mapper>
