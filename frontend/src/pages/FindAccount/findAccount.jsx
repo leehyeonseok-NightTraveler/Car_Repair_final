@@ -1,18 +1,31 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Header from "../../components/common/Header.jsx";
 import Footer from "../../components/common/Footer.jsx";
 import "../../components/common/mainpage.css";
 import "./findAccount.css";
 
 function FindAccount() {
+	
+	const navigate = useNavigate();
+	
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+		if (email.trim() === "") {
+		            alert("이메일을 입력하세요.");
+		            return;
+        }
+        if (phone.trim() === "") {
+            alert("전화번호를 입력하세요.");
+            return;
+        }
+		
         try {
             const response = await axios.post("http://localhost:8484/api/findAccount", {
                 email: email,
@@ -20,7 +33,9 @@ function FindAccount() {
             });
 
             if (response.data.success) {
-                alert("아이디가 이메일로 발송되었습니다.");
+				
+				navigate("/findOK");
+				
             } else {
                 alert("계정 정보를 찾지 못했습니다.");
             }
@@ -30,6 +45,7 @@ function FindAccount() {
         }
     };
 
+	
     return (
         <>
             <Header />
@@ -37,6 +53,7 @@ function FindAccount() {
             <main>
                 <form onSubmit={handleSubmit}>
                     <table className="table1">
+					<tbody>
                         <tr>
                             <td className="trh1" colSpan="3">
                                 <p>아이디 찾기</p>
@@ -99,6 +116,7 @@ function FindAccount() {
                                 <a href="/register" className="link">회원가입</a>
                             </td>
                         </tr>
+						</tbody>
                     </table>
                 </form>
             </main>

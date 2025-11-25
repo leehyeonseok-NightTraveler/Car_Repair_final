@@ -97,7 +97,7 @@ public class FindAccountController {
 
 
     // 🔐 비밀번호 찾기 API
-    @PostMapping("/findPw")
+    @PostMapping("/findPW")
     public HashMap<String, Object> findPw(@RequestBody HashMap<String, String> param) {
 
         HashMap<String, Object> result = new HashMap<>();
