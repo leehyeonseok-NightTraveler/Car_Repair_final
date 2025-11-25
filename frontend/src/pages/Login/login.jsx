@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Header from "../../components/common/Header.jsx";
 import Footer from "../../components/common/Footer.jsx";
 import "../../components/common/mainpage.css";
-import "./login.css";
+import "./login.css"; // login 전용 CSS
 
 function Login() {
     const [accountId, setAccountId] = useState("");
@@ -73,32 +73,35 @@ function Login() {
         <>
             <Header />
 
-            <main>
+            <main className="login-main">
                 <form onSubmit={handleSubmit}>
-                    <table border="1" align="center" className="table1">
+                    <table border="1" align="center" className="login-table">
                         <caption>
-                            <h1 className="cap">일반 회원 로그인</h1>
-                            <p className="p1">MY CAR 정비소의 서비스를 이용하시려면 로그인 하세요.</p>
+                            <h1 className="login-title">일반 회원 로그인</h1>
+                            <p className="login-subtext">
+                                MY CAR 정비소의 서비스를 이용하시려면 로그인 하세요.
+                            </p>
                         </caption>
 
-                        {/* ★ React에서는 tbody가 필수 */}
                         <tbody>
 
-                            <tr className="tab-links-row">
-                                <td className="tab-cell">
-                                    <a className="id_text">회원 로그인</a>
+                            {/* 탭 영역 */}
+                            <tr className="login-tab-row">
+                                <td className="login-tab">
+                                    <a className="login-tab-active">회원 로그인</a>
                                 </td>
-                                <td className="tab-cell">
-                                    <a href="/storeLogin" className="pw_text">
+                                <td className="login-tab">
+                                    <a href="/storeLogin" className="login-tab-other">
                                         업체 로그인
                                     </a>
                                 </td>
                             </tr>
 
+                            {/* 아이디 입력 */}
                             <tr>
                                 <td colSpan="3">
                                     <input
-                                        className="mem"
+                                        className="login-input"
                                         type="text"
                                         name="accountId"
                                         placeholder="아이디를 입력하세요"
@@ -108,10 +111,11 @@ function Login() {
                                 </td>
                             </tr>
 
+                            {/* 비밀번호 */}
                             <tr>
                                 <td colSpan="3">
                                     <input
-                                        className="mem"
+                                        className="login-input"
                                         type="password"
                                         name="password"
                                         placeholder="비밀번호를 입력하세요"
@@ -121,42 +125,46 @@ function Login() {
                                 </td>
                             </tr>
 
+                            {/* 아이디 저장 체크박스 */}
                             <tr>
                                 <td colSpan="3">
-                                    <label className="fake-check">
+                                    <label className="login-check-wrapper">
                                         <input
                                             type="checkbox"
-                                            id="ol_check"   // ★ JSP와 동일한 id 유지
+                                            id="login-save-id"
                                             checked={saveId}
                                             onChange={(e) => setSaveId(e.target.checked)}
                                         />
-                                        <span className="custom-check checked"></span>
-                                        <p className="chek_text">아이디 저장</p>
+                                        <span className="login-check-custom"></span>
+                                        <p className="login-check-text">아이디 저장</p>
                                     </label>
                                 </td>
                             </tr>
 
+                            {/* 에러 메시지 */}
                             <tr>
-                                <td colSpan="3" className="td1">
-                                    <div className="lockTime">
+                                <td colSpan="3" className="login-error-row">
+                                    <div className="login-error-msg">
                                         {loginFailMsg ? loginFailMsg : <>&nbsp;</>}
                                     </div>
                                 </td>
                             </tr>
 
+                            {/* 로그인 버튼 */}
                             <tr>
-                                <td colSpan="3" className="login_btn">
-                                    <input type="submit" value="로그인" id="login" />
+                                <td colSpan="3" className="login-btn-row">
+                                    <input type="submit" value="로그인" className="login-btn" />
                                 </td>
                             </tr>
 
+                            {/* 하단 링크 */}
                             <tr>
-                                <td className="btn3" colSpan="3">
-                                    <a href="/findAccount" className="link">아이디 찾기</a>
-                                    &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;
-                                    <a href="/findPW" className="link">비밀번호 찾기</a>
-                                    &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;
-                                    <a href="/register" className="link">회원가입</a>
+                                <td className="login-links" colSpan="3">
+                                    <a href="/findAccount" className="login-link">아이디 찾기</a>
+                                    &nbsp;&nbsp;/&nbsp;&nbsp;
+                                    <a href="/findPW" className="login-link">비밀번호 찾기</a>
+                                    &nbsp;&nbsp;/&nbsp;&nbsp;
+                                    <a href="/register" className="login-link">회원가입</a>
                                 </td>
                             </tr>
 
