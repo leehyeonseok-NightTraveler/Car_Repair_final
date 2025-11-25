@@ -1,104 +1,171 @@
 package com.boot.controller;
 
-import com.boot.dto.*;
+import com.boot.dto.AccountDTO;
+import com.boot.dto.Criteria;
+import com.boot.dto.NoticeDTO;
+import com.boot.dto.PagingDTO;
 import com.boot.service.NoticeService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
 
+/**
+ * 공지사항 관련 컨트롤러
+ */
+@Slf4j
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api")
 public class NoticeController {
 
-    private final NoticeService noticeService;
+    @Autowired
+    private NoticeService noticeService;
 
-    // 1. 목록 - 당신이 원하는 URL 그대로!
+    /**
+     * 1. 공지사항 목록 페이지
+     */
     @GetMapping("/notice_list")
-    public Map<String, Object> list(Criteria cri) {
-        return Map.of(
-                "list", noticeService.getNoticeList(cri),
-                "pageMaker", new PagingDTO(noticeService.getTotalCount(cri), cri)
-        );
+    public Map<String, Object> noticeList(Criteria cri) {
+        List<NoticeDTO> noticeList = noticeService.noticeList(cri);
+        int total = noticeService.getTotalCount(cri);
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", noticeList);
+        result.put("pageMaker", new PagingDTO(total, cri));
+        return result;
     }
 
-    // 2. 상세보기 - 당신이 원하는 /notice_view/123 그대로!
-    @GetMapping("/notice_view/{no}")
-    public Map<String, Object> detail(@PathVariable Long no, HttpSession session) {
-        String role = (String) session.getAttribute("ROLE");
+    /**
+     * 2. 공지사항 상세 보기
+     */
+    @RequestMapping("/notice_view")
+    public String noticeView(@RequestParam HashMap<String, String> param, Criteria cri,
+                             Model model, HttpSession session) {
+        log.info("noticeView()");
 
-        // 일반 유저만 조회수 증가
-        if (!"ADMIN".equals(role)) {
-            noticeService.increaseViews(no);
+        // 사용자 역할 확인
+        String Role = (String) session.getAttribute("ROLE");
+        if ("ADMIN".equals(Role)) {
+            model.addAttribute("role", Role);
         }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("view", noticeService.getNoticeById(no));
-        response.put("role", role != null ? role : "USER");
-        response.put("pageMaker", null); // 필요시 페이징 정보 추가 가능
-        return response;
+        // 조회수 증가 처리
+        noticeService.increaseViews(param);
+
+        // 공지사항 상세 정보 조회
+        NoticeDTO noticeView = noticeService.noticeView(param);
+        int total = noticeService.getTotalCount(cri);
+
+        // 모델에 데이터 추가
+        model.addAttribute("view", noticeView);
+        model.addAttribute("pageMaker", new PagingDTO(total, cri));
+
+        return "notice/notice_view";
     }
 
-    // 3. 작성 권한 체크 - 당신이 원하는 URL 그대로!
-    @GetMapping("/notice_write/auth")
-    public ResponseEntity<Void> checkWriteAuth(HttpSession session) {
-        if (!"ADMIN".equals(session.getAttribute("ROLE"))) {
-            return ResponseEntity.status(403).build();
-        }
-        return ResponseEntity.ok().build();
+    /**
+     * 3. 공지사항 작성 페이지 이동 (로그인 필요)
+     */
+    @RequestMapping("/notice_write")
+    public String noticeWrite(HttpSession session) {
+        log.info("notice_write()");
+
+        // 관리자가 경우 작성 불가
+        String Role = (String) session.getAttribute("ROLE");
+        if (!"ADMIN".equals(Role)) return "redirect:/login";
+
+        return "notice/notice_write";
     }
 
-    // 4. 작성 처리 - 당신이 원하는 /notice_write 그대로!
-    @PostMapping("/notice_write")
-    public ResponseEntity<String> write(@RequestBody NoticeDTO notice, HttpSession session) {
-        if (!"ADMIN".equals(session.getAttribute("ROLE"))) {
-            return ResponseEntity.status(403).body("권한 없음");
-        }
-        noticeService.writeNotice(notice);
-        return ResponseEntity.ok("success");
+    /**
+     * 4. 공지사항 작성 처리
+     */
+    @RequestMapping("/writeProcess")
+    public String writeProcess(@RequestParam HashMap<String, String> param, HttpSession session) {
+        log.info("writeProcess()");
+
+        // 관리자가 아닐 경우 작성 불가
+        String Role = (String) session.getAttribute("ROLE");
+        if (!"ADMIN".equals(Role)) return "redirect:/login";
+
+        // 공지사항 등록 처리
+        noticeService.writeProcess(param);
+
+        return "redirect:/notice/notice_list";
     }
 
-    // 5. 수정 폼 데이터 불러오기 - 당신이 원하는 /notice_modify/123 그대로!
-    @GetMapping("/notice/modify/{no}")
-    public Map<String, Object> getModifyForm(@PathVariable Long no, Criteria cri, HttpSession session) {
-        if (!"ADMIN".equals(session.getAttribute("ROLE"))) {
-            throw new RuntimeException("권한 없음");
-        }
+    /**
+     * 5. 공지사항 수정 페이지 이동
+     */
+    @RequestMapping("/notice_modify")
+    public String noticeModify(@RequestParam HashMap<String, String> param, Criteria cri,
+                               Model model, HttpSession session) {
+        log.info("noticeModify()");
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("notice", noticeService.getNoticeById(no));
-        response.put("pageMaker", new PagingDTO(noticeService.getTotalCount(cri), cri));
-        return response;
+        // 관리자가 아닐 경우 수정 불가
+        String Role = (String) session.getAttribute("ROLE");
+        if (!"ADMIN".equals(Role)) return "redirect:/login";
+
+        // 수정할 공지사항 정보 조회
+        NoticeDTO noticeModify = noticeService.noticeView(param);
+        model.addAttribute("modify", noticeModify);
+
+        // 페이징 정보 추가
+        int total = noticeService.getTotalCount(cri);
+        model.addAttribute("pageMaker", new PagingDTO(total, cri));
+
+        return "notice/notice_modify";
     }
 
-    // 6. 수정 처리 - 당신이 원하는 /notice_modify/123 그대로!
-    @PutMapping("/notice_modify/{no}")
-    public ResponseEntity<String> modify(
-            @PathVariable Long no,
-            @RequestBody NoticeDTO notice,
-            HttpSession session) {
+    /**
+     * 6. 공지사항 수정 처리
+     */
+    @RequestMapping("/modifyProcess")
+    public String modify(@RequestParam HashMap<String, String> param,
+                         RedirectAttributes attr, HttpSession session) {
+        log.info("modifyProcess()");
 
-        if (!"ADMIN".equals(session.getAttribute("ROLE"))) {
-            return ResponseEntity.status(403).body("권한 없음");
-        }
+        // 관리자가 아닐 경우 수정 불가
+        String Role = (String) session.getAttribute("ROLE");
+        if (!"ADMIN".equals(Role)) return "redirect:/login";
 
-        notice.setNotice_no(no);
-        noticeService.updateNotice(notice);
-        return ResponseEntity.ok("success");
+        // 수정 처리
+        noticeService.modifyProcess(param);
+
+        // 페이지 정보 유지
+        attr.addAttribute("pageNum", param.get("pageNum"));
+        attr.addAttribute("amount", param.get("amount"));
+
+        return "redirect:/notice/notice_list";
     }
 
-    // 7. 삭제 - 당신이 원하는 /notice_view/123 로 DELETE!
-    @DeleteMapping("/notice_view/{no}")
-    public ResponseEntity<String> delete(@PathVariable Long no, HttpSession session) {
-        if (!"ADMIN".equals(session.getAttribute("ROLE"))) {
-            return ResponseEntity.status(403).body("권한 없음");
-        }
-        noticeService.deleteNotice(no);
-        return ResponseEntity.ok("success");
+    /**
+     * 7. 공지사항 삭제 처리
+     */
+    @RequestMapping("/deleteProcess")
+    public String deleteProcess(@RequestParam HashMap<String, String> param,
+                                RedirectAttributes attr, HttpSession session) {
+        log.info("deleteProcess()");
+
+        // 관리자가 아닐 경우 삭제 불가
+        String Role = (String) session.getAttribute("ROLE");
+        if (!"ADMIN".equals(Role)) return "redirect:/login";
+
+        // 삭제 처리
+        noticeService.deleteProcess(param);
+
+        // 페이지 정보 유지
+        attr.addAttribute("pageNum", param.get("pageNum"));
+        attr.addAttribute("amount", param.get("amount"));
+
+        return "redirect:/notice/notice_list";
     }
 }

@@ -34,6 +34,10 @@ import Register from './pages/Register/Register.jsx';
 import RegisterStore from './pages/Register/RegisterStore.jsx';
 import AdminMypage from './pages/Mypage/AdminMypage.jsx';
 
+// 컴포넌트 불러오기 (경로가 맞는지 다시 한번 확인하세요)
+import Header from './components/common/Header.jsx';
+import RecommendMap from './pages/Map/RecommendMap.jsx'; 
+import NoticeList from './pages/Notice/notice_list.jsx';
 
 function App() {
     return (
@@ -42,6 +46,12 @@ function App() {
 
                 {/* 헤더 */}
                 <Header />
+  return (
+    <Router>
+      <div className="min-h-screen bg-gray-50 w-full">
+        
+        {/* 1. 헤더 (fixed: 화면 상단 고정) */}
+        <Header />
 
                 {/* 본문 영역 */}
                 <main className="flex-grow">
@@ -52,6 +62,13 @@ function App() {
 
                         {/* --- [지도] --- */}
                         <Route path="/recommend" element={<RecommendMap />} />
+        {/* 2. 본문 영역을 감싸는 div 추가 (헤더 높이만큼 아래로 밀어줌) */}
+        {/* 👇 [핵심 수정] 이 div가 없으면 지도가 헤더 뒤에 숨습니다. */}
+        <div className="pt-20 w-full"> 
+          <Routes>
+            {/* 메인 주소(/)와 /recommend 주소 */}
+            <Route path="/" element={<RecommendMap />} />
+            <Route path="/recommend" element={<RecommendMap />} />
 
                         {/* --- [공지사항] --- */}
                         <Route path="/notice_list" element={<NoticeList />} />

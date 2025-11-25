@@ -5,7 +5,7 @@
 	<title>Kakao 지도 시작하기</title>
 </head>
 <body>
-	<div id="map" style="width:500px;height:400px;"></div>
+	<div id="map" style="width:700px;height:600px;"></div>
 	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0b4604468a48427fe628a6489a0547be"></script>
 	<script>
 		var container = document.getElementById('map');

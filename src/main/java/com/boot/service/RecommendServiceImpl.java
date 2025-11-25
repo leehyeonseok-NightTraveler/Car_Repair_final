@@ -23,7 +23,7 @@ public class RecommendServiceImpl implements RecommendService {
     private RecommendDAO recommendDAO;
 
     private static final String API_URL = "http://api.data.go.kr/openapi/tn_pubr_public_auto_maintenance_company_api";
-    // 선생님이 주신 키 그대로 사용
+    //  키 그대로 사용
     private static final String SERVICE_KEY = "70b7922fdc9383cc00f4e2eff94586827d6da02aa4f7a995758fdcbac1917018";
 
     private static List<RecommendDTO> cachedList = null;

@@ -26,6 +26,13 @@ repositories {
 	mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        // Spring AI BOM을 사용하여 하위 AI 라이브러리 버전 관리
+        mavenBom "org.springframework.ai:spring-ai-bom:1.0.0" 
+    }
+}
+
 dependencies {
 	// 기본 웹 및 JSP 관련
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -41,6 +48,9 @@ dependencies {
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+	//Google AI
+	implementation 'org.springframework.ai:spring-ai-core'
+	implementation 'org.springframework.ai:spring-ai-google-gemini'
 
 	// 개발용 (자동 리빌드 등)
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
