@@ -1,6 +1,5 @@
 // src/components/Pagination.jsx
 import React from "react";
-import InquiryHistory from "../../pages/Inquiry/Inquiry_history.jsx";
 
 export default function Pagination({ pageMaker, goToPage, currentPage }) {
     if (!pageMaker) return null;
