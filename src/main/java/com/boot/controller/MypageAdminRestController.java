@@ -30,34 +30,35 @@ public class MypageAdminRestController {
             @RequestParam(defaultValue = "1") int storePageNum,
             @RequestParam(defaultValue = "10") int storeAmount) {
 
-        log.info("📌 관리자 대시보드 요청: userPageNum={}, storePageNum={}", userPageNum, storePageNum);
-
         Map<String, Object> result = new HashMap<>();
 
-        /* ---------------------- 회원 목록 페이징 ---------------------- */
-        Criteria userCri = new Criteria(userPageNum, userAmount);
+        /* --- 회원 페이징 Criteria --- */
+        Criteria userCri = new Criteria();
+        userCri.setPageNum(userPageNum);
+        userCri.setAmount(userAmount);
 
         List<AccountDTO> userList = adminService.getAllUsers(userCri);
         int userTotal = adminService.getTotalUserCount(userCri);
-
         PagingDTO userPageMaker = new PagingDTO(userTotal, userCri);
 
         result.put("userList", userList);
         result.put("userPageMaker", userPageMaker);
 
-        /* ---------------------- 업체 승인 대기 목록 ---------------------- */
-        Criteria storeCri = new Criteria(storePageNum, storeAmount);
+        /* --- 업체 페이징 Criteria --- */
+        Criteria storeCri = new Criteria();
+        storeCri.setPageNum(storePageNum);
+        storeCri.setAmount(storeAmount);
 
         List<StoreDTO> pendingStores = adminService.getPendingStoresWithPaging(storeCri);
         int storeTotal = adminService.countPendingStores(storeCri);
-
         PagingDTO storePageMaker = new PagingDTO(storeTotal, storeCri);
 
         result.put("pendingStores", pendingStores);
         result.put("storePageMaker", storePageMaker);
 
-        return result; // JSON으로 자동 변환
+        return result;
     }
+
 
 
     /** 🔹 회원 상태 변경 (ACTIVE / SUSPENDED / DELETED) */
@@ -74,7 +75,7 @@ public class MypageAdminRestController {
 
         Map<String, String> response = new HashMap<>();
         response.put("result", "success");
-        return response;
+        return response;        
     }
 
 
@@ -94,5 +95,4 @@ public class MypageAdminRestController {
         response.put("result", "success");
         return response;
     }
-
 }

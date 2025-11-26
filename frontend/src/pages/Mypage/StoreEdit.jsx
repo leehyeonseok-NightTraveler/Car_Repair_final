@@ -62,8 +62,6 @@ function StoreEdit() {
 
     return (
         <>
-            <Header />
-
             <main className="edit-container">
                 <h2>업체 정보 수정</h2>
 
@@ -143,7 +141,6 @@ function StoreEdit() {
                 </form>
             </main>
             
-            <Footer />
         </>
     );
 }
