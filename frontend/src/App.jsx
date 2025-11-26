@@ -55,6 +55,8 @@ import StoreMypage from "./pages/Mypage/StoreMypage.jsx";
 import StoreEdit from "./pages/Mypage/StoreEdit.jsx";
 
 
+import AutoSearch from "./pages/AutoSearch/autoSearch.jsx";
+
 function App() {
     return (
         <Router>
@@ -118,6 +120,10 @@ function App() {
                         {/* 업체 마이페이지 */}
                         <Route path="/mypage/store" element={<StoreMypage />} />
                         <Route path="/mypage/store/edit" element={<StoreEdit />} />
+						
+                        {/* 자동검색 */}
+                        <Route path="/autoSearch" element={<AutoSearch />} />
+
                     </Routes>
                 {/* 푸터 */}
                 <Footer />

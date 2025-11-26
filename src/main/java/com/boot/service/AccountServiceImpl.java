@@ -18,7 +18,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void register(AccountDTO accountDTO) {
-        log.info("암호화 없이 원본 DTO를 DB로 전달합니다.");
         accountDAO.register(accountDTO);
     }
 }

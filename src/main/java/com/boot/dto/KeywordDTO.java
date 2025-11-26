@@ -1,14 +1,12 @@
-package com.boot.entity;
+package com.boot.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class AutoKeyword {
-    private Long id;
+public class KeywordDTO {
+	private Long id;
     private String keyword;
     private String link;
 }
