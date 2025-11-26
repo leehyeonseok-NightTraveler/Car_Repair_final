@@ -4,7 +4,7 @@ import { getFaqList } from '../../api/faqApi';
 import './faq.css';
 
 const isAdmin = () => {
-    return false;
+    return sessionStorage.getItem("ROLE") === 'ADMIN'; 
 }
 
 const FaqList = () => {
