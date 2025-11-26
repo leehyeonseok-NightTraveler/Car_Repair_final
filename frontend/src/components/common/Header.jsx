@@ -8,23 +8,23 @@ const Header = () => {
     const location = useLocation();
     const role = sessionStorage.getItem("ROLE") || "";
 
-	const handleLogout = async (e) => {
-	    e.preventDefault();
+   const handleLogout = async (e) => {
+       e.preventDefault();
 
-	    try {
-	        const res = await axios.get("http://localhost:8484/api/logout", {
-	            withCredentials: true
-	        });
+       try {
+           const res = await axios.get("http://localhost:8484/api/logout", {
+               withCredentials: true
+           });
 
-	        if (res.data.success) {
-	            sessionStorage.clear();
-	            alert("로그아웃 되었습니다.");
-	            window.location.href = "/";
-	        }
-	    } catch (err) {
-	        console.error("로그아웃 오류:", err);
-	    }
-	};
+           if (res.data.success) {
+               sessionStorage.clear();
+               alert("로그아웃 되었습니다.");
+               window.location.href = "/";
+           }
+       } catch (err) {
+           console.error("로그아웃 오류:", err);
+       }
+   };
 
     return (
         <>

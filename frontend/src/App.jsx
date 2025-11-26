@@ -6,6 +6,7 @@ import './App.css';
 import Header from './components/common/Header';
 import Footer from "./components/common/Footer";
 
+
 // 2. [메인/지도]
 import RecommendMap from './pages/Map/RecommendMap';
 import MainPage from './pages/main/mainpage'; // 메인 페이지
@@ -42,11 +43,11 @@ import Guide3 from './pages/Gaide/Gaide-3.jsx';
 import Guide4 from './pages/Gaide/Gaide-4.jsx';
 
 // 8. [로그인/계정 찾기]
-import Login from './pages/Login/login.jsx'
-import StoreLogin from './pages/Login/storeLogin.jsx'
-import FindAccount from './pages/FindAccount/findAccount.jsx'
-import FindPW from './pages/FindAccount/findPW.jsx'
-import FindOK from './pages/FindAccount/findOK.jsx'
+import Login from './pages/Login/login.jsx';
+import StoreLogin from './pages/Login/storeLogin.jsx';
+import FindAccount from './pages/FindAccount/findAccount.jsx';
+import FindPW from './pages/FindAccount/findPW.jsx';
+import FindOK from './pages/FindAccount/findOK.jsx';
 
 import UserMypage from "./pages/Mypage/UserMypage.jsx";
 import UserEdit from "./pages/Mypage/UserEdit.jsx";
