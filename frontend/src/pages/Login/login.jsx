@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import Header from "../../components/common/Header.jsx";
-import Footer from "../../components/common/Footer.jsx";
 import "../../components/common/mainpage.css";
 import "./login.css"; // login 전용 CSS
 
@@ -71,7 +69,6 @@ function Login() {
 
     return (
         <>
-            <Header />
 
             <main className="login-main">
                 <form onSubmit={handleSubmit}>
@@ -173,7 +170,6 @@ function Login() {
                 </form>
             </main>
 
-            <Footer />
         </>
     );
 }

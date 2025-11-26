@@ -33,6 +33,7 @@ table{
 	font-weight: 500;
 	border: none;
 	top: 10px;
+	border-radius: 0 !important;
 }
 .btn:hover{
 	cursor: pointer;

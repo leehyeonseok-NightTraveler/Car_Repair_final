@@ -1,7 +1,5 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "../../components/common/Header.jsx";
-import Footer from "../../components/common/Footer.jsx";
 import "./findOK.css";
 import "../../components/common/mainpage.css";
 
@@ -10,7 +8,6 @@ function FindOK() {
 
     return (
         <>
-            <Header />
 
             <main>
                 <table className="findok-table">
@@ -46,7 +43,6 @@ function FindOK() {
                 </table>
             </main>
 
-            <Footer />
         </>
     );
 }
