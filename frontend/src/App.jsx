@@ -8,7 +8,7 @@ import Footer from './components/common/Footer';
 import ChatWidget from './components/common/ChatWidget';   // 당신이 만든 위치 정확히!
 
 // 실제 존재하는 메인 페이지
-import MainPage from './pages/main/main.jsx';   // mainpage.jsx → main.jsx로 변경!
+import MainPage from './pages/main/mainpage.jsx';   // mainpage.jsx → main.jsx로 변경!
 
 // 나머지 페이지들 (기존에 있던 거 그대로)
 import RecommendMap from './pages/Map/RecommendMap';
@@ -43,11 +43,11 @@ import Guide3 from './pages/Gaide/Gaide-3.jsx';
 import Guide4 from './pages/Gaide/Gaide-4.jsx';
 
 // 8. [로그인/계정 찾기]
-import Login from './pages/Login/login.jsx'
-import StoreLogin from './pages/Login/storeLogin.jsx'
-import FindAccount from './pages/FindAccount/findAccount.jsx'
-import FindPW from './pages/FindAccount/findPW.jsx'
-import FindOK from './pages/FindAccount/findOK.jsx'
+import Login from './pages/Login/login.jsx';
+import StoreLogin from './pages/Login/storeLogin.jsx';
+import FindAccount from './pages/FindAccount/findAccount.jsx';
+import FindPW from './pages/FindAccount/findPW.jsx';
+import FindOK from './pages/FindAccount/findOK.jsx';
 
 import UserMypage from "./pages/Mypage/UserMypage.jsx";
 import UserEdit from "./pages/Mypage/UserEdit.jsx";
