@@ -10,7 +10,8 @@
 				SELECT *
 			    FROM KEYWORD
 			    WHERE KEYWORD LIKE '%' || #{keyword} || '%'
-			       OR KEYWORD_ENG LIKE '%' || #{keyword} || '%'
+			       OR ENG_ROWER LIKE '%' || #{keyword} || '%'
+			       OR ENG_UPPER LIKE '%' || #{keyword} || '%'
 			    ORDER BY KEYWORD ASC
 	    </select>
 	

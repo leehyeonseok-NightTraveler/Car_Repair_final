@@ -127,6 +127,7 @@ export default function AutoSearch({
           }}
           placeholder={placeholder}
           className="auto-input"
+		  autoComplete="off"
         />
 
         {loading && <div className="auto-loading">로딩...</div>}
@@ -140,19 +141,18 @@ export default function AutoSearch({
         {list.length > 0 && (
           <ul className="auto-list">
             {list.map((item, idx) => (
-              <li
-                id={`item-${idx}`}
-                key={item.id ?? idx}
-                className={`auto-item ${focusedIndex === idx ? "focused" : ""}`}
-                onMouseEnter={() => setFocusedIndex(idx)}
-                onMouseLeave={() => setFocusedIndex(-1)}
-                onClick={() => onSelect(item)}
-              >
-                <div className="auto-keyword">
-                  {highlight(item.keyword ?? "", text)}
-                </div>
-                <div className="auto-link">{item.link}</div>
-              </li>
+				<li
+				  id={`item-${idx}`}
+				  key={item.id ?? idx}
+				  className={`auto-item ${focusedIndex === idx ? "focused" : ""}`}
+				  onMouseEnter={() => setFocusedIndex(idx)}
+				  onMouseLeave={() => setFocusedIndex(-1)}
+				  onClick={() => onSelect(item)}  // ★ 클릭 시 링크 이동
+				>
+				  <div className="auto-keyword">
+				    {highlight(item.keyword ?? "", text)}
+				  </div>
+				</li>
             ))}
           </ul>
         )}
