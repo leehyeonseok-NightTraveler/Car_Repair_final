@@ -1,129 +1,212 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import { MessageCircle, X, Send, Wrench } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Wrench } from 'lucide-react'; 
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { type: 'bot', text: '안녕하세요! 스피드모터스 AI 정비사입니다. 🚗\n무엇을 도와드릴까요? (예: 엔진오일 가격, 영업시간)' }
+    { type: 'bot', text: '안녕하세요! 스피드모터스 AI 정비사입니다. 🚗\n어떤 도움이 필요하신가요?' }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null); 
 
-  // 스크롤 자동 내리기
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, isOpen]);
+  useEffect(() => { 
+    scrollToBottom(); 
+    if (isOpen && !isLoading && inputRef.current) {
+        inputRef.current.focus();
+    }
+  }, [messages, isOpen, isLoading]);
 
-  // 메시지 전송 함수
-  const handleSendMessage = async () => {
-    if (!inputValue.trim()) return;
-
+  const sendMessage = async () => {
+    if (!inputValue.trim() || isLoading) return;
     const userMsg = { type: 'user', text: inputValue };
     setMessages(prev => [...prev, userMsg]);
     setInputValue('');
     setIsLoading(true);
 
     try {
-      // Spring Boot로 전송 (포트 8484 사용)
-      const response = await axios.post('http://localhost:8484/api/react/chat', {
-        message: userMsg.text
-      });
-
-      const botMsg = { type: 'bot', text: response.data.response };
-      setMessages(prev => [...prev, botMsg]);
-    } catch (error) {
-      console.error("Chat Error:", error);
-      setMessages(prev => [...prev, { type: 'bot', text: '죄송합니다. 서버 연결이 원활하지 않습니다. 😥' }]);
+      const res = await axios.post('http://localhost:8484/api/react/chat', { message: userMsg.text });
+      setMessages(prev => [...prev, { type: 'bot', text: res.data.response }]);
+    } catch (err) {
+      console.error("Chat Error:", err);
+      setMessages(prev => [...prev, { type: 'bot', text: '죄송합니다. 서버 연결이 불안정합니다. 😥 서버(8484)와 React(5173)가 모두 실행 중인지 확인해 주세요.' }]);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') handleSendMessage();
+    if (e.key === 'Enter') sendMessage();
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-4 font-sans">
+    <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999, fontFamily: '"Malgun Gothic", sans-serif' }}>
       
+      {/* 챗봇 위젯 (isOpen일 때 표시) */}
       {isOpen && (
-        <div className="w-80 md:w-96 h-[500px] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden animate-fade-in-up">
+        <div style={{
+          width: '380px',
+          height: '640px',
+          background: 'white',
+          borderRadius: '24px',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          border: '1px solid #e0e0e0'
+        }}>
           
           {/* 헤더 */}
-          <div className="bg-teal-500 p-4 flex justify-between items-center text-white">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-white/20 rounded-full">
-                <Wrench size={18} />
+          <div style={{
+            background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+            color: 'white',
+            padding: '20px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <Bot size={36} style={{ minWidth: '36px' }} /> 
+              <div>
+                <div style={{ fontSize: '20px', fontWeight: 'bold' }}>AI 정비 상담사</div>
+                <div style={{ fontSize: '13px', opacity: 0.9 }}>항상 온라인 ∙ 빠른 답변</div>
               </div>
-              <span className="font-bold">AI 정비 상담</span>
             </div>
-            <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 p-1 rounded-full transition">
-              <X size={20} />
-            </button>
+            <button 
+                onClick={() => setIsOpen(false)} 
+                style={{
+                    background: 'rgba(255,255,255,0.2)',
+                    border: 'none',
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    fontSize: '28px',
+                    cursor: 'pointer'
+                }}>×</button>
           </div>
 
           {/* 메시지 영역 */}
-          <div className="flex-1 bg-gray-50 p-4 overflow-y-auto flex flex-col gap-3">
-            {messages.map((msg, idx) => (
-              <div key={idx} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div 
-                  className={`max-w-[80%] p-3 rounded-xl text-sm shadow-sm whitespace-pre-wrap ${
-                    msg.type === 'user' 
-                      ? 'bg-teal-500 text-white rounded-tr-none' 
-                      : 'bg-white text-gray-700 border border-gray-200 rounded-tl-none'
-                  }`}
-                  // 👇 [수정] 이 부분을 추가해야 HTML 태그가 클릭 가능한 링크로 변환됩니다.
-                  dangerouslySetInnerHTML={{ __html: msg.text }} 
-                />
+          <div style={{ flex: 1, overflowY: 'auto', padding: '20px', background: '#f8fafc', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {messages.map((msg, i) => (
+              <div key={i} style={{ textAlign: msg.type === 'user' ? 'right' : 'left' }}>
+                <div style={{
+                  display: 'inline-block',
+                  maxWidth: '80%',
+                  padding: '14px 18px',
+                  borderRadius: '24px',
+                  background: msg.type === 'user' ? '#14b8a6' : 'white',
+                  color: msg.type === 'user' ? 'white' : '#1f2937',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word',
+                  fontSize: '15px',
+                  lineHeight: '1.5'
+                }} dangerouslySetInnerHTML={{ __html: msg.text.replace(/\n/g, '<br>') }} />
               </div>
             ))}
             {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-white p-3 rounded-xl border border-gray-200 rounded-tl-none flex gap-1">
-                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
-                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-75"></span>
-                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150"></span>
+              <div style={{ textAlign: 'left' }}>
+                <div style={{ display: 'inline-block', padding: '14px 18px', background: 'white', borderRadius: '24px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                  <span style={{ display: 'inline-block', animation: 'bounce 1.2s infinite' }}>점</span>
+                  <span style={{ display: 'inline-block', animation: 'bounce 1.2s infinite 0.2s' }}>점</span>
+                  <span style={{ display: 'inline-block', animation: 'bounce 1.2s infinite 0.4s' }}>점</span>
                 </div>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          {/* 입력 영역 */}
-          <div className="p-3 bg-white border-t border-gray-100 flex gap-2">
-            <input
-              type="text"
-              className="flex-1 border border-gray-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-              placeholder="궁금한 점을 물어보세요..."
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
-            />
-            <button 
-              onClick={handleSendMessage}
-              className="bg-teal-500 text-white p-2.5 rounded-full hover:bg-teal-600 transition shadow-md disabled:opacity-50"
-              disabled={isLoading}
-            >
-              <Send size={18} />
-            </button>
+          {/* 입력창 */}
+          <div style={{ padding: '20px', background: 'white', borderTop: '1px solid #e0e0e0' }}>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <input
+                type="text"
+                ref={inputRef}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="궁금한 점을 입력하세요..."
+                disabled={isLoading}
+                style={{
+                  flex: 1,
+                  padding: '16px 20px',
+                  border: '2px solid #e0e0e0',
+                  borderRadius: '30px',
+                  outline: 'none',
+                  fontSize: '16px',
+                  transition: 'all 0.3s',
+                  borderColor: '#e0e0e0'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#14b8a6'}
+                onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
+              />
+              <button
+                onClick={sendMessage}
+                disabled={!inputValue.trim() || isLoading}
+                style={{
+                  background: '#14b8a6',
+                  color: 'white',
+                  border: 'none',
+                  width: '56px',
+                  height: '56px',
+                  borderRadius: '50%',
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(20,184,166,0.4)',
+                  opacity: (!inputValue.trim() || isLoading) ? 0.6 : 1,
+                  transition: 'all 0.3s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#0d9488'}
+                onMouseLeave={(e) => e.currentTarget.style.background = '#14b8a6'}
+              >
+                <Send size={24} />
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* 둥둥 떠있는 버튼 (토글) */}
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className={`${isOpen ? 'rotate-90 scale-0' : 'scale-100'} transition-all duration-300 bg-teal-500 hover:bg-teal-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl flex items-center justify-center group`}
-      >
-        <MessageCircle size={32} className="group-hover:scale-110 transition-transform"/>
-      </button>
+      {/* 플로팅 버튼 (위젯이 닫혀있을 때만 표시: !isOpen) */}
+      {!isOpen && (
+        <button
+          onClick={() => setIsOpen(true)}
+          style={{
+            width: '70px',
+            height: '70px',
+            background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '50%',
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            cursor: 'pointer',
+            boxShadow: '0 10px 30px rgba(20,184,166,0.5)',
+            transition: 'all 0.3s',
+            transform: 'scale(1)',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.15)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+        >
+          <MessageCircle size={36} />
+        </button>
+      )}
+
+      {/* CSS 애니메이션 키프레임 */}
+      <style>{`
+        @keyframes chat-dot-bounce {
+          0%, 80%, 100% { transform: scale(0); opacity: 0; }
+          40% { transform: scale(1); opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 }

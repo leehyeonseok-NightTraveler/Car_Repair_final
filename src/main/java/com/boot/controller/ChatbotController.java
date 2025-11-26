@@ -1,43 +1,52 @@
+// src/main/java/com/boot/controller/ChatbotController.java
 package com.boot.controller;
 
 import org.springframework.web.bind.annotation.*;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+
+import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/react/chat")
-@CrossOrigin(origins = "http://localhost:5173") 
+@RequestMapping("/api/chat")
+@CrossOrigin(origins = {"http://localhost:5173", "https://yourdomain.com"}, maxAge = 3600)
 public class ChatbotController {
 
-    // 💡 ChatClient 관련 코드는 모두 제거하고 Mock(규칙 기반)으로 작동합니다.
+    private static final String INQUIRY_LINK = "<a href='/inquiry/history' target='_blank' class='text-blue-600 font-bold underline hover:text-blue-800'>1:1 문의 페이지</a>";
 
-    @PostMapping
-    public Map<String, String> chat(@RequestBody Map<String, String> payload) {
-        String userMessage = payload.get("message");
-        String reply = "";
-        
-        // [수정됨] 예약 페이지 대신 1:1 문의 페이지로 연결
-        String inquiryLink = "<a href='/inquiry/history' target='_blank' style='color:#0066cc; font-weight:bold; text-decoration:underline;'>1:1 문의 페이지</a>";
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, String> handleChat(@RequestBody Map<String, String> request) {
+        String userMessage = request.getOrDefault("message", "").trim().toLowerCase();
+        String reply = generateReply(userMessage);
 
-        if (userMessage.contains("안녕")) {
-            reply = "안녕하세요! 스피드모터스 정비 상담 AI입니다. 🛠️\n차량 점검이나 문의사항이 있으시면 말씀해주세요.";
-        } else if (userMessage.contains("가격") || userMessage.contains("비용") || userMessage.contains("견적")) {
-            // '예약' 대신 '상담원과 문의'로 유도
-            reply = "💰 정확한 견적은 차량 정보 확인 후 상담이 필요합니다. " + inquiryLink + "를 통해 문의해 주세요.";
-        } else if (userMessage.contains("영업") || userMessage.contains("시간")) {
-            reply = "⏰ 영업 시간 안내\n평일: 09:00 ~ 19:00\n주말: 09:00 ~ 15:00\n(매주 일요일은 휴무입니다)";
-        } else if (userMessage.contains("위치") || userMessage.contains("주소")) {
-            reply = "📍 저희 정비소는 지도 페이지에 표시된 위치에 있습니다. 자세한 상담은 " + inquiryLink + "를 이용해주세요.";
-        } else {
-            // 일반 응답
-            reply = "궁금한 사항은 언제든지 말씀해주시거나, " + inquiryLink + "를 통해 전문가와 상담하실 수 있습니다.";
+        return Map.of("response", reply);
+    }
+
+    private String generateReply(String message) {
+        if (message.contains("안녕") || message.contains("하이") || message.contains("hello")) {
+            return "안녕하세요! 스피드모터스 AI 정비사입니다. 🚗\n차량 점검, 견적, 영업시간 등 무엇이든 물어보세요!";
         }
-        
-        Map<String, String> response = new HashMap<>();
-        response.put("response", reply);
-        
-        return response;
+
+        if (message.contains("가격") || message.contains("비용") || message.contains("견적") || message.contains("얼마")) {
+            return "정확한 견적은 차량 모델, 연식, 점검 항목에 따라 달라져요.\n" + INQUIRY_LINK + "에서 차량 정보를 남겨주시면 빠르게 답변드릴게요!";
+        }
+
+        if (message.contains("영업") || message.contains("시간") || message.contains("오픈") || message.contains("마감")) {
+            return "영업시간 안내\n\n" +
+                   "평일: 09:00 ~ 19:00\n" +
+                   "토요일: 09:00 ~ 15:00\n" +
+                   "일요일: 휴무\n\n" +
+                   "전화 문의: 02-123-4567";
+        }
+
+        if (message.contains("위치") || message.contains("주소") || message.contains("어디")) {
+            return "저희 정비소 위치는 홈페이지 지도에서 확인 가능해요!\n" +
+                   "정확한 내비 안내는 " + INQUIRY_LINK + "로 문의 주세요.";
+        }
+
+        // 기본 응답
+        return "좋은 질문 감사합니다!\n" +
+               "더 정확한 상담을 원하시면 " + INQUIRY_LINK + "를 통해 전문 상담원과 바로 연결해 드릴게요.";
     }
 }
