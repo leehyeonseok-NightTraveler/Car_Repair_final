@@ -48,8 +48,6 @@ import FindAccount from './pages/FindAccount/findAccount.jsx'
 import FindPW from './pages/FindAccount/findPW.jsx'
 import FindOK from './pages/FindAccount/findOK.jsx'
 
-import AdminMypage from './pages/Mypage/AdminMypage.jsx'
-
 import UserMypage from "./pages/Mypage/UserMypage.jsx";
 import UserEdit from "./pages/Mypage/UserEdit.jsx";
 
