@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { MapPin, Search, Phone, Navigation, Filter } from 'lucide-react';
-import './RecommendMap.css'; // 👈 CSS 파일 임포트 필수!
+import './RecommendMap.css'; // 위에서 만든 CSS 파일 연결
 
 export default function RecommendMap() {
   const [map, setMap] = useState(null);
@@ -11,28 +11,35 @@ export default function RecommendMap() {
   const mapContainer = useRef(null);
   const infoWindowRef = useRef(null);
 
-  // 1. 지도 초기화
+  // 1. 지도 초기화 (JSP의 initMap 대체)
   useEffect(() => {
     const container = mapContainer.current;
+    
+    // 카카오맵 로드 대기 (네트워크 속도 고려하여 0.1초마다 체크)
     const waitForKakao = setInterval(() => {
       if (window.kakao && window.kakao.maps) {
         clearInterval(waitForKakao);
+        
         const options = {
           center: new window.kakao.maps.LatLng(37.5665, 126.9780),
           level: 11
         };
         const kakaoMap = new window.kakao.maps.Map(container, options);
         setMap(kakaoMap);
+        
+        // 초기 데이터 로드
         loadMarkers(""); 
       }
     }, 100);
+
     return () => clearInterval(waitForKakao);
   }, []);
 
-  // 2. 데이터 불러오기
+  // 2. 데이터 불러오기 (Spring Boot API 호출)
   const loadMarkers = async (region) => {
     try {
-      const response = await axios.get('http://localhost:8585/api/react/recommend', {
+      // React 전용 API 주소로 요청 (포트 8484)
+      const response = await axios.get('http://localhost:8484/api/react/recommend', {
         params: { region: region }
       });
       const data = response.data;
@@ -47,22 +54,30 @@ export default function RecommendMap() {
   const drawMarkers = (list) => {
     if (!map) return;
     const { kakao } = window;
+
+    // 기존 마커 삭제
     markers.forEach(m => m.setMap(null));
     const newMarkers = [];
     const bounds = new kakao.maps.LatLngBounds();
 
     list.forEach(loc => {
         if (!loc.latitude || !loc.longitude) return;
+
         const position = new kakao.maps.LatLng(loc.latitude, loc.longitude);
         const marker = new kakao.maps.Marker({ position, map: map });
+
+        // 마커 클릭 이벤트 (인포윈도우 열기)
         kakao.maps.event.addListener(marker, 'click', () => {
             openInfoWindow(marker, loc);
         });
+
         newMarkers.push(marker);
         bounds.extend(position);
     });
 
     setMarkers(newMarkers);
+    
+    // 검색 결과가 있으면 지도 범위 재설정, 없으면 서울 중심으로 이동
     if (list.length > 0) {
         map.setBounds(bounds);
     } else {
@@ -71,12 +86,16 @@ export default function RecommendMap() {
     }
   };
 
-  // 인포윈도우 (스타일은 인라인 유지 추천 - 카카오맵 내부 HTML이라서)
+  // 인포윈도우 열기
   const openInfoWindow = (marker, loc) => {
       const { kakao } = window;
+      
+      // 기존에 열린 인포윈도우가 있으면 닫기
       if (infoWindowRef.current) {
           infoWindowRef.current.close();
       }
+
+      // 인포윈도우 내용 (HTML)
       const content = `
           <div style="padding:16px; min-width:220px; border-radius:12px; background:white; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
               <h4 style="margin:0 0 8px; font-weight:700; font-size:16px; color:#111827; display:flex; align-items:center; gap:6px;">
@@ -86,11 +105,13 @@ export default function RecommendMap() {
               <p style="margin:0; color:#0d9488; font-weight:600; font-size:13px;">📞 ${loc.phoneNumber || '전화번호 없음'}</p>
           </div>
       `;
+
       const iw = new kakao.maps.InfoWindow({ content, removable: true });
       iw.open(map, marker);
       infoWindowRef.current = iw;
   };
 
+  // 리스트 클릭 시 해당 위치로 지도 이동
   const handleListClick = (loc) => {
       if(!map) return;
       const { kakao } = window;
@@ -128,7 +149,6 @@ export default function RecommendMap() {
             <div className="filter-controls">
                 <select 
                     className="region-select"
-                    // 화살표 아이콘은 CSS 파일로 옮기기 까다로워서 인라인 유지 (배경 이미지 URL 이슈)
                     style={{backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition:`right 0.5rem center`, backgroundRepeat:`no-repeat`, backgroundSize:`1.5em 1.5em`, paddingRight: '2.5rem'}}
                     value={selectedRegion} 
                     onChange={(e) => setSelectedRegion(e.target.value)}
@@ -146,7 +166,8 @@ export default function RecommendMap() {
 
         {/* 3. 메인 카드 (지도 + 리스트) */}
         <div className="main-card">
-          {/* 좌측 리스트 */}
+          
+          {/* 좌측 리스트 (PC 버전) */}
           <div className="list-panel">
               <div className="list-header">
                   <h3 className="font-bold text-gray-800 text-lg">검색 결과</h3>
@@ -179,11 +200,11 @@ export default function RecommendMap() {
               </div>
           </div>
 
-          {/* 우측 지도 */}
+          {/* 우측 지도 영역 */}
           <div className="map-section">
               <div ref={mapContainer} className="w-full h-full" style={{ width: '100%', height: '100%' }}></div>
               
-              {/* 모바일 버튼 */}
+              {/* 모바일 목록 보기 버튼 */}
               <div className="mobile-list-btn-wrapper">
                   <button className="mobile-list-btn">
                       <span className="flex items-center gap-2"><Navigation size={18} className="text-teal-500"/> 목록 보기</span>

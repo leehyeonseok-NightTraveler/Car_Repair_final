@@ -1,24 +1,19 @@
+// src/main/java/com/boot/dto/InquiryDTO.java
 package com.boot.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.sql.Timestamp;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class InquiryDTO {
-    private int inquiry_no;
-    private String inquiry_title;
-    private String inquiry_content;
+    private Long inquiry_no;
     private String customer_id;
     private String customer_name;
     private String customer_phone;
     private String customer_email;
-    private String inquiry_created;
-    private String inquiry_status;
+    private String inquiry_title;
+    private String inquiry_content;
+    private String inquiry_created;      // TO_CHAR 적용된 "2025년 11월 25일 14시30분"
+    private String inquiry_status;       // "답변대기" or "답변완료"
     private String reply_content;
-    private Timestamp reply_created;
+    private String reply_created;
 }

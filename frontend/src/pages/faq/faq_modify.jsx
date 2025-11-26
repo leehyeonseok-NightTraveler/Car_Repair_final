@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getFaqDetail, modifyFaq } from '../../api/faqApi'; // 경로 확인 (../../api/faqApi)
-import './faq.css'; // 스타일 재사용
+import { getFaqDetail, modifyFaq } from '../../api/faqApi'; 
+import './faq.css';
 
 const FaqModify = () => {
   const { faqNo } = useParams(); // URL에서 글번호 가져오기
   const navigate = useNavigate();
 
+  // 💡 State 키를 백엔드 HashMap 키와 일치시켜 혼동을 줄이거나, 
+  //    혹은 DTO 필드명(faqTitle, faqContent) 그대로 사용합니다.
   const [faqTitle, setFaqTitle] = useState('');
   const [faqContent, setFaqContent] = useState('');
 
@@ -15,6 +17,7 @@ const FaqModify = () => {
     const loadData = async () => {
       try {
         const data = await getFaqDetail(faqNo);
+        // DTO 필드명(faqTitle, faqContent)으로 상태 업데이트
         setFaqTitle(data.faqTitle);
         setFaqContent(data.faqContent);
       } catch (err) {
@@ -22,7 +25,12 @@ const FaqModify = () => {
         navigate('/faq');
       }
     };
-    loadData();
+    // faqNo가 유효한지 확인 후 로드 시작 (옵션)
+    if (faqNo) {
+        loadData();
+    } else {
+        navigate('/faq');
+    }
   }, [faqNo, navigate]);
 
   // 2. 수정 완료 버튼 클릭
@@ -30,18 +38,19 @@ const FaqModify = () => {
     e.preventDefault();
 
     try {
-      const faqData = {
-        faq_no: faqNo,
-        faq_title: faqTitle,
-        faq_content: faqContent
+      // 💡 Body에 담아 보낼 데이터만 객체로 준비합니다.
+      // 백엔드 HashMap 키: faqTitle, faqContent에 맞춥니다.
+      const dataToSend = {
+        faqTitle: faqTitle,    // 💡 백엔드 HashMap 키 이름에 맞게 수정
+        faqContent: faqContent // 💡 백엔드 HashMap 키 이름에 맞게 수정
       };
 
-      await modifyFaq(faqData);
+      await modifyFaq(faqNo, dataToSend); 
       
       alert("글이 수정되었습니다.");
       navigate(`/faq/view/${faqNo}`); // 상세 페이지로 이동
     } catch (err) {
-      console.error(err);
+      console.error("수정 실패:", err);
       alert("수정에 실패했습니다.");
     }
   };
