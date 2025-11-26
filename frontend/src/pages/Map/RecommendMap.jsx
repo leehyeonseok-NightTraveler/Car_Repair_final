@@ -50,56 +50,41 @@ export default function RecommendMap() {
     }
   };
 
-// 3. 마커 그리기
-const drawMarkers = (list) => {
-  if (!map) return;
-  const { kakao } = window;
+  // 3. 마커 그리기
+  const drawMarkers = (list) => {
+    if (!map) return;
+    const { kakao } = window;
 
-  // 1. 커스텀 마커 이미지 설정 (새로 추가)
-  // 정비소 핀 아이콘을 사용합니다.
-  const imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png"; // Kakao 기본 아이콘
-  const imageSize = new kakao.maps.Size(24, 35); 
-  const imageOption = { offset: new kakao.maps.Point(12, 35) };
-  
-  const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+    // 기존 마커 삭제
+    markers.forEach(m => m.setMap(null));
+    const newMarkers = [];
+    const bounds = new kakao.maps.LatLngBounds();
 
-  // 기존 마커 삭제 및 새 배열 초기화
-  markers.forEach(m => m.setMap(null));
-  const newMarkers = [];
-  const bounds = new kakao.maps.LatLngBounds();
+    list.forEach(loc => {
+        if (!loc.latitude || !loc.longitude) return;
 
-  list.forEach(loc => {
-      if (!loc.latitude || !loc.longitude) return;
+        const position = new kakao.maps.LatLng(loc.latitude, loc.longitude);
+        const marker = new kakao.maps.Marker({ position, map: map });
 
-      const position = new kakao.maps.LatLng(loc.latitude, loc.longitude);
-      
-      // 2. 마커 생성 시 커스텀 이미지 적용
-      const marker = new kakao.maps.Marker({ 
-          position: position, 
-          map: map,
-          image: markerImage // 이미지 적용
-      });
+        // 마커 클릭 이벤트 (인포윈도우 열기)
+        kakao.maps.event.addListener(marker, 'click', () => {
+            openInfoWindow(marker, loc);
+        });
 
-      // 마커 클릭 이벤트 (인포윈도우 열기)
-      kakao.maps.event.addListener(marker, 'click', () => {
-          openInfoWindow(marker, loc);
-      });
+        newMarkers.push(marker);
+        bounds.extend(position);
+    });
 
-      newMarkers.push(marker);
-      bounds.extend(position);
-  });
-
-  setMarkers(newMarkers);
-  
-  // 3. 검색 결과에 따라 지도 범위 조정
-  if (list.length > 0) {
-      map.setBounds(bounds);
-  } else {
-      // 결과가 없으면 서울 중심으로 돌아감
-      map.setCenter(new kakao.maps.LatLng(37.5665, 126.9780));
-      map.setLevel(11);
-  }
-};
+    setMarkers(newMarkers);
+    
+    // 검색 결과가 있으면 지도 범위 재설정, 없으면 서울 중심으로 이동
+    if (list.length > 0) {
+        map.setBounds(bounds);
+    } else {
+        map.setCenter(new kakao.maps.LatLng(37.5665, 126.9780));
+        map.setLevel(11);
+    }
+  };
 
   // 인포윈도우 열기
   const openInfoWindow = (marker, loc) => {
