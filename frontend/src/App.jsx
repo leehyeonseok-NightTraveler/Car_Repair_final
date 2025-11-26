@@ -48,6 +48,14 @@ import FindAccount from './pages/FindAccount/findAccount.jsx'
 import FindPW from './pages/FindAccount/findPW.jsx'
 import FindOK from './pages/FindAccount/findOK.jsx'
 
+import AdminMypage from './pages/Mypage/AdminMypage.jsx'
+
+import UserMypage from "./pages/Mypage/UserMypage.jsx";
+import UserEdit from "./pages/Mypage/UserEdit.jsx";
+
+import StoreMypage from "./pages/Mypage/StoreMypage.jsx";
+import StoreEdit from "./pages/Mypage/StoreEdit.jsx";
+
 
 function App() {
     return (
@@ -102,6 +110,16 @@ function App() {
                         <Route path="/findPW" element={<FindPW />} />
                         <Route path="/findOK" element={<FindOK />} />
                         
+                        {/* 관리자 마이페이지 */}
+                        <Route path="/admin/mypage" element={<AdminMypage />} />
+			
+                        {/* 유저 마이페이지 */}
+                        <Route path="/mypage/user" element={<UserMypage />} />
+                        <Route path="/mypage/user/edit" element={<UserEdit />} />
+
+                        {/* 업체 마이페이지 */}
+                        <Route path="/mypage/store" element={<StoreMypage />} />
+                        <Route path="/mypage/store/edit" element={<StoreEdit />} />
                     </Routes>
                 {/* 푸터 */}
                 <Footer />

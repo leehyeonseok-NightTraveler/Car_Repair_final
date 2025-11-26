@@ -14,19 +14,19 @@ function AdminMypage() {
     const [loading, setLoading] = useState(true);
 
     // 데이터 로드
-    const loadData = async () => {
-        setLoading(true);
-        try {
-            const userRes = await axios.get("http://localhost:8484/api/mypage/admin/users");
-            const storeRes = await axios.get("http://localhost:8484/api/mypage/admin/stores");
+	const loadData = async () => {
+	    setLoading(true);
+	    try {
+	        const res = await axios.get("http://localhost:8484/api/mypage/admin/dashboard");
 
-            setUserList(userRes.data);
-            setPendingStores(storeRes.data);
-        } catch (err) {
-            console.error("관리자 데이터 로드 실패:", err);
-        }
-        setLoading(false);
-    };
+	        setUserList(res.data.userList);
+	        setPendingStores(res.data.pendingStores);
+
+	    } catch (err) {
+	        console.error("관리자 데이터 로드 실패:", err);
+	    }
+	    setLoading(false);
+	};
 
     // 첫 로딩 시 호출
     useEffect(() => {
@@ -34,20 +34,20 @@ function AdminMypage() {
     }, []);
 
     // 회원 상태 변경
-    const updateUserStatus = async (accountId, status) => {
-        await axios.post("http://localhost:8484/api/mypage/user/updateStatus",
-            { accountId, status }
-        );
-        loadData();
-    };
+	const updateUserStatus = async (accountId, status) => {
+	    await axios.post("http://localhost:8484/api/mypage/admin/user/updateStatus", {
+	        accountId, status
+	    });
+	    loadData();
+	};
 
     // 업체 승인/거절
-    const updateStoreStatus = async (storeId, status) => {
-        await axios.post("http://localhost:8484/api/mypage/store/updateStatus",
-            { storeId, status }
-        );
-        loadData();
-    };
+	const updateStoreStatus = async (storeId, status) => {
+	    await axios.post("http://localhost:8484/api/mypage/admin/store/updateStatus", {
+	        storeId, status
+	    });
+	    loadData();
+	};
 
     return (
         <>
