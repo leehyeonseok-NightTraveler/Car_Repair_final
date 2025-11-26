@@ -1,4 +1,8 @@
-// src/components/common/Header.jsx
+// src/common/Header.jsx
+import React from "react";
+import axios from "axios";
+import { Link, useLocation } from "react-router-dom";
+import "./mainpage.css";
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -8,56 +12,45 @@ export default function Header() {
     // 현재 경로를 확인하여 활성화된 메뉴를 표시하기 위해 사용
     const location = useLocation();
 
-    // 네비게이션 메뉴 정의
-    const navItems = [
-        { name: '정비소 찾기', path: '/recommend', icon: Wrench },
-        { name: '공지사항', path: '/notice_list', icon: Bell },
-        // 필요하다면 여기에 다른 메뉴 추가 가능 (예: { name: '로그인', path: '/login' })
-    ];
+	const handleLogout = async (e) => {
+	    e.preventDefault();
+
+	    try {
+	        const res = await axios.get("http://localhost:8484/api/logout", {
+	            withCredentials: true
+	        });
+
+	        if (res.data.success) {
+	            sessionStorage.clear();
+	            alert("로그아웃 되었습니다.");
+	            window.location.href = "/";
+	        }
+	    } catch (err) {
+	        console.error("로그아웃 오류:", err);
+	    }
+	};
 
     return (
-        <header className="sticky top-0 z-50 bg-white shadow-md border-b border-gray-100/80 backdrop-blur-sm">
-            <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-center h-16">
-                    
-                    {/* 1. 로고 (홈 링크) */}
-                    <div className="flex-shrink-0">
-                        <Link to="/" className="text-xl font-extrabold text-teal-600 hover:text-teal-700 transition duration-150 flex items-center gap-2">
-                            <Wrench size={24} className="text-teal-500" />
-                            MY CAR 정비소
-                        </Link>
-                    </div>
+        <>
+            {/* 플로팅 아이콘 */}
+            <div className="floating-icons">
+                <a href="https://www.instagram.com/khieiorkr/" target="_blank" rel="noopener noreferrer">
+                    <img src="https://img.icons8.com/fluent/48/000000/instagram-new.png" alt="인스타그램" />
+                </a>
+                <a href="https://www.youtube.com/@KH_academy" target="_blank" rel="noopener noreferrer">
+                    <img src="https://img.icons8.com/color/48/youtube-play.png" alt="유튜브" />
+                </a>
+            </div>
 
-                    {/* 2. 주 네비게이션 */}
-                    <nav className="hidden md:block">
-                        <ul className="flex space-x-6">
-                            {navItems.map((item) => {
-                                // 현재 경로가 메뉴 경로와 일치하는지 확인
-                                const isActive = 
-                                    (item.path === '/' && location.pathname === '/') || 
-                                    (item.path !== '/' && location.pathname.startsWith(item.path));
-                                
-                                return (
-                                    <li key={item.name}>
-                                        <Link 
-                                            to={item.path} 
-                                            className={`
-                                                px-3 py-2 text-sm font-medium transition duration-150 ease-in-out
-                                                flex items-center gap-1
-                                                ${isActive 
-                                                    ? 'text-teal-600 border-b-2 border-teal-600' 
-                                                    : 'text-gray-600 hover:text-teal-600 hover:border-b-2 hover:border-teal-300/50'
-                                                }
-                                            `}
-                                        >
-                                            <item.icon size={16} />
-                                            {item.name}
-                                        </Link>
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    </nav>
+            <header>
+                <div className="inner">
+                    <h1>
+                        <Link to="/">MY CAR 정비소</Link>
+                    </h1>
+
+                    <ul id="gnb">
+                        <li><Link to="/guide">꿀팁 가이드</Link></li>
+                        <li><Link to="/recommend">주변 정비소</Link></li>
 
                     {/* 3. 유틸리티/모바일 메뉴 (임시) */}
                     <div className="flex items-center space-x-4">
@@ -76,8 +69,37 @@ export default function Header() {
                         </button>
                     </div>
 
+                    <ul className="util">
+                        {role === "USER" && (
+                            <>
+                                <li><Link to="/mypage_user">마이페이지</Link></li>
+                                <li><a href="#" onClick={handleLogout}>로그아웃</a></li>
+                                <li className="admin-enter"><Link to="/promote_admin">관리자 전환</Link></li>
+                            </>
+                        )}
+                        {role === "STORE" && (
+                            <>
+                                <li><Link to="/mypage_store">업체 마이페이지</Link></li>
+                                <li><a href="#" onClick={handleLogout}>로그아웃</a></li>
+                            </>
+                        )}
+                        {role === "ADMIN" && (
+                            <>
+                                <li><Link to="/mypage_admin">관리자 페이지</Link></li>
+                                <li className="admin-enter"><Link to="/admin/exit">관리자 모드 해제</Link></li>
+                            </>
+                        )}
+                        {!role && (
+                            <>
+                                <li><Link to="/login">로그인</Link></li>
+                                <li><Link to="/register">회원가입</Link></li>
+                            </>
+                        )}
+                    </ul>
                 </div>
             </div>
         </header>
     );
-}
+};
+
+export default Header;

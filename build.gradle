@@ -60,10 +60,9 @@ dependencies {
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.5'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	
-	// 이메일 전송 관련 (명시적으로 추가)
-	implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.13'
-	implementation 'org.eclipse.angus:angus-mail:2.0.1'
-	implementation 'jakarta.mail:jakarta.mail-api:2.0.1'
+	// 이메일 전송 관련 (javax.mail 로 유지)
+    implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.13'
+    implementation 'com.sun.mail:javax.mail:1.6.2'
 
 }
 
