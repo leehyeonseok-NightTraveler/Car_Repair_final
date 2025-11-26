@@ -19,6 +19,11 @@ public class WebConfig implements WebMvcConfigurer {
     	.allowedMethods("POST")
     	.allowCredentials(true);
     	
+    	registry.addMapping("/api/logout")
+        .allowedOrigins("http://localhost:5173")
+        .allowedMethods("GET")
+        .allowCredentials(true);
+    	
         registry.addMapping("/**")
                 .allowedOrigins("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
