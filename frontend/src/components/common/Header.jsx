@@ -1,12 +1,31 @@
 /* eslint-disable no-unused-vars */
 // src/common/Header.jsx
 import React from "react";
+import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
 import "./mainpage.css";
 
 const Header = () => {
     const location = useLocation();
     const role = sessionStorage.getItem("ROLE") || "";
+
+   const handleLogout = async (e) => {
+       e.preventDefault();
+
+       try {
+           const res = await axios.get("http://localhost:8484/api/logout", {
+               withCredentials: true
+           });
+
+           if (res.data.success) {
+               sessionStorage.clear();
+               alert("로그아웃 되었습니다.");
+               window.location.href = "/";
+           }
+       } catch (err) {
+           console.error("로그아웃 오류:", err);
+       }
+   };
 
     return (
         <>
@@ -28,7 +47,6 @@ const Header = () => {
                         <Link to="/">MY CAR 정비소</Link>
                     </h1>
 
-                    {/* 메인 네비게이션 */}
                     <ul id="gnb">
                         <li><Link to="/guide">꿀팁 가이드</Link></li>
                         <li><Link to="/recommend">주변 정비소</Link></li>
@@ -51,12 +69,12 @@ const Header = () => {
                         </li>
                     </ul>
 
-                    {/* 우측 유틸 메뉴 */}
                     <ul className="util">
                         {role === "USER" && (
                             <>
-                                <li><Link to="/mypage/user">마이페이지</Link></li>
-                                <li><Link to="/logout">로그아웃</Link></li>
+                                <li><Link to="/mypage_user">마이페이지</Link></li>
+                                <li><a href="#" onClick={handleLogout}>로그아웃</a></li>
+                                <li className="admin-enter"><Link to="/promote_admin">관리자 전환</Link></li>
                             </>
                         )}
                         {role === "STORE" && (

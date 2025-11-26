@@ -32,6 +32,7 @@
     padding: 15px;
     font-size: 15px;
     border-bottom: 1px solid #ddd;
+    text-align: left; /* ⬅️ 수정: 좌측 정렬 */
 }
 
 /* 테이블 헤더 */
@@ -65,10 +66,15 @@
 
 /* 💡 내용 셀 스타일: 상세 내용의 레이아웃을 잡아줍니다. */
 .faq-content-cell {
+    /* 텍스트가 셀 상단에 붙도록 정렬 */
+    vertical-align: top;
+    /* 텍스트는 좌측 정렬 */
     text-align: left;
-    white-space: pre-wrap; /* 줄 바꿈 유지 */
-    min-height: 200px; /* 최소 높이 설정 */
-    vertical-align: top; /* 텍스트 상단 정렬 */
+    /* 긴 내용 자동 줄바꿈 및 작성된 줄바꿈 유지 */
+    white-space: pre-wrap; 
+    /* 내용이 비어있어도 최소 높이를 가지도록 강제 */
+    min-height: 200px; 
+    height: 200px; /* 명확하게 높이 지정 */
 }
 
 /* ============================
@@ -140,4 +146,28 @@
 }
 .pagination button.btn-delete:hover {
     background-color: #c82333;
+}
+
+/* --- 글쓰기 버튼 스타일 --- */
+.write-button {
+    /* 배경색 지정 (예: 푸른색 계열) */
+    background-color: #333; 
+    /* 글자색을 흰색으로 지정 */
+    color: white; 
+    /* 패딩(여백) 지정 */
+    padding: 8px 15px; 
+    /* 모서리를 둥글게 */
+    border: none;
+    border-radius: 5px; 
+    /* 마우스 오버 시 커서 모양 변경 */
+    cursor: pointer;
+    /* 글꼴 크기 */
+    font-size: 14px;
+    /* 부드러운 전환 효과 */
+    transition: background-color 0.3s;
+}
+
+/* 마우스 올렸을 때 (Hover) 효과 */
+.write-button:hover {
+    background-color: #ddd;
 }

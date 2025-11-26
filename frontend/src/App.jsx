@@ -1,10 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
+import { Send, Bot, X, MessageCircle } from 'lucide-react';
 
 // 1. 공통 컴포넌트
 import Header from './components/common/Header';
 import Footer from "./components/common/Footer";
+import ChatWidget from "./components/common/ChatWidget";
+
 
 // 2. [메인/지도]
 import RecommendMap from './pages/Map/RecommendMap';
@@ -57,6 +60,7 @@ import UserEdit from "./pages/Mypage/UserEdit.jsx";
 // 11. [정비업체 마이페이지]
 import StoreMypage from "./pages/Mypage/StoreMypage.jsx";
 import StoreEdit from "./pages/Mypage/StoreEdit.jsx";
+
 
 
 function App() {
@@ -125,8 +129,9 @@ function App() {
                     </Routes>
                 {/* 푸터 */}
                 <Footer />
-
+                <ChatWidget />
             </div>
+
         </Router>
     );
 }
