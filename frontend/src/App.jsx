@@ -1,23 +1,23 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Send, Bot, X, MessageCircle } from 'lucide-react';
 import './App.css';
 
+// 1. 공통 컴포넌트
 import Header from './components/common/Header';
-import Footer from './components/common/Footer';
-import ChatWidget from './components/common/ChatWidget';   // 당신이 만든 위치 정확히!
+import Footer from "./components/common/Footer";
 
-// 실제 존재하는 메인 페이지
-import MainPage from './pages/main/mainpage.jsx';   // mainpage.jsx → main.jsx로 변경!
 
-// 나머지 페이지들 (기존에 있던 거 그대로)
+// 2. [메인/지도]
 import RecommendMap from './pages/Map/RecommendMap';
+import MainPage from './pages/main/mainpage'; // 메인 페이지
 
+// 3. [공지사항]
 import NoticeList from './pages/Notice/notice_list';
 import NoticeWrite from "./pages/Notice/notice_write.jsx";
 import NoticeView from "./pages/Notice/notice_view.jsx";
 import NoticeModify from "./pages/Notice/notice_modify.jsx";
 
+// 4. [FAQ]
 import FaqList from "./pages/faq/faq_list";
 import FaqView from "./pages/faq/faq_view";
 import FaqWrite from "./pages/faq/faq_write";
@@ -123,11 +123,6 @@ function App() {
                 {/* 푸터 */}
                 <Footer />
 
-                  
-              {/* 챗봇 위젯 — 모든 페이지에 항상 보임 */}
-              <ChatWidget />
-
-                  
             </div>
         </Router>
     );
