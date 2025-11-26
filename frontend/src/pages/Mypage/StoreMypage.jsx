@@ -22,7 +22,6 @@ function StoreMypage() {
 
     return (
         <>
-            <Header />
 
             <main className="mypage-body">
                 <div className="mypage-title">
@@ -56,7 +55,6 @@ function StoreMypage() {
                 </section>
             </main>
 
-            <Footer />
         </>
     );
 }

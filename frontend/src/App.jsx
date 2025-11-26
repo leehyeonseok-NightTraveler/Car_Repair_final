@@ -32,7 +32,6 @@ import ReplyWrite from './pages/Inquiry/reply_write.jsx';
 // 6. [회원/관리]
 import Register from './pages/Register/Register.jsx';
 import RegisterStore from './pages/Register/RegisterStore.jsx';
-import AdminMypage from './pages/Mypage/AdminMypage.jsx';
 
 // 7. [꿀팁 가이드] (SCRUM-27 추가)
 import Guide from './pages/Gaide/Gaide.jsx'; // 폴더명 Gaide로 수정했습니다.
@@ -42,17 +41,20 @@ import Guide3 from './pages/Gaide/Gaide-3.jsx';
 import Guide4 from './pages/Gaide/Gaide-4.jsx';
 
 // 8. [로그인/계정 찾기]
-import Login from './pages/Login/login.jsx'
-import StoreLogin from './pages/Login/storeLogin.jsx'
-import FindAccount from './pages/FindAccount/findAccount.jsx'
-import FindPW from './pages/FindAccount/findPW.jsx'
-import FindOK from './pages/FindAccount/findOK.jsx'
+import Login from './pages/Login/login.jsx';
+import StoreLogin from './pages/Login/storeLogin.jsx';
+import FindAccount from './pages/FindAccount/findAccount.jsx';
+import FindPW from './pages/FindAccount/findPW.jsx';
+import FindOK from './pages/FindAccount/findOK.jsx';
 
-import AdminMypage from './pages/Mypage/AdminMypage.jsx'
+// 9. [관리자 마이페이지]
+import AdminMypage from './pages/Mypage/AdminMypage.jsx';
 
+// 10. [유저 마이페이지]
 import UserMypage from "./pages/Mypage/UserMypage.jsx";
 import UserEdit from "./pages/Mypage/UserEdit.jsx";
 
+// 11. [정비업체 마이페이지]
 import StoreMypage from "./pages/Mypage/StoreMypage.jsx";
 import StoreEdit from "./pages/Mypage/StoreEdit.jsx";
 

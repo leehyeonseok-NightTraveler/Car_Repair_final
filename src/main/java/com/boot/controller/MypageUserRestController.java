@@ -31,23 +31,28 @@ public class MypageUserRestController {
 
         String accountId = (String) session.getAttribute("accountId");
 
-//        if (accountId == null) {
-//            return ResponseEntity.status(401).body("NOT_LOGIN");
-//        }
+        if (accountId == null) {
+            return ResponseEntity.status(401).body("NOT_LOGIN");
+        }
 
-        // 회원 기본 정보
+        // 1. 회원 기본 정보
         AccountDTO user = userService.getUserInfo(accountId);
 
-        // 차량 리스트
+        // 2. 차량 리스트
         List<MypageDTO> carList = carService.selectCarList(accountId);
 
-        // 문의 내역 + 페이징
-        Criteria cri = new Criteria(pageNum, 10);
-        List<InquiryDTO> inquiryList = inquiryService.selectByAccountId(accountId);
-        int total = inquiryService.TotalInquiryUser(accountId, cri);
-        PagingDTO pageMaker = new PagingDTO(total, cri);
+        // 3. 문의 내역 + 페이징 (기존 서비스 로직 재사용)
+        Criteria cri = new Criteria();
+        cri.setPageNum(pageNum);   // 현재 페이지
+        cri.setAmount(10);         // 페이지당 개수 (원래 쓰던 값으로 맞춰도 됨)
 
-        // JSON 묶어서 전달
+        Map<String, Object> inquiryMap = inquiryService.inquiryHistory(cri, accountId);
+
+        @SuppressWarnings("unchecked")
+        List<InquiryDTO> inquiryList = (List<InquiryDTO>) inquiryMap.get("inquiryList");
+        PagingDTO pageMaker = (PagingDTO) inquiryMap.get("pageMaker");
+
+        // 4. JSON으로 묶어서 리턴
         Map<String, Object> result = new HashMap<>();
         result.put("user", user);
         result.put("carList", carList);
@@ -56,6 +61,7 @@ public class MypageUserRestController {
 
         return ResponseEntity.ok(result);
     }
+
 
     /** 🔹 차량 등록 */
     @PostMapping("/addCar")

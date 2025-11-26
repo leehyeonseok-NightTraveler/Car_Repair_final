@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 // src/common/Header.jsx
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import "./mainpage.css";   // ← 이 파일이 당신이 준 그 CSS 맞습니다!
+import "./mainpage.css";
 
 const Header = () => {
     const location = useLocation();
@@ -21,6 +22,7 @@ const Header = () => {
 
             <header>
                 <div className="inner">
+
                     {/* 로고 */}
                     <h1>
                         <Link to="/">MY CAR 정비소</Link>
@@ -36,14 +38,14 @@ const Header = () => {
                             <ul className="submenu">
                                 <li>
                                     {role === "USER" || role === "STORE" ? (
-                                        <Link to="/inquiry/history">1:1 문의</Link>
+                                        <Link to="/inquiry_history">1:1 문의</Link>
                                     ) : role === "ADMIN" ? (
-                                        <Link to="/inquiry/manage">문의 관리</Link>
+                                        <Link to="/inquiry_manage">문의 관리</Link>
                                     ) : (
                                         <Link to="/login">1:1 문의</Link>
                                     )}
                                 </li>
-                                <li><Link to="/notice">공지사항</Link></li>
+                                <li><Link to="/notice_list">공지사항</Link></li>
                                 <li><Link to="/faq">FAQ</Link></li>
                             </ul>
                         </li>
@@ -53,21 +55,20 @@ const Header = () => {
                     <ul className="util">
                         {role === "USER" && (
                             <>
-                                <li><Link to="/mypage_user">마이페이지</Link></li>
+                                <li><Link to="/mypage/user">마이페이지</Link></li>
                                 <li><Link to="/logout">로그아웃</Link></li>
-                                <li className="admin-enter"><Link to="/promote_admin">관리자 전환</Link></li>
                             </>
                         )}
                         {role === "STORE" && (
                             <>
-                                <li><Link to="/mypage_store">업체 마이페이지</Link></li>
+                                <li><Link to="/mypage/store">업체 마이페이지</Link></li>
                                 <li><Link to="/logout">로그아웃</Link></li>
                             </>
                         )}
                         {role === "ADMIN" && (
                             <>
-                                <li><Link to="/mypage_admin">관리자 페이지</Link></li>
-                                <li className="admin-enter"><Link to="/admin/exit">관리자 모드 해제</Link></li>
+                                <li><Link to="/admin/mypage">관리자 페이지</Link></li>
+                                <li><Link to="/admin/exit">관리자 모드 해제</Link></li>
                             </>
                         )}
                         {!role && (
@@ -77,6 +78,7 @@ const Header = () => {
                             </>
                         )}
                     </ul>
+
                 </div>
             </header>
         </>
