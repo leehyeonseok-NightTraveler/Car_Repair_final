@@ -58,7 +58,6 @@ function App() {
                 <Header />
 
                 {/* 본문 영역 */}
-                <main className="flex-grow">
                     <Routes>
 
                         {/* --- [메인 페이지] --- */}
@@ -104,8 +103,6 @@ function App() {
                         <Route path="/findOK" element={<FindOK />} />
                         
                     </Routes>
-                </main>
-
                 {/* 푸터 */}
                 <Footer />
 
