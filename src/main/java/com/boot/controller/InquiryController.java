@@ -5,20 +5,25 @@ import com.boot.dto.Criteria;
 import com.boot.dto.InquiryDTO;
 import com.boot.service.InquiryService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
-@RequiredArgsConstructor
-@RequestMapping("/api")
+import javax.servlet.http.HttpSession;
+
+@Controller
+@Slf4j
+@RequestMapping("/inquiry")
 public class InquiryController {
 
-    private final InquiryService inquiryService;
+    private final InquiryService inquiryService = null;
 
     // 1. 내 문의 내역
     @GetMapping("/inquiry_history")

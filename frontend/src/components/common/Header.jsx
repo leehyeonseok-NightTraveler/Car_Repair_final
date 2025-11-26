@@ -4,9 +4,13 @@ import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
 import "./mainpage.css";
 
-const Header = () => {
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Wrench, Bell } from 'lucide-react'; // 아이콘 추가
+
+export default function Header() {
+    // 현재 경로를 확인하여 활성화된 메뉴를 표시하기 위해 사용
     const location = useLocation();
-    const role = sessionStorage.getItem("ROLE") || "";
 
 	const handleLogout = async (e) => {
 	    e.preventDefault();
@@ -48,23 +52,22 @@ const Header = () => {
                         <li><Link to="/guide">꿀팁 가이드</Link></li>
                         <li><Link to="/recommend">주변 정비소</Link></li>
 
-                        <li className="dropdown-parent">
-                            <Link to="#">고객센터</Link>
-                            <ul className="submenu">
-                                <li>
-                                    {role === "USER" || role === "STORE" ? (
-                                        <Link to="/inquiry/history">1:1 문의</Link>
-                                    ) : role === "ADMIN" ? (
-                                        <Link to="/inquiry/manage">문의 관리</Link>
-                                    ) : (
-                                        <Link to="/login">1:1 문의</Link>
-                                    )}
-                                </li>
-                                <li><Link to="/notice">공지사항</Link></li>
-                                <li><Link to="/faq">FAQ</Link></li>
-                            </ul>
-                        </li>
-                    </ul>
+                    {/* 3. 유틸리티/모바일 메뉴 (임시) */}
+                    <div className="flex items-center space-x-4">
+                        {/* 로그인/회원가입 등 유틸리티 링크 (추후 구현) */}
+                        <Link 
+                            to="/login" 
+                            className="text-sm font-medium text-gray-500 hover:text-teal-600 transition hidden sm:block"
+                        >
+                            로그인
+                        </Link>
+                        {/* 모바일 메뉴 버튼 (나중에 구현) */}
+                        <button className="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100 transition">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                            </svg>
+                        </button>
+                    </div>
 
                     <ul className="util">
                         {role === "USER" && (
@@ -94,8 +97,8 @@ const Header = () => {
                         )}
                     </ul>
                 </div>
-            </header>
-        </>
+            </div>
+        </header>
     );
 };
 
