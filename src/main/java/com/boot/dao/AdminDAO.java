@@ -7,4 +7,5 @@ import com.boot.dto.AdminDTO;
 public interface AdminDAO {
 
     public void updateAccountRole(AdminDTO adminDTO);
+    public void downgradeToUser(String accountId);
 }

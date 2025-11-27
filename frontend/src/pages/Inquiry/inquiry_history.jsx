@@ -27,6 +27,10 @@ export default function InquiryHistory() {
 
             const res = await axios.get("/api/inquiry/history", {params, withCredentials: true});
 
+            console.log("API 응답:", res.data);
+            console.log("inquiryList:", res.data.inquiryList);
+
+
             if (res.data.redirect) {
                 navigate(res.data.redirect);
                 return;

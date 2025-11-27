@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boot.dao.ReservationDAO">
+
+<insert id="insertReservation" parameterType="com.boot.dto.ReservationDTO">
+    <selectKey keyProperty="rsvNo" resultType="int" order="BEFORE">
+        SELECT SEQ_RSV_NO.NEXTVAL FROM DUAL
+    </selectKey>
+    
+    INSERT INTO TBL_RESERVATION (
+        rsv_no, account_id, store_id, rsv_date, car_model, service_type, request_memo
+    ) VALUES (
+        #{rsvNo}, 
+        #{accountId}, 
+        #{storeId}, 
+        #{rsvDate}, 
+        #{carModel}, 
+        #{serviceType}, 
+        #{requestMemo}
+    )
+</insert>
+
+</mapper>

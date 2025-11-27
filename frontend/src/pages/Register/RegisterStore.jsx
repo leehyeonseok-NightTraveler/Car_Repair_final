@@ -1,18 +1,26 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Link는 안 써서 뺐습니다.
-import './Register.css'; // 공통 CSS 사용
+import { useNavigate } from 'react-router-dom';
+import { useDaumPostcodePopup } from 'react-daum-postcode'; 
+import './Register.css';
 
 function RegisterStore() {
   const navigate = useNavigate();
 
-  // 업체용 데이터 상태 관리
+  const scriptUrl = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+  const open = useDaumPostcodePopup(scriptUrl);
+
   const [formData, setFormData] = useState({
     storeId: '',
     password: '',
+    storeName: '', // ★ 1. 업체명 상태 추가 (DB의 store_name과 매핑될 변수)
     email: '',
     phoneNumber: '',
-    address: '',
-    dayType: '평일', // 기본값
+    
+    zonecode: '',      
+    address: '',       
+    detailAddress: '', 
+    
+    dayType: '평일',
     startTime: '',
     endTime: '',
     description: ''
@@ -23,26 +31,55 @@ function RegisterStore() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleComplete = (data) => {
+    let fullAddress = data.address; 
+    let extraAddress = '';
+
+    if (data.addressType === 'R') {
+      if (data.bname !== '') {
+        extraAddress += data.bname;
+      }
+      if (data.buildingName !== '') {
+        extraAddress += (extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName);
+      }
+      fullAddress += (extraAddress !== '' ? ` (${extraAddress})` : '');
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      zonecode: data.zonecode,
+      address: fullAddress
+    }));
+  };
+
+  const handleSearchClick = () => {
+    open({ onComplete: handleComplete });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // 간단한 유효성 검사
-    if (!formData.storeId || !formData.password || !formData.address) {
+    // 유효성 검사에도 storeName 추가
+    if (!formData.storeId || !formData.password || !formData.address || !formData.storeName) {
         alert("필수 정보를 모두 입력해주세요.");
         return;
     }
 
+    const finalData = {
+        ...formData,
+        address: `(${formData.zonecode}) ${formData.address} ${formData.detailAddress}`.trim()
+    };
+
     try {
-      // 스프링 부트 'StoreRegisterController' 주소로 전송
       const response = await fetch("http://localhost:8484/api/registerstore", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(finalData),
       });
 
       if (await response.text() === "success") {
         alert("🏢 업체 가입 신청이 완료되었습니다! 관리자 승인 후 이용 가능합니다.");
-        navigate("/"); // 메인으로 이동
+        navigate("/"); 
       } else {
         alert("가입 실패: 이미 존재하는 아이디일 수 있습니다.");
       }
@@ -55,20 +92,9 @@ function RegisterStore() {
   return (
     <div className="register-container">
       
-      {/* 탭 메뉴: 버튼 형시 */}
       <div className="tab-button-group">
-        <button 
-            className="tab-button" 
-            onClick={() => navigate('/register')} // 일반 가입으로 이동
-        >
-            일반 회원가입
-        </button>
-        <button 
-            className="tab-button active" // 현재 페이지 활성화 (파란색)
-            disabled 
-        >
-            업체 회원가입
-        </button>
+        <button className="tab-button" onClick={() => navigate('/register')}>일반 회원가입</button>
+        <button className="tab-button active" disabled>업체 회원가입</button>
       </div>
 
       <h1>업체 회원가입</h1>
@@ -76,65 +102,85 @@ function RegisterStore() {
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="storeId">업체 아이디</label>
-          <input 
-            type="text" 
-            id="storeId"
-            name="storeId" 
-            placeholder="사용할 업체 아이디"
-            onChange={handleChange} 
-            required 
-          />
+          <input type="text" name="storeId" placeholder="아이디" onChange={handleChange} required />
         </div>
         
         <div className="form-group">
           <label htmlFor="password">비밀번호</label>
-          <input 
-            type="password" 
-            id="password"
-            name="password" 
-            placeholder="비밀번호"
-            onChange={handleChange} 
-            required 
-          />
+          <input type="password" name="password" placeholder="비밀번호" onChange={handleChange} required />
         </div>
 
+        {/* ▼▼▼ ★ 2. 업체명 입력칸 추가 (비밀번호 밑) ▼▼▼ */}
         <div className="form-group">
-          <label htmlFor="email">업체 이메일</label>
-          <input 
-            type="email" 
-            id="email"
-            name="email" 
-            placeholder="store@example.com"
-            onChange={handleChange} 
-            required 
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="phoneNumber">업체 전화번호</label>
+          <label htmlFor="storeName">업체명 (가게 이름)</label>
           <input 
             type="text" 
-            id="phoneNumber"
-            name="phoneNumber" 
-            placeholder="02-1234-5678" 
+            name="storeName" 
+            placeholder="상호명을 입력해주세요" 
             onChange={handleChange} 
             required 
           />
         </div>
+        {/* ▲▲▲ 추가 끝 ▲▲▲ */}
 
         <div className="form-group">
-          <label htmlFor="address">업체 주소</label>
+          <label htmlFor="email">이메일</label>
+          <input type="email" name="email" placeholder="store@example.com" onChange={handleChange} required />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="phoneNumber">전화번호</label>
+          <input type="text" name="phoneNumber" placeholder="02-1234-5678" onChange={handleChange} required />
+        </div>
+
+        {/* 주소 입력 부분 */}
+        <div className="form-group">
+          <label>업체 주소</label>
+          
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
+              <input 
+                type="text" 
+                name="zonecode" 
+                value={formData.zonecode}
+                placeholder="우편번호"
+                readOnly 
+                style={{ width: '120px' }} 
+              />
+              <button 
+                type="button" 
+                onClick={handleSearchClick}
+                className="address-search-btn" 
+                style={{ 
+                    padding: '8px 16px', 
+                    cursor: 'pointer',
+                    backgroundColor: '#333', 
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '4px'
+                }}
+              >
+                주소 찾기
+              </button>
+          </div>
+
           <input 
             type="text" 
-            id="address"
             name="address" 
-            placeholder="서울시 강남구..."
+            value={formData.address}
+            placeholder="기본 주소"
+            readOnly 
+            style={{ marginBottom: '8px' }}
+          />
+
+          <input 
+            type="text" 
+            name="detailAddress" 
+            value={formData.detailAddress}
+            placeholder="상세 주소 (예: 1층 101호)"
             onChange={handleChange} 
-            required 
           />
         </div>
 
-        {/* 영업 시간 입력 그룹 */}
         <div className="form-group">
             <label>영업 시간</label>
             <div className="form-time-group">
@@ -143,44 +189,19 @@ function RegisterStore() {
                     <option value="주말">주말</option>
                     <option value="연중무휴">연중무휴</option>
                 </select>
-                
-                <input 
-                    type="number" 
-                    name="startTime" 
-                    className="time-input" 
-                    min="0" max="23" 
-                    placeholder="09" 
-                    onChange={handleChange} 
-                    required 
-                />
-                <span className="time-unit">시 부터</span>
-                
-                <input 
-                    type="number" 
-                    name="endTime" 
-                    className="time-input" 
-                    min="0" max="23" 
-                    placeholder="18" 
-                    onChange={handleChange} 
-                    required 
-                />
-                <span className="time-unit">시 까지</span>
+                <input type="number" name="startTime" className="time-input" min="0" max="23" placeholder="09" onChange={handleChange} required />
+                <span className="time-unit">시 ~</span>
+                <input type="number" name="endTime" className="time-input" min="0" max="23" placeholder="18" onChange={handleChange} required />
+                <span className="time-unit">시</span>
             </div>
         </div>
 
-        {/* 업체 상세 소개 (넓은 칸) */}
         <div className="form-group">
             <label htmlFor="description">업체 상세 소개</label>
-            <textarea 
-                id="description"
-                name="description" 
-                placeholder="정비소의 장점, 경력, 서비스 내용 등을 자세히 적어주세요..." 
-                onChange={handleChange}
-                // CSS에서 높이를 150px로 잡았기 때문에 rows는 없어도 됩니다.
-            ></textarea>
+            <textarea name="description" placeholder="소개글 입력..." onChange={handleChange}></textarea>
         </div>
 
-        <button type="submit" className="submit-button">업체 가입하기</button>
+        <button type="submit" className="submit-button">가입하기</button>
       </form>
     </div>
   );
