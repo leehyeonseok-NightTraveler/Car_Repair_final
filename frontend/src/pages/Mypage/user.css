@@ -266,33 +266,3 @@
   height: auto !important;
   vertical-align: middle !important;
 }
-
-/* Pagination.jsx 전용 버튼 스타일 */
-.pagination-item button {
-    display: block;
-    padding: 6px 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background: white;
-    color: #333;
-    cursor: pointer;
-    font-size: 13px;
-    transition: 0.2s;
-}
-
-.pagination-item button:hover {
-    background-color: #ddd;
-}
-
-/* 활성 페이지 */
-.pagination-item.active button {
-    background-color: #007acc;
-    color: #fff;
-    border-color: #007acc;
-    font-weight: bold;
-}
-
-.pagination-item.active button:hover {
-    background-color: #007acc;
-    color: #fff;
-}
