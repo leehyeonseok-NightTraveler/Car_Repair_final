@@ -266,3 +266,9 @@
   height: auto !important;
   vertical-align: middle !important;
 }
+
+.car-form input,
+.car-form select {
+  width: 100%;
+  box-sizing: border-box;
+}

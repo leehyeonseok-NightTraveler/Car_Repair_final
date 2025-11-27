@@ -46,6 +46,8 @@ function UserMypage() {
       car_number: form.get("car_number"),
       car_model: form.get("car_model"),
       car_type: form.get("car_type"),
+      model_year: form.get("model_year"),
+      car_mileage: form.get("car_mileage"),
     };
 
     try {
@@ -130,30 +132,45 @@ function UserMypage() {
         <h3>내 차량 관리</h3>
 
         <form onSubmit={addCar} className="car-form">
-          <table className="info-table">
-            <tbody>
-              <tr>
-                <th>차량번호</th>
-                <td><input type="text" name="car_number" required /></td>
-              </tr>
-              <tr>
-                <th>차량모델</th>
-                <td><input type="text" name="car_model" required /></td>
-              </tr>
-              <tr>
-                <th>차량종류</th>
-                <td>
-                  <select name="car_type" required>
-                    <option value="">선택</option>
-                    <option value="국산">국산</option>
-                    <option value="해외">해외</option>
-                  </select>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <button type="submit" className="btn-normal">차량 등록</button>
-        </form>
+  <table className="info-table">
+    <tbody>
+      <tr>
+        <th>차량번호</th>
+        <td><input type="text" name="car_number" required /></td>
+      </tr>
+
+      <tr>
+        <th>차량모델</th>
+        <td><input type="text" name="car_model" required /></td>
+      </tr>
+
+      <tr>
+        <th>차량종류</th>
+        <td>
+          <select name="car_type" required>
+            <option value="">선택</option>
+            <option value="국산">국산</option>
+            <option value="해외">해외</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <th>연식</th>
+        <td><input type="text" name="model_year" placeholder="예: 2020" required /></td>
+      </tr>
+
+      <tr>
+        <th>주행거리</th>
+        <td><input type="number" name="car_mileage" min="0" required /></td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <button type="submit" className="btn-normal">차량 등록</button>
+</form>
+
 
         {/* 차량 리스트 */}
         {carList.length > 0 ? (
@@ -163,27 +180,40 @@ function UserMypage() {
                 <th>차량번호</th>
                 <th>차량모델</th>
                 <th>차량종류</th>
+                <th>연식</th>
+               <th>주행거리 (km)</th>
                 <th>삭제</th>
               </tr>
             </thead>
             <tbody>
-              {carList.map((car) => (
-                <tr key={car.car_number}>
-                  <td>{car.car_number}</td>
-                  <td>{car.car_model}</td>
-                  <td>{car.car_type}</td>
-                  <td>
-                    <button className="btn-sub" onClick={() => deleteCar(car.car_number)}>
-                      삭제
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+            {carList.map((car) => (
+              <tr key={car.car_number}>
+                <td>{car.car_number}</td>
+                <td>{car.car_model}</td>
+                <td>{car.car_type}</td>
+                <td>{car.model_year}</td>   
+                <td>{car.car_mileage}</td>  
+                <td>
+                  <button className="btn-sub" onClick={() => deleteCar(car.car_number)}>
+                    삭제
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
           </table>
         ) : (
           <p>등록된 차량이 없습니다.</p>
         )}
+		{/* 정비 이력 확인 버튼 */}
+		<div style={{ marginTop: "20px", textAlign: "right" }}>
+		  <button
+		    className="btn-normal"
+		    onClick={() => (window.location.href = "/maintenance")}
+		  >
+		    정비 이력 확인
+		  </button>
+		</div>
       </section>
 
       {/* ===== 문의 내역 ===== */}
