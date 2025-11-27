@@ -64,6 +64,10 @@ import StoreEdit from "./pages/Mypage/StoreEdit.jsx";
 // 12.[검색기능]
 import AutoSearch from "./pages/AutoSearch/autoSearch.jsx";
 
+// 13.[리뷰 페이지]
+import Review from "./pages/Review/review.jsx";
+import StarRating from "./pages/Review/starRating.jsx";
+
 function App() {
     return (
         <Router>
@@ -130,6 +134,10 @@ function App() {
 						
                         {/* 자동검색 */}
                         <Route path="/autoSearch" element={<AutoSearch />} />
+						
+                        {/* 리뷰 */}
+                        <Route path="/review" element={<Review />} />
+                        <Route path="/starRating" element={<StarRating />} />
 
                     </Routes>
                 {/* 푸터 */}
