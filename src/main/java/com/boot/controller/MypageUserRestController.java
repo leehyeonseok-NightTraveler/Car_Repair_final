@@ -7,12 +7,15 @@ import com.boot.service.Mypage_Service;
 import com.boot.service.Mypage_UserService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/mypage/user")
@@ -41,18 +44,29 @@ public class MypageUserRestController {
         // 2. 차량 리스트
         List<MypageDTO> carList = carService.selectCarList(accountId);
 
-        // 3. 문의 내역 + 페이징 (기존 서비스 로직 재사용)
-        Criteria cri = new Criteria();
-        cri.setPageNum(pageNum);   // 현재 페이지
-        cri.setAmount(10);         // 페이지당 개수 (원래 쓰던 값으로 맞춰도 됨)
+        // 3. 문의 내역은 일단 안전하게 try-catch로 감싸고, 죽으면 빈 값 리턴
+        List<InquiryDTO> inquiryList = new ArrayList<>();
+        PagingDTO pageMaker = null;
 
-        Map<String, Object> inquiryMap = inquiryService.inquiryHistory(cri, accountId);
+        try {
+            Criteria cri = new Criteria();
+            cri.setPageNum(pageNum);
+            cri.setAmount(10);
 
-        @SuppressWarnings("unchecked")
-        List<InquiryDTO> inquiryList = (List<InquiryDTO>) inquiryMap.get("inquiryList");
-        PagingDTO pageMaker = (PagingDTO) inquiryMap.get("pageMaker");
+            Map<String, Object> inquiryMap = inquiryService.inquiryHistory(cri, accountId);
 
-        // 4. JSON으로 묶어서 리턴
+            @SuppressWarnings("unchecked")
+            List<InquiryDTO> tempList = (List<InquiryDTO>) inquiryMap.get("inquiryList");
+            PagingDTO tempPageMaker = (PagingDTO) inquiryMap.get("pageMaker");
+
+            if (tempList != null) inquiryList = tempList;
+            pageMaker = tempPageMaker;
+
+        } catch (Exception e) {
+            log.error("마이페이지 문의 내역 조회 실패", e);
+            // 일단 화면 깨지지 않게만 처리
+        }
+
         Map<String, Object> result = new HashMap<>();
         result.put("user", user);
         result.put("carList", carList);
@@ -61,6 +75,7 @@ public class MypageUserRestController {
 
         return ResponseEntity.ok(result);
     }
+
 
 
     /** 🔹 차량 등록 */
