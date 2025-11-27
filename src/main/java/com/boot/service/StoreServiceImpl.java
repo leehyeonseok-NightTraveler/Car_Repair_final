@@ -1,5 +1,7 @@
 package com.boot.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,4 +41,9 @@ public class StoreServiceImpl implements StoreService {
             return false;
         }
     }
+
+	@Override
+	public List<StoreDTO> getAllStores() {
+		return storeDAO.findAllStores(); // DAO 메서드 호출
+	}
 }
