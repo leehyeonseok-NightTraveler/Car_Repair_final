@@ -31,7 +31,7 @@ export default function ChatWidget() {
     setIsLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:8484/api/react/chat', { message: userMsg.text });
+      const res = await axios.post('/api/react/chat', { message: userMsg.text });
       setMessages(prev => [...prev, { type: 'bot', text: res.data.response }]);
     } catch (err) {
       console.error("Chat Error:", err);

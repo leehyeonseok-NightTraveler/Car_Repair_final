@@ -58,7 +58,7 @@
 
 /* 좌측 리스트 패널 */
 .list-panel {
-  @apply hidden lg:flex flex-col w-96 border-r border-gray-100 bg-white;
+  @apply hidden lg:flex flex-col w-96 border-r border-gray-100 bg-white h-full min-h-0;
 }
 
 .list-header {
