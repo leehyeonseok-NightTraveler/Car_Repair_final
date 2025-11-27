@@ -19,23 +19,3 @@ public class WebConfig implements WebMvcConfigurer {
     }
 }
     	
-//     	registry.addMapping("/api/login")
-//         .allowedOrigins("http://localhost:5173")
-//         .allowedMethods("POST")
-//         .allowCredentials(true);
-    	
-//     	registry.addMapping("/api/storeLogin")
-//     	.allowedOrigins("http://localhost:5173")
-//     	.allowedMethods("POST")
-//     	.allowCredentials(true);
-    	
-//     	registry.addMapping("/api/logout")
-//         .allowedOrigins("http://localhost:5173")
-//         .allowedMethods("GET")
-//         .allowCredentials(true);
-    	
-//         registry.addMapping("/**")
-//                 .allowedOrigins("*")
-//                 .allowedMethods("GET", "POST", "PUT", "DELETE")
-//                 .allowCredentials(false);
-//     }
