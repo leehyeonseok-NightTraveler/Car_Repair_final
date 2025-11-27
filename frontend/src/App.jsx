@@ -117,7 +117,7 @@ function App() {
                         
                         {/* --- [마이페이지 - Header.jsx의 링크와 일치시킴] --- */}
                         {/* 유저 */}
-                        <Route path="/mypage_user" element={<UserMypage />} />
+                        <Route path="/mypage/user" element={<UserMypage />} />
                         <Route path="/mypage/user/edit" element={<UserEdit />} />
 
                         {/* 업체 */}
