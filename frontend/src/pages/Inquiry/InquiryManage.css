@@ -1,59 +1,71 @@
 /* InquiryManage.css - 관리자 전용 고급 스타일 */
 .manage-page {
     min-height: 100vh;
+    max-width: 80%;
     background: #fff;
-    padding: 40px 20px;
+    /* 상단 여백 증가 */
+    padding: 60px 20px;
     font-family: 'Pretendard', sans-serif;
 }
 
 .manage-container {
-    min-width: 75%;
+    /* 최대 너비 추가 및 라운딩 조정 */
+    max-width: 100%;
     margin: 0 auto;
     background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    /* 그림자 미세 조정 */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     border: 1px solid #eaeaea;
     overflow: hidden;
 }
 
 /* --- 헤더 영역 --- */
 .manage-header {
+    /* 배경색 지정 (관리자 페이지에 어울리는 강조색) */
+    background: #007acc;
     color: white;
-    padding: 50px 40px;
+    /* 패딩 조정 */
+    padding: 40px 50px;
     text-align: center;
 }
 
 .manage-title {
-    font-size: 32px;
-    font-weight: 800;
+    /* 폰트 크기 및 굵기 조정 */
+    font-size: 30px;
+    font-weight: 700;
     margin: 0;
     letter-spacing: -0.5px;
 }
 
 .manage-divider {
     border: none;
-    height: 4px;
+    height: 3px; /* 두께 조정 */
     background: rgba(255, 255, 255, 0.2);
-    margin: 30px 0 0;
+    /* 마진 조정 */
+    margin: 20px 0 0;
 }
 
 /* --- 필터 영역 --- */
 .manage-filter {
-    padding: 30px 40px 20px;
+    /* 좌우 패딩 일관성 유지 */
+    padding: 35px 50px 25px;
     text-align: right;
 }
 
 .manage-filter select {
-    padding: 14px 24px;
+    /* 패딩 및 라운딩 조정 */
+    padding: 12px 22px;
     border: 2px solid #007acc;
-    border-radius: 16px;
+    border-radius: 12px;
     font-size: 16px;
     font-weight: 600;
     background: white;
     color: #007acc;
     min-width: 200px;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 122, 204, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 122, 204, 0.1); /* 그림자 미세 조정 */
+    transition: all 0.3s;
 }
 
 /* --- 로딩/데이터 없음 메시지 --- */
@@ -64,16 +76,21 @@
     color: #777;
     background: #f8f9fa;
     border-radius: 16px;
-    margin: 30px 40px;
+    /* 좌우 마진 일관성 유지 */
+    margin: 30px 50px;
 }
 
 /* --- 테이블 레이아웃 --- */
 .manage-table-wrapper {
-    margin: 0 40px 40px;
+    /* 좌우/하단 마진 조정 */
+    margin: 0 50px 50px;
     overflow-x: auto;
-    border-radius: 16px;
-    min-height: 800px;
+    /* 라운딩 조정 */
+    border-radius: 12px;
+    /* min-height 제거 또는 감소 (선택적) */
+    min-height: 400px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e5e5; /* 테이블 경계선 추가 */
 }
 
 .manage-table {
@@ -81,45 +98,59 @@
     margin-bottom: 0;
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px;
+    min-width: 900px; /* 최소 너비 증가 */
     background: white;
-
 }
 
 .manage-table th {
     background: #007acc;
     color: white;
-    padding: 20px 15px;
+    /* 패딩 조정 */
+    padding: 18px 15px;
     text-align: center;
     font-weight: 700;
     font-size: 16px;
+    letter-spacing: 0.2px;
 }
+.manage-table th:first-child {
+    border-top-left-radius: 11px;
+}
+.manage-table th:last-child {
+    border-top-right-radius: 11px;
+}
+
 
 /* --- TD(셀) 높이 강제 지정 및 max-height 제거 --- */
 .manage-table td {
-    padding: 20px 15px;
+    /* 패딩 조정 */
+    padding: 18px 15px;
     text-align: center;
     font-size: 15px;
-    /* ✨ 모든 목록 행의 높이를 70px로 강제 지정 */
-    height: 70px;
+    /* 행 높이 미세 조정 */
+    height: 65px;
     vertical-align: middle;
+    border-bottom: 1px solid #f0f0f0; /* 행 구분선 추가 */
+}
+.manage-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 .manage-table tbody tr:hover {
-    background: #f8fbff;
+    /* 호버 색상 조정 */
+    background: #eff6ff;
     transition: 0.3s;
 }
 
 .manage-col-no {
     width: 90px;
     font-weight: 600;
-    /* max-height: 30px; <- 제거 */
 }
 
 .manage-col-title {
+    /* 왼쪽 정렬 유지 */
     text-align: left !important;
-    padding-left: 30px !important;
-    /* max-height: 30px; <- 제거 */
+    /* 왼쪽 패딩 조정 */
+    padding-left: 20px !important;
 }
 
 .manage-col-title a {
@@ -127,25 +158,23 @@
     text-decoration: none;
     font-weight: 600;
     transition: color 0.2s;
-    /* max-height: 30px; <- 제거 */
 }
 
 .manage-col-title a:hover {
     color: #007acc;
     text-decoration: underline;
-    /* max-height: 30px; <- 제거 */
 }
 
 .manage-col-author {
+    width: 120px;
     color: #555;
     font-weight: 500;
-    /* max-height: 30px; <- 제거 */
 }
 
 .manage-col-date {
+    width: 160px;
     color: #777;
     white-space: nowrap;
-    /* max-height: 30px; <- 제거 */
 }
 
 .manage-col-status {
@@ -154,29 +183,63 @@
 
 /* --- 상태 뱃지 --- */
 .status-badge {
-    padding: 8px 18px;
-    border-radius: 25px;
-    font-size: 13.5px;
+    /* 패딩, 라운딩, 폰트 크기 조정 */
+    padding: 7px 16px;
+    border-radius: 18px;
+    font-size: 13px;
     font-weight: 700;
     min-width: 92px;
     display: inline-block;
+    letter-spacing: 0.1px;
 }
 
 .status-badge.waiting {
     background: #fff8e1;
     color: #d97706;
-    border: 1.8px solid #ffcd7a;
+    border: 1.5px solid #ffcd7a;
 }
 
 .status-badge.completed {
     background: #e3f2fd;
     color: #0069d9;
-    border: 1.8px solid #90caf9;
+    border: 1.5px solid #90caf9;
 }
 
 /* --- 페이지네이션 --- */
 .manage-pagination {
-    padding: 0 40px 50px;
+    padding: 0 50px 50px;
     display: flex;
     justify-content: center;
+    gap: 8px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.manage-pagination button {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.manage-pagination button:hover {
+    background: #f5f5f5;
+    border-color: #999;
+}
+
+.manage-pagination button.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+    font-weight: bold;
+}
+
+.manage-pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
