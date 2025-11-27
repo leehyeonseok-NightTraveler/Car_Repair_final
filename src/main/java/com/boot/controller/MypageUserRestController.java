@@ -32,19 +32,19 @@ public class MypageUserRestController {
             @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
             HttpSession session) {
 
-        String accountId = (String) session.getAttribute("accountId");
+        String customer_id = (String) session.getAttribute("accountId");
 
-        if (accountId == null) {
+        if (customer_id == null) {
             return ResponseEntity.status(401).body("NOT_LOGIN");
         }
 
         // 1. 회원 기본 정보
-        AccountDTO user = userService.getUserInfo(accountId);
+        AccountDTO user = userService.getUserInfo(customer_id);
 
         // 2. 차량 리스트
-        List<MypageDTO> carList = carService.selectCarList(accountId);
+        List<MypageDTO> carList = carService.selectCarList(customer_id);
 
-        // 3. 문의 내역은 일단 안전하게 try-catch로 감싸고, 죽으면 빈 값 리턴
+        // 3. 문의 내역 (새 구조 반영)
         List<InquiryDTO> inquiryList = new ArrayList<>();
         PagingDTO pageMaker = null;
 
@@ -53,20 +53,16 @@ public class MypageUserRestController {
             cri.setPageNum(pageNum);
             cri.setAmount(10);
 
-            Map<String, Object> inquiryMap = inquiryService.inquiryHistory(cri, accountId);
-
-            @SuppressWarnings("unchecked")
-            List<InquiryDTO> tempList = (List<InquiryDTO>) inquiryMap.get("inquiryList");
-            PagingDTO tempPageMaker = (PagingDTO) inquiryMap.get("pageMaker");
-
-            if (tempList != null) inquiryList = tempList;
-            pageMaker = tempPageMaker;
+            inquiryList = inquiryService.getInquiryListWithPaging(cri, customer_id);
+            int total = inquiryService.getTotalUserInquiry(cri, customer_id);
+            pageMaker = new PagingDTO(total, cri);
 
         } catch (Exception e) {
             log.error("마이페이지 문의 내역 조회 실패", e);
-            // 일단 화면 깨지지 않게만 처리
+            // inquiryList = 빈값 유지
         }
 
+        // 최종 묶어서 리턴(JSON)
         Map<String, Object> result = new HashMap<>();
         result.put("user", user);
         result.put("carList", carList);
