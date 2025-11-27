@@ -46,24 +46,23 @@ function FindAccount() {
 	
     return (
         <>
-
             <main>
                 <form onSubmit={handleSubmit}>
                     <table className="table1">
 					<tbody>
-                        <tr>
+                        <tr className="tr-center">
                             <td className="trh1" colSpan="3">
                                 <p>아이디 찾기</p>
                             </td>
                         </tr>
 
-                        <tr>
+                        <tr className="tr-center">
                             <td colSpan="3" className="td1">
                                 <p>아래 정보를 입력하시면 아이디를 메일로 발송해 드립니다.</p>
                             </td>
                         </tr>
 
-                        <tr>
+                        <tr className="tr-center">
                             <td colSpan="3">
                                 <input
                                     className="email"
@@ -75,7 +74,7 @@ function FindAccount() {
                             </td>
                         </tr>
 
-                        <tr>
+                        <tr className="tr-center">
                             <td colSpan="3">
                                 <input
                                     className="phone"
@@ -87,13 +86,13 @@ function FindAccount() {
                             </td>
                         </tr>
 
-                        <tr>
+                        <tr className="tr-center">
                             <td colSpan="3">
                                 <input className="find2" type="submit" value="확인" />
                             </td>
                         </tr>
 
-                        <tr>
+                        <tr className="tr-center">
                             <td colSpan="3">
                                 <input
                                     className="btn2"
@@ -104,7 +103,7 @@ function FindAccount() {
                             </td>
                         </tr>
 
-                        <tr className="lastTr">
+                        <tr className="tr-center">
                             <td className="btn3">
                                 <a href="/findAccount" className="link">아이디 찾기</a>
                                 &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;
