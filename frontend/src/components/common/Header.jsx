@@ -87,6 +87,7 @@ const Header = () => {
                             <>
                                 <li><Link to="/admin/mypage">관리자 페이지</Link></li>
                                 <li><Link to="/admin/exit">관리자 모드 해제</Link></li>
+                                <li><a href="#" onClick={handleLogout}>로그아웃</a></li>
                             </>
                         )}
                         {!role && (
