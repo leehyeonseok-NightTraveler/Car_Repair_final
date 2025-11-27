@@ -1,0 +1,66 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.boot.dao.MaintenanceDAO">
+
+    <!-- 내 차량 목록 조회 -->
+    <select id="getMyCars" resultType="com.boot.dto.MypageDTO">
+        SELECT *
+        FROM tbl_mypage
+        WHERE account_id = #{accountId}
+    </select>
+
+    <!-- 특정 차량의 정비 이력 조회 -->
+    <select id="getRepairHistory" resultType="com.boot.dto.RepairHistoryDTO">
+        SELECT *
+        FROM repair_history
+        WHERE car_number = #{car_number}
+    </select>
+
+    <!-- 정비 이력 추가 -->
+    <insert id="addRepairHistory" parameterType="com.boot.dto.RepairHistoryDTO">
+        INSERT INTO repair_history (
+        repair_id, car_number, repair_date, mileage,
+        description, shop_name, cost, memo, reg_date
+        )
+        VALUES (
+        repair_history_seq.NEXTVAL, #{car_number}, #{repair_date}   ,
+        #{mileage}, #{description}, #{shop_name}, #{cost}, #{memo}, SYSDATE
+        )
+    </insert>
+
+    <!-- 소모품 전체 목록 조회 -->
+    <select id="getAllConsumableItems" resultType="com.boot.dto.ConsumableItemDTO">
+        SELECT *
+        FROM consumable_item
+    </select>
+
+    <!-- 특정 차량의 소모품 교체 로그 조회 -->
+    <select id="getConsumableLogs" resultType="com.boot.dto.ConsumableLogDTO">
+        SELECT *
+        FROM consumable_log
+        WHERE car_number = #{car_number}
+    </select>
+
+    <!-- 소모품 교체 로그 추가 -->
+    <insert id="addConsumableLog" parameterType="com.boot.dto.ConsumableLogDTO">
+        INSERT INTO consumable_log (
+        replace_id, car_number, consumable_key, replacement_date, replacement_mileage,
+        shop_name, cost, memo, reg_date
+        )
+        VALUES (
+        consumable_log_seq.NEXTVAL, #{car_number}, #{consumable_key}, #{replacement_date},
+        #{replacement_mileage}, #{shop_name}, #{cost}, #{memo}, SYSDATE
+        )
+    </insert>
+
+    <!-- 정비 이력 삭제 -->
+    <delete id="deleteRepairHistory" parameterType="int">
+        DELETE FROM repair_history WHERE repair_id = #{repair_id}
+    </delete>
+
+    <!-- 소모품 교체 로그 삭제 -->
+    <delete id="deleteConsumableLog" parameterType="int">
+        DELETE FROM consumable_log WHERE replace_id = #{replace_id}
+    </delete>
+
+</mapper>

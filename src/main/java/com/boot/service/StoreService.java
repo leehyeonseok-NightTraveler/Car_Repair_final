@@ -12,8 +12,7 @@ public interface StoreService {
     /**
      * 업체 회원가입 로직 (비밀번호 암호화 포함)
      * @param storeDTO
-     */
-    public void registerStore(StoreDTO storeDTO);
-    
+     */    
     public List<StoreDTO> getAllStores();
+    boolean registerStore(StoreDTO dto);
 }

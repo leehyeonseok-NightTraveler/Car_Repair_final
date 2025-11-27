@@ -5,8 +5,10 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import com.boot.dto.StoreDTO;
 
-@Mapper // MyBatis가 이 인터페이스를 DAO(Mapper)로 인식
+@Mapper
 public interface StoreDAO {
+    // 업체 등록 (성공 시 1 반환)
+    int registerStore(StoreDTO dto);
     
     /**
      * 업체 회원가입 (tbl_store에 삽입)
@@ -15,4 +17,6 @@ public interface StoreDAO {
     public void registerStore(StoreDTO storeDTO);
     
     List<StoreDTO> findAllStores();
+    // 아이디 중복 체크 (필요시 사용)
+    int checkId(String storeId);
 }
