@@ -4,7 +4,6 @@ import axios from "axios";
 import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
 
-import "../../components/common/mainpage.css";
 import "../../components/common/mypage_common.css";
 import "./store.css";
 
@@ -12,7 +11,10 @@ function StoreMypage() {
     const [store, setStore] = useState({});
 
     const loadStoreData = async () => {
-        const res = await axios.get("http://localhost:8484/api/mypage/store/info");
+        const res = await axios.get("http://localhost:8484/api/mypage/store/info", {
+            withCredentials: true,
+        });
+
         setStore(res.data);
     };
 

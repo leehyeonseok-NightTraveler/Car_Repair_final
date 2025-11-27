@@ -4,7 +4,6 @@ import axios from "axios";
 import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
 
-import "../../components/common/mainpage.css";
 import "../../components/common/mypage_common.css";
 import "./storeedit.css";
 
@@ -26,7 +25,10 @@ function StoreEdit() {
 
     // 기존 업체 정보 로드
     const loadStoreInfo = async () => {
-        const res = await axios.get("http://localhost:8484/api/mypage/store/info");
+        const res = await axios.get("http://localhost:8484/api/mypage/store/info", {
+            withCredentials: true
+        });
+
         setStore(prev => ({ ...prev, ...res.data }));
     };
 
@@ -50,7 +52,10 @@ function StoreEdit() {
         }
 
         try {
-            await axios.post("http://localhost:8484/api/mypage/store/update", store);
+            await axios.post("http://localhost:8484/api/mypage/store/update", store, {
+                withCredentials: true
+            });
+
             alert("수정이 완료되었습니다.");
             window.location.href = "/mypage/store";
 
