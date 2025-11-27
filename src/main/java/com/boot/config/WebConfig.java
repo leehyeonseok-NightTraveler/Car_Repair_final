@@ -11,10 +11,13 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
 
         registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:5173")
+                .allowedOriginPatterns("http://localhost:*")   // 5173, 3000 등 모두 허용
                 .allowedMethods("*")
-                .allowCredentials(true);  // ★ 쿠키 공유 허용
-
+                .allowedHeaders("*")
+                .exposedHeaders("Set-Cookie")
+                .allowCredentials(true);
+    }
+}
     	
 //     	registry.addMapping("/api/login")
 //         .allowedOrigins("http://localhost:5173")
@@ -36,4 +39,3 @@ public class WebConfig implements WebMvcConfigurer {
 //                 .allowedMethods("GET", "POST", "PUT", "DELETE")
 //                 .allowCredentials(false);
 //     }
-}
