@@ -8,25 +8,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-    	
-    	registry.addMapping("/api/login")
-        .allowedOrigins("http://localhost:5173")
-        .allowedMethods("POST")
-        .allowCredentials(true);
-    	
-    	registry.addMapping("/api/storeLogin")
-    	.allowedOrigins("http://localhost:5173")
-    	.allowedMethods("POST")
-    	.allowCredentials(true);
-    	
-    	registry.addMapping("/api/logout")
-        .allowedOrigins("http://localhost:5173")
-        .allowedMethods("GET")
-        .allowCredentials(true);
-    	
+        
+        // 모든 경로(/**)에 대해 리액트 접속을 허용한다.
         registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowCredentials(false);
+                .allowedOrigins("http://localhost:5173") // [중요] * 대신 정확한 주소 입력
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 모든 방식 허용
+                .allowCredentials(true) // [중요] 로그인 정보(세션/쿠키) 허용
+                .maxAge(3600); // 설정 캐시 시간 (1시간)
     }
 }
