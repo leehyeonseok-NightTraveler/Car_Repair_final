@@ -61,7 +61,8 @@ import UserEdit from "./pages/Mypage/UserEdit.jsx";
 import StoreMypage from "./pages/Mypage/StoreMypage.jsx";
 import StoreEdit from "./pages/Mypage/StoreEdit.jsx";
 
-
+// 12.[검색기능]
+import AutoSearch from "./pages/AutoSearch/autoSearch.jsx";
 
 function App() {
     return (
@@ -126,6 +127,10 @@ function App() {
                         {/* 업체 마이페이지 */}
                         <Route path="/mypage/store" element={<StoreMypage />} />
                         <Route path="/mypage/store/edit" element={<StoreEdit />} />
+						
+                        {/* 자동검색 */}
+                        <Route path="/autoSearch" element={<AutoSearch />} />
+
                     </Routes>
                 {/* 푸터 */}
                 <Footer />

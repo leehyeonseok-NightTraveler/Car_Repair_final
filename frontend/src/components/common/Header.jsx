@@ -3,6 +3,7 @@
 import React from "react";
 import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
+import AutoSearch from "../../pages/AutoSearch/autoSearch.jsx";
 import "./mainpage.css";
 
 const Header = () => {
@@ -46,6 +47,33 @@ const Header = () => {
                     <h1>
                         <Link to="/">MY CAR 정비소</Link>
                     </h1>
+					
+					{/* 검색창 영역 */}
+					<div>
+	                      <AutoSearch placeholder="검색어 입력하세요" />
+	                 </div>
+	
+	                  <ul id="gnb">
+	                      <li><Link to="/guide">꿀팁 가이드</Link></li>
+	                      <li><Link to="/recommend">주변 정비소</Link></li>
+	
+	                      <li className="dropdown-parent">
+	                          <Link to="#">고객센터</Link>
+	                          <ul className="submenu">
+	                              <li>
+	                                  {role === "USER" || role === "STORE" ? (
+	                                      <Link to="/inquiry/history">1:1 문의</Link>
+	                                  ) : role === "ADMIN" ? (
+	                                      <Link to="/inquiry/manage">문의 관리</Link>
+	                                  ) : (
+	                                      <Link to="/login">1:1 문의</Link>
+	                                  )}
+	                              </li>
+	                              <li><Link to="/notice">공지사항</Link></li>
+	                              <li><Link to="/faq">FAQ</Link></li>
+	                          </ul>
+	                      </li>
+	                  </ul>
 
                     <ul id="gnb">
                         <li><Link to="/guide">꿀팁 가이드</Link></li>
