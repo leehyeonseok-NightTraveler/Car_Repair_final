@@ -40,7 +40,7 @@ public class MypageUserRestController {
 
         // 1. 회원 기본 정보
         AccountDTO user = userService.getUserInfo(customer_id);
- 
+
         // 2. 차량 리스트
         List<MypageDTO> carList = carService.selectCarList(customer_id);
 
