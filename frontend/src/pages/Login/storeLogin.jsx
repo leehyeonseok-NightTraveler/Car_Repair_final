@@ -53,6 +53,10 @@ function StoreLogin() {
             );
 
             if (res.data.success) {
+				
+				sessionStorage.setItem("ROLE", "STORE");
+				sessionStorage.setItem("ACCOUNT_ID", storeId)
+				
                 if (saveId) setCookie("storeSavedId", storeId, 7);
                 else deleteCookie("storeSavedId");
 
