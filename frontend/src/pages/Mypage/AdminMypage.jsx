@@ -1,9 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Header from "../../components/common/Header.jsx";
-import Footer from "../../components/common/Footer.jsx";
-import "../../components/common/mainpage.css";
 import "../../components/common/mypage_common.css";
 import "./admin.css";
 
@@ -51,7 +48,6 @@ function AdminMypage() {
 
     return (
         <>
-            <Header />
 
             <main className="mypage-body admin">
 
@@ -176,8 +172,6 @@ function AdminMypage() {
                 )}
 
             </main>
-
-            <Footer />
         </>
     );
 }

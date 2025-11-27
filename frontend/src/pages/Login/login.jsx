@@ -61,6 +61,9 @@ function Login() {
 				
                 if (saveId) setCookie("savedId", accountId, 7);
                 else deleteCookie("savedId");
+				
+				sessionStorage.setItem("ROLE", res.data.role);
+				sessionStorage.setItem("ACCOUNT_ID", accountId);
 
                 window.location.href = "/";
             } else {

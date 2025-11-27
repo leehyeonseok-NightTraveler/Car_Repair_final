@@ -4,10 +4,10 @@ import axios from "axios";
 const BASE_URL = "http://localhost:8484"; 
 
 // 2. 목록 조회 (GET /faq?pageNum=...&amount=...)
-export const getFaqList = async (page = 1, amount = 10) => {
+export const getFaqList = async (page = 1, amount = 10, searchType = '', keyword = '') => {
   try {
     const response = await axios.get(`${BASE_URL}/faq`, {
-      params: { pageNum: page, amount: amount }
+      params: { pageNum: page, amount: amount, type: searchType, keyword: keyword}
     });
     return response.data; 
   } catch (error) {

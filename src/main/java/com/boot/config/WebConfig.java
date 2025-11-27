@@ -6,14 +6,36 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        
-        // 모든 경로(/**)에 대해 리액트 접속을 허용한다.
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173") // [중요] * 대신 정확한 주소 입력
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 모든 방식 허용
-                .allowCredentials(true) // [중요] 로그인 정보(세션/쿠키) 허용
-                .maxAge(3600); // 설정 캐시 시간 (1시간)
+
+        registry.addMapping("/api/**")
+                .allowedOriginPatterns("http://localhost:*")   // 5173, 3000 등 모두 허용
+                .allowedMethods("*")
+                .allowedHeaders("*")
+                .exposedHeaders("Set-Cookie")
+                .allowCredentials(true);
     }
 }
+    	
+//     	registry.addMapping("/api/login")
+//         .allowedOrigins("http://localhost:5173")
+//         .allowedMethods("POST")
+//         .allowCredentials(true);
+    	
+//     	registry.addMapping("/api/storeLogin")
+//     	.allowedOrigins("http://localhost:5173")
+//     	.allowedMethods("POST")
+//     	.allowCredentials(true);
+    	
+//     	registry.addMapping("/api/logout")
+//         .allowedOrigins("http://localhost:5173")
+//         .allowedMethods("GET")
+//         .allowCredentials(true);
+    	
+//         registry.addMapping("/**")
+//                 .allowedOrigins("*")
+//                 .allowedMethods("GET", "POST", "PUT", "DELETE")
+//                 .allowCredentials(false);
+//     }

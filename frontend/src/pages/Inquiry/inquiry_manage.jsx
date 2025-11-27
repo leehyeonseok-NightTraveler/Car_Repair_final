@@ -4,24 +4,24 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import InquiryFloating from "../../components/common/InquiryFloating";
 import Pagination from "../../components/common/Pagination";
-import "./Inquiry.css"
+import "./InquiryManage.css"; // 전용 CSS로 분리!
 
 export default function InquiryManage() {
     const [list, setList] = useState([]);
     const [pageMaker, setPageMaker] = useState(null);
-    const [role, setRole] = useState("");
+    const [role] = useState(sessionStorage.getItem("ROLE") || "");
     const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
     const location = useLocation();
     const query = new URLSearchParams(location.search);
     const currentPage = parseInt(query.get("pageNum") || "1", 10);
-    const type = query.get("type") || "";
+    const type = query.get("type") || ""; // W 또는 C
 
     const fetchManage = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await axios.get("/api/inquiry_manage", {
+            const res = await axios.get("/api/inquiry/manage", {
                 params: { pageNum: currentPage, amount: 10, type },
                 withCredentials: true,
             });
@@ -31,11 +31,11 @@ export default function InquiryManage() {
                 return;
             }
 
-            setList(res.data.ManageList || []);
+            setList(res.data.inquiryManage || []); // 백엔드 키 확인!
             setPageMaker(res.data.pageMaker);
-            setRole(res.data.role || "");
         } catch (err) {
             alert("문의 목록을 불러올 수 없습니다.");
+            console.error(err);
         } finally {
             setLoading(false);
         }
@@ -52,67 +52,77 @@ export default function InquiryManage() {
         navigate(`?${params.toString()}`);
     };
 
-    const handleSearch = (e) => {
-        e.preventDefault();
-        const newType = e.target.type.value;
-        navigate(`?pageNum=1&type=${newType}`);
+    const handleTypeChange = (e) => {
+        const newType = e.target.value;
+        navigate(newType ? `?pageNum=1&type=${newType}` : "?pageNum=1");
     };
 
     return (
-        <main className="inquiry-history-container">
-            <InquiryFloating role={role} />
+        <>
+            <InquiryFloating />
 
-            <div className="content">
-                <section className="inquiry-header">
-                    <h1 className="inquiry-title">문의 관리</h1>
-                    <hr className="inquiry-divider" />
-                </section>
+            <main className="manage-page">
+                <div className="manage-container">
 
-                <form onSubmit={handleSearch}>
-                    <select name="type" defaultValue={type}>
-                        <option value="">--</option>
-                        <option value="W">답변대기</option>
-                        <option value="C">답변완료</option>
-                    </select>
-                    <button type="submit">Search</button>
-                </form>
+                    <header className="manage-header">
+                        <h1 className="manage-title">문의 관리 (관리자)</h1>
+                        <hr className="manage-divider" />
+                    </header>
 
-                {loading && <div>로딩 중...</div>}
-                {!loading && list.length === 0 && <div>문의가 없습니다.</div>}
+                    <div className="manage-filter">
+                        <select value={type} onChange={handleTypeChange}>
+                            <option value="">전체 문의</option>
+                            <option value="답변대기">답변대기</option>
+                            <option value="답변완료">답변완료</option>
+                        </select>
+                    </div>
 
-                {!loading && list.length > 0 && (
-                    <>
-                        <table className="inquiry-table">
-                            <thead>
-                            <tr>
-                                <th>번호</th>
-                                <th>제목</th>
-                                <th>작성일</th>
-                                <th>상태</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {list.map((item) => (
-                                <tr key={item.inquiry_no}>
-                                    <td>{item.inquiry_no}</td>
-                                    <td>
-                                        <Link to={`/inquiry_view?inquiry_no=${item.inquiry_no}`}>
-                                            {item.inquiry_title}
-                                        </Link>
-                                    </td>
-                                    <td>{item.inquiry_created}</td>
-                                    <td className={`status-cell ${item.inquiry_status}`}>
-                                        {item.inquiry_status === "Y" ? "답변완료" : "답변대기"}
-                                    </td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
+                    {loading && <div className="manage-loading">문의 목록을 불러오는 중...</div>}
+                    {!loading && list.length === 0 && <div className="manage-empty">문의 내역이 없습니다.</div>}
 
-                        <Pagination pageMaker={pageMaker} goToPage={goToPage} currentPage={currentPage} />
-                    </>
-                )}
-            </div>
-        </main>
+                    {!loading && list.length > 0 && (
+                        <>
+                            <div className="manage-table-wrapper">
+                                <table className="manage-table">
+                                    <thead>
+                                    <tr>
+                                        <th>번호</th>
+                                        <th>제목</th>
+                                        <th>작성자</th>
+                                        <th>작성일</th>
+                                        <th>상태</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {list.map((item) => (
+                                        <tr key={item.inquiry_no}>
+                                            <td className="manage-col-no">{item.inquiry_no}</td>
+                                            <td className="manage-col-title">
+                                                <Link to={`/inquiry/view/${item.inquiry_no}`}>
+                                                    {item.inquiry_title}
+                                                </Link>
+                                            </td>
+                                            <td className="manage-col-author">{item.customer_id || item.customer_name}</td>
+                                            <td className="manage-col-date">{item.inquiry_created}</td>
+                                            <td className="manage-col-status">
+                                                <span
+                                                    className={`status-badge ${item.inquiry_status === "답변대기" ? "waiting" : "completed"}`}>
+                                                    {item.inquiry_status}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div className="manage-pagination">
+                                <Pagination pageMaker={pageMaker} goToPage={goToPage} currentPage={currentPage} />
+                            </div>
+                        </>
+                    )}
+                </div>
+            </main>
+        </>
     );
 }

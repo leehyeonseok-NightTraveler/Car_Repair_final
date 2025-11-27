@@ -1,9 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
+import { Send, Bot, X, MessageCircle } from 'lucide-react';
 
 // 1. 공통 컴포넌트
 import Header from './components/common/Header';
 import Footer from "./components/common/Footer";
+import ChatWidget from "./components/common/ChatWidget";
 
 // 2. [메인/지도]
 import RecommendMap from './pages/Map/RecommendMap';
@@ -32,7 +34,6 @@ import ReplyWrite from './pages/Inquiry/reply_write.jsx';
 // (경로는 실제 파일 위치에 맞춰 수정 필요할 수 있음. src/pages/Register/Register.jsx 가정)
 import Register from './pages/Register/Register.jsx';
 import RegisterStore from './pages/Register/RegisterStore.jsx';
-import AdminMypage from './pages/Mypage/AdminMypage.jsx';
 
 // 7. [꿀팁 가이드]
 import Guide from './pages/Gaide/Gaide.jsx';
@@ -53,10 +54,14 @@ import UserMypage from "./pages/Mypage/UserMypage.jsx";
 import UserEdit from "./pages/Mypage/UserEdit.jsx";
 import StoreMypage from "./pages/Mypage/StoreMypage.jsx";
 import StoreEdit from "./pages/Mypage/StoreEdit.jsx";
+import AdminMypage from './pages/Mypage/AdminMypage.jsx';
 
 // 10. [관리자 권한 승급]
 import AdminPromote from "./pages/promote_admin/AdminPromote.jsx";
+;
 
+// 11.[검색기능]
+import AutoSearch from "./pages/AutoSearch/autoSearch.jsx";
 
 function App() {
     return (
@@ -74,10 +79,10 @@ function App() {
                         <Route path="/recommend" element={<RecommendMap />} />
 
                         {/* --- [공지사항] --- */}
-                        <Route path="/notice_list" element={<NoticeList />} />
-                        <Route path="/notice_write" element={<NoticeWrite />} />
-                        <Route path="/notice_view/:notice_no" element={<NoticeView />} />
-                        <Route path="/notice_modify/:notice_no" element={<NoticeModify />} />
+                        <Route path="/notice/list" element={<NoticeList />} />
+                        <Route path="/notice/write" element={<NoticeWrite />} />
+                        <Route path="/notice/view/:notice_no" element={<NoticeView />} />
+                        <Route path="/notice/modify/:notice_no" element={<NoticeModify />} />
 
                         {/* --- [꿀팁 가이드] --- */}
                         <Route path="/guide" element={<Guide />} />    
@@ -93,11 +98,11 @@ function App() {
                         <Route path="/faq/modify/:faqNo" element={<FaqModify />} />
 
                         {/* --- [1:1 문의 기능] --- */}
-                        <Route path="/inquiry_write" element={<InquiryWrite />} />
-                        <Route path="/inquiry_history" element={<InquiryHistory />} />
-                        <Route path="/inquiry_view/:inquiryNo" element={<InquiryView />} />
-                        <Route path="/inquiry_manage" element={<InquiryManage />} />
-                        <Route path="/reply_write/:inquiryNo" element={<ReplyWrite />} />
+                        <Route path="/inquiry/write" element={<InquiryWrite />} />
+                        <Route path="/inquiry/history" element={<InquiryHistory />} />
+                        <Route path="/inquiry/view/:inquiry_no" element={<InquiryView />} />
+                        <Route path="/inquiry/manage" element={<InquiryManage />} />
+                        <Route path="/inquiry/reply_write/:inquiry_no" element={<ReplyWrite />} />
 
                         {/* --- [회원가입] --- */}
                         <Route path="/register" element={<Register />} />
@@ -125,14 +130,18 @@ function App() {
                         {/* --- [관리자 권한 승급] --- */}
                         {/* ★ [수정됨] Header.jsx의 링크와 일치하도록 주소를 /admin/promote 로 변경 */}
                         <Route path="/admin/promote" element={<AdminPromote />} />
+						
+                        {/* 자동검색 */}
+                        <Route path="/autoSearch" element={<AutoSearch />} />
 
                     </Routes>
                 </main>
 
                 {/* 푸터 */}
                 <Footer />
-
+                <ChatWidget />
             </div>
+
         </Router>
     );
 }

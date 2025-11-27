@@ -47,7 +47,7 @@
         WHERE account_id = #{accountId}
     </update>
 
-    <select id="getAllUsersWithPaging" resultType="com.boot.dto.AccountDTO">
+    <select id="getAllUsersWithPaging" parameterType="com.boot.dto.Criteria" resultType="com.boot.dto.AccountDTO">
         <![CDATA[
         SELECT *
         FROM (
@@ -79,7 +79,7 @@
         FROM tbl_account
     </select>
 
-    <select id="getPendingStoresWithPaging" resultType="com.boot.dto.StoreDTO">
+    <select id="getPendingStoresWithPaging" parameterType="com.boot.dto.Criteria" resultType="com.boot.dto.StoreDTO">
         <![CDATA[
         SELECT *
         FROM (

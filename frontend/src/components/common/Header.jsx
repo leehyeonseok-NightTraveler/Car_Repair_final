@@ -1,7 +1,10 @@
+/* eslint-disable no-unused-vars */
+// src/common/Header.jsx
 import React, { useState, useEffect } from 'react'; // React Hook 추가
 import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-// import "./mainpage.css"; // [수정] 오류 발생 시 주석 처리 (파일이 없으면 에러남)
+import AutoSearch from "../../pages/AutoSearch/autoSearch.jsx";
+import "./mainpage.css";
 
 const Header = () => {
     const location = useLocation();
@@ -67,7 +70,38 @@ const Header = () => {
 
             <header>
                 <div className="inner">
-                    <h1><Link to="/">MY CAR 정비소</Link></h1>
+
+                    {/* 로고 */}
+                    <h1>
+                        <Link to="/">MY CAR 정비소</Link>
+                    </h1>
+					
+					{/* 검색창 영역 */}
+					<div>
+	                      <AutoSearch placeholder="검색어 입력하세요" />
+	                 </div>
+	
+	                  <ul id="gnb">
+	                      <li><Link to="/guide">꿀팁 가이드</Link></li>
+	                      <li><Link to="/recommend">주변 정비소</Link></li>
+	
+	                      <li className="dropdown-parent">
+	                          <Link to="#">고객센터</Link>
+	                          <ul className="submenu">
+	                              <li>
+	                                  {role === "USER" || role === "STORE" ? (
+	                                      <Link to="/inquiry/history">1:1 문의</Link>
+	                                  ) : role === "ADMIN" ? (
+	                                      <Link to="/inquiry/manage">문의 관리</Link>
+	                                  ) : (
+	                                      <Link to="/login">1:1 문의</Link>
+	                                  )}
+	                              </li>
+	                              <li><Link to="/notice/list">공지사항</Link></li>
+	                              <li><Link to="/faq">FAQ</Link></li>
+	                          </ul>
+	                      </li>
+	                  </ul>
 
                     <ul id="gnb">
                         <li><Link to="/guide">꿀팁 가이드</Link></li>
@@ -75,8 +109,16 @@ const Header = () => {
                         <li className="dropdown-parent">
                             <Link to="#">고객센터</Link>
                             <ul className="submenu">
-                                <li>{role === "ADMIN" ? <Link to="/inquiry/manage">문의 관리</Link> : <Link to="/inquiry/history">1:1 문의</Link>}</li>
-                                <li><Link to="/notice_list">공지사항</Link></li>
+                                <li>
+                                    {role === "USER" || role === "STORE" ? (
+                                        <Link to="/inquiry/history">1:1 문의</Link>
+                                    ) : role === "ADMIN" ? (
+                                        <Link to="/inquiry/manage">문의 관리</Link>
+                                    ) : (
+                                        <Link to="/login">1:1 문의</Link>
+                                    )}
+                                </li>
+                                <li><Link to="/notice/list">공지사항</Link></li>
                                 <li><Link to="/faq">FAQ</Link></li>
                             </ul>
                         </li>
@@ -86,7 +128,7 @@ const Header = () => {
                         {/* 1. 일반 유저일 때 */}
                         {role === "USER" && (
                             <>
-                                <li><Link to="/mypage_user">마이페이지</Link></li>
+                                <li><Link to="/mypage/user">마이페이지</Link></li>
                                 <li><a href="#" onClick={handleLogout}>로그아웃</a></li>
                                 <li className="admin-enter"><Link to="/admin/promote">관리자 전환</Link></li>
                             </>
@@ -95,7 +137,7 @@ const Header = () => {
                         {/* 2. 업체일 때 */}
                         {role === "STORE" && (
                             <>
-                                <li><Link to="/mypage_store">업체 마이페이지</Link></li>
+                                <li><Link to="/mypage/store">업체 마이페이지</Link></li>
                                 <li><a href="#" onClick={handleLogout}>로그아웃</a></li>
                             </>
                         )}
@@ -121,6 +163,7 @@ const Header = () => {
                             </>
                         )}
                     </ul>
+
                 </div>
             </header>
         </>
