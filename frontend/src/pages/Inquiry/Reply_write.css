@@ -1,0 +1,122 @@
+/* src/pages/inquiry/ReplyWrite.css - 답변 작성/수정 페이지 전용 스타일 */
+
+/* 1. 기본 레이아웃 및 컨테이너 */
+.reply-write-page {
+    min-height: 100vh;
+    background: #f8f9fa; /* 배경색 변경 */
+    padding: 60px 20px;
+    font-family: 'Pretendard', sans-serif;
+}
+
+.reply-write-container {
+    min-width: 60%;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    padding: 40px;
+    border: 1px solid #e0e0e0;
+}
+
+/* 2. 문의 원본 헤더 영역 */
+.reply-write-header {
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #007acc; /* 강조 색상 */
+}
+
+.reply-write-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #222;
+    margin: 0;
+}
+
+.reply-write-divider {
+    display: none; /* 헤더에서 경계선 제거 (컨테이너 border-bottom 사용) */
+}
+
+/* 3. 문의 원본 본문 영역 */
+.reply-write-body {
+    padding-bottom: 30px;
+    border-bottom: 1px dashed #ccc;
+    margin-bottom: 30px;
+}
+
+.reply-write-content {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #444;
+    min-height: 150px;
+    white-space: pre-wrap; /* HTML 내용을 그대로 표시 */
+}
+
+.reply-write-meta {
+    text-align: right;
+    font-size: 14px;
+    color: #777;
+    margin-top: 15px;
+}
+
+/* 4. 답변 작성 섹션 */
+.reply-write-reply-section {
+    margin-top: 20px;
+}
+
+.reply-write-reply-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #007acc;
+    margin-bottom: 15px;
+}
+
+.reply-write-content-area {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    line-height: 1.6;
+    resize: vertical;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.reply-write-content-area:focus {
+    border-color: #007acc;
+    outline: none;
+}
+
+/* 5. 제출 버튼 영역 */
+.reply-write-submit {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.reply-write-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    min-width: 150px;
+}
+
+.reply-write-btn-primary {
+    background-color: #007acc;
+    color: white;
+}
+
+.reply-write-btn-primary:hover {
+    background-color: #005f99;
+}
+
+/* 6. 로딩 상태 */
+.reply-write-loading {
+    text-align: center;
+    padding: 100px;
+    font-size: 18px;
+    color: #555;
+}

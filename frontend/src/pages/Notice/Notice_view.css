@@ -1,0 +1,140 @@
+/* NoticeView.css - 공지사항 상세보기 전용 */
+
+.notice-view-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif;
+}
+
+.notice-view-header {
+    margin-bottom: 30px;
+}
+
+.notice-view-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 20px 0;
+    word-break: keep-all;
+}
+
+.notice-view-info {
+    display: flex;
+    gap: 20px;
+    color: #666;
+    font-size: 0.95rem;
+    flex-wrap: wrap;
+}
+
+.notice-view-divider {
+    border: none;
+    border-top: 2px solid #e9ecef;
+    margin: 30px 0;
+}
+
+.notice-view-content {
+    min-height: 300px;
+    padding: 20px 0;
+    line-height: 1.8;
+    font-size: 1.05rem;
+    color: #333;
+}
+
+.notice-view-content-inner img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.notice-view-content-inner pre,
+.notice-view-content-inner code {
+    background: #f8f9fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: "D2Coding", Consolas, monospace;
+}
+
+/* 버튼 그룹 */
+.notice-view-actions {
+    text-align: center;
+}
+
+.notice-view-button-group {
+    display: inline-flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.notice-view-btn-modify,
+.notice-view-btn-delete,
+.notice-view-btn-list {
+    padding: 12px 28px;
+    font-size: 1.02rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-width: 100px;
+}
+
+.notice-view-btn-modify {
+    background: #0066cc;
+    color: white;
+    border: none;
+}
+.notice-view-btn-modify:hover {
+    background: #0055aa;
+}
+
+.notice-view-btn-delete {
+    background: #dc3545;
+    color: white;
+    border: none;
+}
+.notice-view-btn-delete:hover {
+    background: #c82333;
+}
+
+.notice-view-btn-list {
+    background: #6c757d;
+    color: white;
+    border: none;
+}
+.notice-view-btn-list:hover {
+    background: #5a6268;
+}
+
+/* 로딩 & 빈 상태 */
+.notice-view-loading,
+.notice-view-empty {
+    text-align: center;
+    padding: 80px 20px;
+    color: #666;
+}
+
+.notice-view-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #0066cc;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .notice-view-title { font-size: 1.9rem; }
+    .notice-view-info { font-size: 0.9rem; gap: 12px; }
+    .notice-view-button-group { flex-direction: column; align-items: center; }
+    .notice-view-btn-modify,
+    .notice-view-btn-delete,
+    .notice-view-btn-list { width: 100%; max-width: 300px; }
+}

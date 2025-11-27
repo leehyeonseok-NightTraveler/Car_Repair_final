@@ -1,0 +1,99 @@
+/* src/pages/inquiry/InquiryWrite.css */
+
+/* 1. 전체 레이아웃 및 컨테이너 */
+.inquiry-write-page {
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background-color: #f5f7fa; /* 연한 배경색 */
+}
+
+.inquiry-write-form {
+    min-width: 50%;
+    margin: 0 auto;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+}
+
+.inquiry-write-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #007acc; /* 제목 하단에 강조선 */
+    padding-bottom: 10px;
+}
+
+/* 2. 폼 그룹 (Label + Input/Textarea) */
+.inquiry-write-group {
+    margin-bottom: 25px;
+}
+
+.inquiry-write-group label {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+/* 3. 입력 필드 스타일 */
+.inquiry-write-group input[type="text"],
+.inquiry-write-group input[type="tel"],
+.inquiry-write-group input[type="email"],
+.inquiry-write-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    color: #333;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.inquiry-write-group input:focus,
+.inquiry-write-group textarea:focus {
+    border-color: #007acc;
+    box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.2);
+    outline: none;
+}
+
+.inquiry-write-group textarea {
+    resize: vertical;
+    min-height: 150px;
+}
+
+/* 4. 액션 버튼 영역 */
+.inquiry-write-actions {
+    text-align: center;
+    padding-top: 20px;
+}
+
+.inquiry-write-submit-btn {
+    padding: 12px 30px;
+    background-color: #007acc;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    min-width: 150px;
+}
+
+.inquiry-write-submit-btn:hover {
+    background-color: #005f99;
+}
+
+/* 5. 로딩 상태 */
+.inquiry-write-loading {
+    text-align: center;
+    padding: 100px;
+    font-size: 18px;
+    color: #555;
+}

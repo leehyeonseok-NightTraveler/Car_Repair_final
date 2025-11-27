@@ -1,0 +1,182 @@
+/* InquiryManage.css - 관리자 전용 고급 스타일 */
+.manage-page {
+    min-height: 100vh;
+    background: #fff;
+    padding: 40px 20px;
+    font-family: 'Pretendard', sans-serif;
+}
+
+.manage-container {
+    min-width: 75%;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid #eaeaea;
+    overflow: hidden;
+}
+
+/* --- 헤더 영역 --- */
+.manage-header {
+    color: white;
+    padding: 50px 40px;
+    text-align: center;
+}
+
+.manage-title {
+    font-size: 32px;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.manage-divider {
+    border: none;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 30px 0 0;
+}
+
+/* --- 필터 영역 --- */
+.manage-filter {
+    padding: 30px 40px 20px;
+    text-align: right;
+}
+
+.manage-filter select {
+    padding: 14px 24px;
+    border: 2px solid #007acc;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    background: white;
+    color: #007acc;
+    min-width: 200px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 122, 204, 0.15);
+}
+
+/* --- 로딩/데이터 없음 메시지 --- */
+.manage-loading, .manage-empty {
+    text-align: center;
+    padding: 120px 20px;
+    font-size: 19px;
+    color: #777;
+    background: #f8f9fa;
+    border-radius: 16px;
+    margin: 30px 40px;
+}
+
+/* --- 테이블 레이아웃 --- */
+.manage-table-wrapper {
+    margin: 0 40px 40px;
+    overflow-x: auto;
+    border-radius: 16px;
+    min-height: 800px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.manage-table {
+    margin-top: 0;
+    margin-bottom: 0;
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+    background: white;
+
+}
+
+.manage-table th {
+    background: #007acc;
+    color: white;
+    padding: 20px 15px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+/* --- TD(셀) 높이 강제 지정 및 max-height 제거 --- */
+.manage-table td {
+    padding: 20px 15px;
+    text-align: center;
+    font-size: 15px;
+    /* ✨ 모든 목록 행의 높이를 70px로 강제 지정 */
+    height: 70px;
+    vertical-align: middle;
+}
+
+.manage-table tbody tr:hover {
+    background: #f8fbff;
+    transition: 0.3s;
+}
+
+.manage-col-no {
+    width: 90px;
+    font-weight: 600;
+    /* max-height: 30px; <- 제거 */
+}
+
+.manage-col-title {
+    text-align: left !important;
+    padding-left: 30px !important;
+    /* max-height: 30px; <- 제거 */
+}
+
+.manage-col-title a {
+    color: #222;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+    /* max-height: 30px; <- 제거 */
+}
+
+.manage-col-title a:hover {
+    color: #007acc;
+    text-decoration: underline;
+    /* max-height: 30px; <- 제거 */
+}
+
+.manage-col-author {
+    color: #555;
+    font-weight: 500;
+    /* max-height: 30px; <- 제거 */
+}
+
+.manage-col-date {
+    color: #777;
+    white-space: nowrap;
+    /* max-height: 30px; <- 제거 */
+}
+
+.manage-col-status {
+    width: 130px;
+}
+
+/* --- 상태 뱃지 --- */
+.status-badge {
+    padding: 8px 18px;
+    border-radius: 25px;
+    font-size: 13.5px;
+    font-weight: 700;
+    min-width: 92px;
+    display: inline-block;
+}
+
+.status-badge.waiting {
+    background: #fff8e1;
+    color: #d97706;
+    border: 1.8px solid #ffcd7a;
+}
+
+.status-badge.completed {
+    background: #e3f2fd;
+    color: #0069d9;
+    border: 1.8px solid #90caf9;
+}
+
+/* --- 페이지네이션 --- */
+.manage-pagination {
+    padding: 0 40px 50px;
+    display: flex;
+    justify-content: center;
+}

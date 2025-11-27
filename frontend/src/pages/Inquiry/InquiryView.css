@@ -1,0 +1,210 @@
+/* InquiryView.css - 완전 독립형 스타일 */
+
+.view-page {
+    min-height: 100vh;
+    background: #fff;
+    padding: 40px 20px;
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.view-container {
+    min-width: 70%;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.07);
+    border: 1px solid #f0f0f0;
+    overflow: hidden;
+}
+
+.view-header {
+    padding: 40px 40px 25px;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.view-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #222222;
+    margin: 0 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.view-meta {
+    color: #666666;
+    font-size: 15px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.view-divider {
+    border: none;
+    border-top: 2px solid #f0f0f0;
+    margin: 0;
+}
+
+.view-content-section {
+    padding: 40px;
+    line-height: 1.8;
+    font-size: 16px;
+    color: #333333;
+}
+
+.view-content {
+    min-height: 200px;
+    background: #fafafa;
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px dashed #dddddd;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.view-reply {
+    background: #f8fbff;
+    border-top: 1px solid #e3f2fd;
+    padding: 40px;
+}
+
+.view-reply-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #007acc;
+    margin: 0 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.reply-status {
+    font-size: 14px;
+    color: #666666;
+    font-weight: normal;
+}
+
+.view-reply-content {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    line-height: 1.8;
+    font-size: 15.5px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.view-no-reply {
+    color: #999999;
+    font-style: italic;
+    text-align: center;
+    padding: 40px;
+    background: #fafafa;
+    border-radius: 12px;
+    border: 1px dashed #dddddd;
+}
+
+.view-reply-date {
+    margin-top: 15px;
+    color: #666666;
+    font-size: 14px;
+    text-align: right;
+}
+
+.view-reply-actions {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.btn-primary {
+    display: inline-block;
+    background: linear-gradient(135deg, #007acc, #005b9f);
+    color: white;
+    padding: 13px 38px;
+    border-radius: 50px;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 16px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 122, 204, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 122, 204, 0.4);
+}
+
+.view-footer {
+    padding: 30px 40px;
+    text-align: center;
+}
+
+.btn-back {
+    padding: 12px 32px;
+    background: white;
+    border: 2px solid #cccccc;
+    color: #555555;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+.btn-back:hover {
+    background: #f8f8f8;
+    border-color: #999999;
+}
+
+.view-loading,
+.view-empty {
+    text-align: center;
+    padding: 120px 20px;
+    font-size: 18px;
+    color: #888888;
+}
+
+/* 상태 뱃지 (View용) */
+.status-badge.small {
+    font-size: 12.5px;
+    padding: 5px 11px;
+    min-width: auto;
+    border-radius: 16px;
+}
+
+.status-badge.waiting {
+    background: #fff8e1;
+    color: #d97706;
+    border: 1.5px solid #ffcd7a;
+}
+
+.status-badge.completed {
+    background: #e3f2fd;
+    color: #0069d9;
+    border: 1.5px solid #90caf9;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .view-page {
+        padding: 20px 15px;
+    }
+
+    .view-header, .view-content-section, .view-reply, .view-footer {
+        padding: 25px 20px;
+    }
+
+    .view-title {
+        font-size: 24px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .status-badge.small {
+        margin-top: 8px;
+    }
+}
