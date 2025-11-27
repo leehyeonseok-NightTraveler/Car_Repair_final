@@ -62,7 +62,6 @@ function UserMypage() {
 
   return (
     <>
-      <Header />
 
       <div className="mypage-body">
 
@@ -213,7 +212,6 @@ function UserMypage() {
 
       </div>
 
-      <Footer />
     </>
   );
 }

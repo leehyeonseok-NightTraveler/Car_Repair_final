@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // src/common/Header.jsx
 import React from "react";
 import axios from "axios";
@@ -9,23 +10,23 @@ const Header = () => {
     const location = useLocation();
     const role = sessionStorage.getItem("ROLE") || "";
 
-	const handleLogout = async (e) => {
-	    e.preventDefault();
+   const handleLogout = async (e) => {
+       e.preventDefault();
 
-	    try {
-	        const res = await axios.get("http://localhost:8484/api/logout", {
-	            withCredentials: true
-	        });
+       try {
+           const res = await axios.get("http://localhost:8484/api/logout", {
+               withCredentials: true
+           });
 
-	        if (res.data.success) {
-	            sessionStorage.clear();
-	            alert("로그아웃 되었습니다.");
-	            window.location.href = "/";
-	        }
-	    } catch (err) {
-	        console.error("로그아웃 오류:", err);
-	    }
-	};
+           if (res.data.success) {
+               sessionStorage.clear();
+               alert("로그아웃 되었습니다.");
+               window.location.href = "/";
+           }
+       } catch (err) {
+           console.error("로그아웃 오류:", err);
+       }
+   };
 
     return (
         <>
@@ -41,6 +42,8 @@ const Header = () => {
 
             <header>
                 <div className="inner">
+
+                    {/* 로고 */}
                     <h1>
                         <Link to="/">MY CAR 정비소</Link>
                     </h1>
@@ -81,14 +84,14 @@ const Header = () => {
                             <ul className="submenu">
                                 <li>
                                     {role === "USER" || role === "STORE" ? (
-                                        <Link to="/inquiry/history">1:1 문의</Link>
+                                        <Link to="/inquiry_history">1:1 문의</Link>
                                     ) : role === "ADMIN" ? (
-                                        <Link to="/inquiry/manage">문의 관리</Link>
+                                        <Link to="/inquiry_manage">문의 관리</Link>
                                     ) : (
                                         <Link to="/login">1:1 문의</Link>
                                     )}
                                 </li>
-                                <li><Link to="/notice">공지사항</Link></li>
+                                <li><Link to="/notice_list">공지사항</Link></li>
                                 <li><Link to="/faq">FAQ</Link></li>
                             </ul>
                         </li>
@@ -104,14 +107,15 @@ const Header = () => {
                         )}
                         {role === "STORE" && (
                             <>
-                                <li><Link to="/mypage_store">업체 마이페이지</Link></li>
-                                <li><a href="#" onClick={handleLogout}>로그아웃</a></li>
+                                <li><Link to="/mypage/store">업체 마이페이지</Link></li>
+                                <li><Link to="/logout">로그아웃</Link></li>
                             </>
                         )}
                         {role === "ADMIN" && (
                             <>
-                                <li><Link to="/mypage_admin">관리자 페이지</Link></li>
-                                <li className="admin-enter"><Link to="/admin/exit">관리자 모드 해제</Link></li>
+                                <li><Link to="/admin/mypage">관리자 페이지</Link></li>
+                                <li><Link to="/admin/exit">관리자 모드 해제</Link></li>
+                                <li><a href="#" onClick={handleLogout}>로그아웃</a></li>
                             </>
                         )}
                         {!role && (
@@ -121,6 +125,7 @@ const Header = () => {
                             </>
                         )}
                     </ul>
+
                 </div>
             </header>
         </>
