@@ -13,26 +13,34 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/notice")
 public class NoticeController {
 
     private final NoticeService noticeService;
 
-    // 1. 목록 - 당신이 원하는 URL 그대로!
-    @GetMapping("/notice_list")
-    public Map<String, Object> list(Criteria cri) {
+    /**
+     * 1. 공지사항 목록 조회 및 관리자 권한 반환
+     */
+    @GetMapping("/list")
+    public Map<String, Object> list(Criteria cri, HttpSession session) {
+        String role = (String) session.getAttribute("ROLE");
+        boolean isAdmin = "ADMIN".equals(role);
+
         return Map.of(
                 "list", noticeService.getNoticeList(cri),
-                "pageMaker", new PagingDTO(noticeService.getTotalCount(cri), cri)
+                "pageMaker", new PagingDTO(noticeService.getTotalCount(cri), cri),
+                "isAdmin", isAdmin
         );
     }
 
-    // 2. 상세보기 - 당신이 원하는 /notice_view/123 그대로!
-    @GetMapping("/notice_view/{no}")
+    /**
+     * 2. 공지사항 상세 조회 및 조회수 증가 (비관리자일 경우)
+     */
+    @GetMapping("/view/{no}")
     public Map<String, Object> detail(@PathVariable Long no, HttpSession session) {
         String role = (String) session.getAttribute("ROLE");
 
-        // 일반 유저만 조회수 증가
+        // ADMIN이 아닐 경우에만 조회수 증가
         if (!"ADMIN".equals(role)) {
             noticeService.increaseViews(no);
         }
@@ -40,21 +48,25 @@ public class NoticeController {
         Map<String, Object> response = new HashMap<>();
         response.put("view", noticeService.getNoticeById(no));
         response.put("role", role != null ? role : "USER");
-        response.put("pageMaker", null); // 필요시 페이징 정보 추가 가능
+        response.put("pageMaker", null);
         return response;
     }
 
-    // 3. 작성 권한 체크 - 당신이 원하는 URL 그대로!
-    @GetMapping("/notice_write/auth")
+    /**
+     * 3. 공지사항 작성 권한 체크 (ADMIN만 허용)
+     */
+    @GetMapping("/write/auth")
     public ResponseEntity<Void> checkWriteAuth(HttpSession session) {
         if (!"ADMIN".equals(session.getAttribute("ROLE"))) {
-            return ResponseEntity.status(403).build();
+            return ResponseEntity.status(403).build(); // 권한 없음
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().build(); // 권한 있음
     }
 
-    // 4. 작성 처리 - 당신이 원하는 /notice_write 그대로!
-    @PostMapping("/notice_write")
+    /**
+     * 4. 공지사항 작성 처리 (ADMIN만 허용)
+     */
+    @PostMapping("/write")
     public ResponseEntity<String> write(@RequestBody NoticeDTO notice, HttpSession session) {
         if (!"ADMIN".equals(session.getAttribute("ROLE"))) {
             return ResponseEntity.status(403).body("권한 없음");
@@ -63,12 +75,11 @@ public class NoticeController {
         return ResponseEntity.ok("success");
     }
 
-    // 5. 수정 폼 데이터 불러오기 - 당신이 원하는 /notice_modify/123 그대로!
-    @GetMapping("/notice/modify/{no}")
-    public Map<String, Object> getModifyForm(@PathVariable Long no, Criteria cri, HttpSession session) {
-        if (!"ADMIN".equals(session.getAttribute("ROLE"))) {
-            throw new RuntimeException("권한 없음");
-        }
+    /**
+     * 5. 공지사항 수정 폼 데이터 불러오기 (ADMIN만 허용)
+     */
+    @GetMapping("/modify/{no}")
+    public Map<String, Object> getModifyForm(@PathVariable Long no, Criteria cri) {
 
         Map<String, Object> response = new HashMap<>();
         response.put("notice", noticeService.getNoticeById(no));
@@ -76,8 +87,10 @@ public class NoticeController {
         return response;
     }
 
-    // 6. 수정 처리 - 당신이 원하는 /notice_modify/123 그대로!
-    @PutMapping("/notice_modify/{no}")
+    /**
+     * 6. 공지사항 수정 처리 (ADMIN만 허용)
+     */
+    @PutMapping("/modify/{no}")
     public ResponseEntity<String> modify(
             @PathVariable Long no,
             @RequestBody NoticeDTO notice,
@@ -92,8 +105,10 @@ public class NoticeController {
         return ResponseEntity.ok("success");
     }
 
-    // 7. 삭제 - 당신이 원하는 /notice_view/123 로 DELETE!
-    @DeleteMapping("/notice_view/{no}")
+    /**
+     * 7. 공지사항 삭제 처리 (ADMIN만 허용)
+     */
+    @DeleteMapping("/view/{no}")
     public ResponseEntity<String> delete(@PathVariable Long no, HttpSession session) {
         if (!"ADMIN".equals(session.getAttribute("ROLE"))) {
             return ResponseEntity.status(403).body("권한 없음");

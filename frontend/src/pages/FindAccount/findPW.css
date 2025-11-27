@@ -9,7 +9,7 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.09);
 }
 
-tr {
+.tr-center {
   text-align: center;
 }
 
@@ -105,13 +105,4 @@ tr {
 }
 
 /* 페이지 레이아웃 */
-main {
-  background-color: #f9f9f9;
-  width: 100vw !important;
-  margin-left: calc(50% - 50vw) !important;
-  margin-right: calc(50% - 50vw) !important;
-  min-height: 80vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+

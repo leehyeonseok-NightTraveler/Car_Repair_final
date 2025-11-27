@@ -18,5 +18,6 @@
         <mapper resource="mybatis/mappers/mypage_StoreMapper.xml"/>
         <mapper resource="mybatis/mappers/mypage_UserMapper.xml"/>
         <mapper resource="mybatis/mappers/findAccount.xml"/>
+        <mapper resource="mybatis/mappers/AutoKeywordMapper.xml"/>
 	</mappers>
 </configuration>

@@ -4,23 +4,19 @@ package com.boot.dao;
 import com.boot.dto.Criteria;
 import com.boot.dto.InquiryDTO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface InquiryDAO {
-
-    void writeProcess(Map<String, String> param);
-
-    List<InquiryDTO> inquiryList(Map<String, Object> param);        // customer_id + cri
-    List<InquiryDTO> inquiryManageList(Criteria cri);
-
-    InquiryDTO inquiryView(Long inquiry_no);
-
-    void replyProcess(Map<String, String> param);
-
-    int TotalInquiry(Criteria cri);
-    int TotalInquiryUser(String loginId);
-
-    void deleteInquiries(List<Long> inquiryIds);
+    List<InquiryDTO> getInquiryListWithPaging(@Param("cri") Criteria cri, String customer_id);
+    int getTotalUserInquiry(@Param("cri") Criteria cri, String customer_id);
+    List<InquiryDTO> getInquiryManageWithPaging(@Param("cri") Criteria cri);
+    int getTotalAllInquiry(@Param("cri") Criteria cri);
+    InquiryDTO getInquiryView(int inquiry_no);
+    void inquiryReplyProcess(InquiryDTO inquiryDTO);
+    InquiryDTO getUserInfo(String customer_id);
+    void inquiryWriteProcess(InquiryDTO inquiryDTO);
+    void inquiryDeleteProcess(List<Integer> inquiryNos, String customer_id);
 }

@@ -1,33 +1,26 @@
 // src/pages/inquiry/InquiryView.jsx
-import React, { useEffect, useState, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // useLocation 제거, useParams 추가
+import React, {useEffect, useState, useCallback} from "react";
+import {useParams, useNavigate} from "react-router-dom";
 import axios from "axios";
 import InquiryFloating from "../../components/common/InquiryFloating";
-import "./Inquiry.css"
+import "./InquiryView.css";
 
 export default function InquiryView() {
     const [inquiry, setInquiry] = useState({});
-    const [role, setRole] = useState("");
     const [loading, setLoading] = useState(true);
+    const [role] = useState(sessionStorage.getItem("ROLE") || "");
     const navigate = useNavigate();
+    const {inquiry_no} = useParams();
 
-    // ⭐️ 수정: useParams를 사용하여 URL 파라미터에서 inquiryNo를 가져옵니다.
-    // App.js 라우팅이 /inquiry_view/:inquiryNo 라고 가정합니다.
-    const { inquiryNo } = useParams();
-
-    const fetchView = useCallback(async () => {
-        // ⭐️ 수정: inquiry_no 대신 inquiryNo 사용
-        if (!inquiryNo) {
-            navigate("/inquiry_history");
+    const fetchInquiry = useCallback(async () => {
+        if (!inquiry_no || isNaN(inquiry_no)) {
+            navigate("/inquiry/history");
             return;
         }
 
         try {
-            const res = await axios.get("/api/inquiry_view", {
-                // ⭐️ 수정: 파라미터 이름 inquiryNo로 변경
-                params: { inquiry_no: inquiryNo },
-                withCredentials: true,
-            });
+            setLoading(true);
+            const res = await axios.get(`/api/inquiry/view/${inquiry_no}`, {withCredentials: true});
 
             if (res.data.redirect) {
                 navigate(res.data.redirect);
@@ -35,72 +28,105 @@ export default function InquiryView() {
             }
 
             setInquiry(res.data.inquiryView || {});
-            setRole(res.data.role || "");
         } catch (err) {
-            alert("문의 내용을 불러올 수 없습니다.");
+            if (err.response?.status === 404) {
+                alert("해당 문의가 존재하지 않거나 삭제되었습니다.");
+            } else {
+                alert("문의 내용을 불러올 수 없습니다.");
+            }
+            navigate("/inquiry/history");
         } finally {
             setLoading(false);
         }
-    }, [inquiryNo, navigate]); // 의존성 배열도 inquiryNo로 변경
+    }, [inquiry_no, navigate]);
 
     useEffect(() => {
-        fetchView();
-    }, [fetchView]);
+        fetchInquiry();
+    }, [fetchInquiry]);
 
-    if (loading) return <div>로딩 중...</div>;
-    // URL 파라미터가 유효하지 않은 경우를 대비해 inquiryNo를 확인하는 로직을 추가해도 좋습니다.
-    if (!inquiry.inquiry_no) return <div>문의가 존재하지 않습니다.</div>;
+    if (loading) return <main className="view-page">
+        <div className="view-loading">로딩 중...</div>
+    </main>;
+    if (!inquiry.inquiry_no) return <main className="view-page">
+        <div className="view-empty">문의가 존재하지 않습니다.</div>
+    </main>;
 
     return (
-        <main id="inquiry-view-container" className="inquiry-view-container">
-            <InquiryFloating role={role} />
+        <>
+            <InquiryFloating/>
 
-            <section className="inquiry-header">
-                <h2 className="inquiry-title">{inquiry.inquiry_title}</h2>
-                <hr className="inquiry-divider" />
-            </section>
+            <main className="view-page">
+                <div className="view-container">
 
-            <article className="inquiry-body">
-                <div
-                    className="inquiry-content"
-                    dangerouslySetInnerHTML={{ __html: inquiry.inquiry_content }}
-                />
-                <div className="inquiry-meta">
-                    <span className="inquiry-date">{inquiry.inquiry_created}</span>
-                </div>
-            </article>
+                    <header className="view-header">
+                        <h1 className="view-title">
+                            {inquiry.inquiry_title}
+                            <span
+                                className={`status-badge small ${inquiry.inquiry_status === "답변대기" ? "waiting" : "completed"}`}>
+                                {inquiry.inquiry_status}
+                            </span>
+                        </h1>
+                        <div className="view-meta">
+                            <span>{inquiry.inquiry_created}</span>
+                            {inquiry.customer_name && <span>｜ 작성자: {inquiry.customer_name}</span>}
+                        </div>
+                    </header>
 
-            {/* 관리자 답변 영역 */}
-            {role === "ADMIN" ? (
-                <section className="inquiry-reply">
-                    <h3 className="reply-title">관리자 답변</h3>
-                    {inquiry.reply_content ? (
+                    <section className="view-content-section">
                         <div
-                            className="reply-content"
-                            dangerouslySetInnerHTML={{ __html: inquiry.reply_content }}
+                            className="view-content"
+                            dangerouslySetInnerHTML={{__html: inquiry.inquiry_content}}
                         />
-                    ) : (
-                        <p>아직 답변이 없습니다.</p>
+                    </section>
+
+                    {(role === "ADMIN" || inquiry.reply_content) && (
+                        <section className="view-reply">
+                            <h3 className="view-reply-title">
+                                관리자 답변
+                                {role === "ADMIN" && (
+                                    <span className="reply-status">
+                                        {inquiry.reply_content ? "(작성됨)" : "(미작성)"}
+                                    </span>
+                                )}
+                            </h3>
+
+                            {inquiry.reply_content ? (
+                                <>
+                                    <div
+                                        className="view-reply-content"
+                                        dangerouslySetInnerHTML={{__html: inquiry.reply_content}}
+                                    />
+                                    {inquiry.reply_created && (
+                                        <div className="view-reply-date">
+                                            답변 작성일: {inquiry.reply_created}
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <p className="view-no-reply">아직 답변이 작성되지 않았습니다.</p>
+                            )}
+
+                            {role === "ADMIN" && (
+                                <div className="view-reply-actions">
+                                    <button
+                                        // 💡 수정! 정확한 라우터 경로를 사용합니다.
+                                        onClick={() => navigate(`/inquiry/reply_write/${inquiry.inquiry_no}`)}
+                                        className="btn-primary"
+                                    >
+                                        {inquiry.reply_content ? "답변 수정" : "답변 작성"}
+                                    </button>
+                                </div>
+                            )}
+                        </section>
                     )}
-                    <div className="reply-button">
-                        {/* ⭐️ 수정: 답변 작성 링크를 URL 파라미터 방식으로 변경 */}
-                        <a
-                            href={`/reply_write/${inquiry.inquiry_no}`}
-                            className="btn btn-primary"
-                        >
-                            {inquiry.reply_content ? "답변 수정" : "답변 작성"}
-                        </a>
+
+                    <div className="view-footer">
+                        <button onClick={() => navigate(-1)} className="btn-back">
+                            ← 목록으로 돌아가기
+                        </button>
                     </div>
-                </section>
-            ) : inquiry.reply_content ? (
-                <section className="inquiry-reply">
-                    <h3 className="reply-title">관리자 답변</h3>
-                    <div
-                        className="reply-content"
-                        dangerouslySetInnerHTML={{ __html: inquiry.reply_content }}
-                    />
-                </section>
-            ) : null}
-        </main>
+                </div>
+            </main>
+        </>
     );
 }
