@@ -188,46 +188,61 @@ function UserMypage() {
 
       {/* ===== 문의 내역 ===== */}
       <section className="mypage-section">
-  <h3>1:1 문의 내역</h3>
+        <h3>1:1 문의 내역</h3>
 
-  {inquiryList.length > 0 ? (
-    <>
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th>번호</th>
-            <th>제목</th>
-            <th>작성일</th>
-            <th>상태</th>
-            <th>보기</th>
-          </tr>
-        </thead>
-        <tbody>
-          {inquiryList.map((q) => (
-            <tr key={q.inquiry_no}>
-              <td>{q.inquiry_no}</td>
-              <td>{q.inquiry_title}</td>
-              <td>{q.inquiry_created}</td>
-              <td>{q.inquiry_status}</td>
-              <td>
-                <a className="btn-sub" href={`/inquiry/${q.inquiry_no}`}>상세보기</a>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+        {inquiryList.length > 0 ? (
+          <>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>번호</th>
+                  <th>제목</th>
+                  <th>작성일</th>
+                  <th>상태</th>
+                  <th>보기</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inquiryList.map((q) => (
+                  <tr key={q.inquiry_no}>
+                    <td>{q.inquiry_no}</td>
+                    <td>{q.inquiry_title}</td>
+                    <td>{q.inquiry_created}</td>
+                    <td>{q.inquiry_status}</td>
+                    <td>
+                      <a className="btn-sub" href={`/inquiry/${q.inquiry_no}`}>상세보기</a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-      <Pagination
-        pageMaker={pageMaker}
-        currentPage={pageMaker?.cri?.pageNum}
-        goToPage={changePage}
-      />
-    </>
-  ) : (
-    <p>등록된 문의 내역이 없습니다.</p>
-  )}
-</section>
+            {/* 페이지네이션 */}
+            <nav className="pagination-container">
+              <ul className="pagination-list">
+                {pageMaker?.prev && (
+                  <li><button onClick={() => changePage(pageMaker.startPage - 1)}>이전</button></li>
+                )}
 
+                {Array.from({ length: pageMaker.endPage - pageMaker.startPage + 1 }, (_, i) => {
+                  const num = pageMaker.startPage + i;
+                  return (
+                    <li key={num} className={(pageMaker?.cri?.pageNum === num) ? "active" : ""}>
+                      <button onClick={() => changePage(num)}>{num}</button>
+                    </li>
+                  );
+                })}
+
+                {pageMaker?.next && (
+                  <li><button onClick={() => changePage(pageMaker.endPage + 1)}>다음</button></li>
+                )}
+              </ul>
+            </nav>
+          </>
+        ) : (
+          <p>등록된 문의 내역이 없습니다.</p>
+        )}
+      </section>
     </div>
   );
 }
