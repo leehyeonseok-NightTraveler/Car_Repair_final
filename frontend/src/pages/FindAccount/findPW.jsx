@@ -59,19 +59,19 @@ function FindPW() {
                     <table className="findpw-table">
                         <tbody>
 
-                            <tr>
+                            <tr className="tr-center">
                                 <td className="findpw-title" colSpan="3">
                                     <p>비밀번호 찾기</p>
                                 </td>
                             </tr>
 
-                            <tr>
+                            <tr className="tr-center">
                                 <td colSpan="3" className="findpw-desc">
                                     <p>아래 정보를 입력하시면 임시 비밀번호를 이메일로 발송해 드립니다.</p>
                                 </td>
                             </tr>
 
-                            <tr>
+                            <tr className="tr-center">
                                 <td colSpan="3">
                                     <input
                                         className="findpw-account-id"
@@ -83,7 +83,7 @@ function FindPW() {
                                 </td>
                             </tr>
 
-                            <tr>
+                            <tr className="tr-center">
                                 <td colSpan="3">
                                     <input
                                         className="findpw-phone"
@@ -95,7 +95,7 @@ function FindPW() {
                                 </td>
                             </tr>
 
-                            <tr>
+                            <tr className="tr-center">
                                 <td colSpan="3">
                                     <input
                                         className="findpw-email"
@@ -107,7 +107,7 @@ function FindPW() {
                                 </td>
                             </tr>
 
-                            <tr>
+                            <tr className="tr-center">
                                 <td colSpan="3">
                                     <input
                                         className="findpw-submit"
@@ -117,7 +117,7 @@ function FindPW() {
                                 </td>
                             </tr>
 
-                            <tr>
+                            <tr className="tr-center">
                                 <td colSpan="3">
                                     <input
                                         className="findpw-login-btn"
@@ -128,7 +128,7 @@ function FindPW() {
                                 </td>
                             </tr>
 
-                            <tr className="findpw-last-row">
+                            <tr className="tr-center">
                                 <td className="findpw-bottom-btns">
                                     <a href="/findAccount" className="findpw-link">아이디 찾기</a>
                                     &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;

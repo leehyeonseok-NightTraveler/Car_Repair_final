@@ -340,16 +340,3 @@ footer .footer-info .copyright {
     color: #777;
     font-size: 13px;
 }
-
-.admin-enter a {
-  background-color: #222;
-  color: #fff !important;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  transition: background 0.3s;
-}
-
-.admin-enter a:hover {
-  background-color: #007bff;
-}

@@ -241,3 +241,28 @@
     margin-top: 10px;
   }
 }
+
+/* 테이블이 부모 높이를 따라 늘어나는 문제 차단 */
+.data-table {
+  height: auto !important;
+  max-height: none !important;
+  display: table !important;
+}
+
+/* tbody 강제 줄이기 */
+.data-table tbody {
+  display: table-row-group !important;
+  height: auto !important;
+}
+
+/* tr 높이 강제 */
+.data-table tr {
+  height: auto !important;
+}
+
+/* td 안의 콘텐츠만큼만 */
+.data-table td {
+  padding: 8px 10px !important;
+  height: auto !important;
+  vertical-align: middle !important;
+}

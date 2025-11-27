@@ -2,8 +2,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-import "../../components/common/mainpage.css";
-import "../../components/common/mypage_common.css";
 import "./user.css";
 
 function UserMypage() {
@@ -17,9 +15,10 @@ function UserMypage() {
   /** 🔹 유저/차량/문의 내역 로드 */
   const loadUserData = async (pageNum = 1) => {
     try {
-      const res = await axios.get(`/api/mypage/user/info?pageNum=${pageNum}`, {
-        withCredentials: true,
-      });
+      const res = await axios.get("/api/mypage/user/info", {
+        params: { pageNum },
+        withCredentials: true
+        });
 
       setUser(res.data.user);
       setCarList(res.data.carList || []);
@@ -228,7 +227,7 @@ function UserMypage() {
                 {Array.from({ length: pageMaker.endPage - pageMaker.startPage + 1 }, (_, i) => {
                   const num = pageMaker.startPage + i;
                   return (
-                    <li key={num} className={pageMaker.cri.pageNum === num ? "active" : ""}>
+                    <li key={num} className={(pageMaker?.cri?.pageNum === num) ? "active" : ""}>
                       <button onClick={() => changePage(num)}>{num}</button>
                     </li>
                   );

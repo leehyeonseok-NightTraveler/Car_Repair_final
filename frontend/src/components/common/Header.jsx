@@ -100,9 +100,9 @@ const Header = () => {
                     <ul className="util">
                         {role === "USER" && (
                             <>
-                                <li><Link to="/mypage_user">마이페이지</Link></li>
+                                <li><Link to="/mypage/user">마이페이지</Link></li>
                                 <li><a href="#" onClick={handleLogout}>로그아웃</a></li>
-                                <li className="admin-enter"><Link to="/promote_admin">관리자 전환</Link></li>
+                                <li><Link to="/promote_admin">관리자 전환</Link></li>
                             </>
                         )}
                         {role === "STORE" && (
