@@ -69,7 +69,7 @@ const Header = () => {
 	                                      <Link to="/login">1:1 문의</Link>
 	                                  )}
 	                              </li>
-	                              <li><Link to="/notice">공지사항</Link></li>
+	                              <li><Link to="/notice/list">공지사항</Link></li>
 	                              <li><Link to="/faq">FAQ</Link></li>
 	                          </ul>
 	                      </li>
@@ -84,14 +84,14 @@ const Header = () => {
                             <ul className="submenu">
                                 <li>
                                     {role === "USER" || role === "STORE" ? (
-                                        <Link to="/inquiry_history">1:1 문의</Link>
+                                        <Link to="/inquiry/history">1:1 문의</Link>
                                     ) : role === "ADMIN" ? (
-                                        <Link to="/inquiry_manage">문의 관리</Link>
+                                        <Link to="/inquiry/manage">문의 관리</Link>
                                     ) : (
                                         <Link to="/login">1:1 문의</Link>
                                     )}
                                 </li>
-                                <li><Link to="/notice_list">공지사항</Link></li>
+                                <li><Link to="/notice/list">공지사항</Link></li>
                                 <li><Link to="/faq">FAQ</Link></li>
                             </ul>
                         </li>

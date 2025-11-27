@@ -80,10 +80,10 @@ function App() {
                         <Route path="/recommend" element={<RecommendMap />} />
 
                         {/* --- [공지사항] --- */}
-                        <Route path="/notice_list" element={<NoticeList />} />
-                        <Route path="/notice_write" element={<NoticeWrite />} />
-                        <Route path="/notice_view/:notice_no" element={<NoticeView />} />
-                        <Route path="/notice_modify/:notice_no" element={<NoticeModify />} />
+                        <Route path="/notice/list" element={<NoticeList />} />
+                        <Route path="/notice/write" element={<NoticeWrite />} />
+                        <Route path="/notice/view/:notice_no" element={<NoticeView />} />
+                        <Route path="/notice/modify/:notice_no" element={<NoticeModify />} />
 
                         {/* --- [꿀팁 가이드] (SCRUM-27) --- */}
                         <Route path="/guide" element={<Guide />} />    
@@ -99,11 +99,11 @@ function App() {
                         <Route path="/faq/modify/:faqNo" element={<FaqModify />} />
 
                         {/* --- [1:1 문의 기능] --- */}
-                        <Route path="/inquiry_write" element={<InquiryWrite />} />
-                        <Route path="/inquiry_history" element={<InquiryHistory />} />
-                        <Route path="/inquiry_view/:inquiryNo" element={<InquiryView />} />
-                        <Route path="/inquiry_manage" element={<InquiryManage />} />
-                        <Route path="/reply_write/:inquiryNo" element={<ReplyWrite />} />
+                        <Route path="/inquiry/write" element={<InquiryWrite />} />
+                        <Route path="/inquiry/history" element={<InquiryHistory />} />
+                        <Route path="/inquiry/view/:inquiry_no" element={<InquiryView />} />
+                        <Route path="/inquiry/manage" element={<InquiryManage />} />
+                        <Route path="/inquiry/reply_write/:inquiry_no" element={<ReplyWrite />} />
 
                         {/* --- [회원가입/관리] --- */}
                         <Route path="/register" element={<Register />} />
