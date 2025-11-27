@@ -13,7 +13,7 @@ public class Criteria {
     private int amount = 10;
     private String type;
     private String keyword;
-
+    
     // MyBatis에서 type을 배열로 쓰고 싶을 때 (검색 기능 확장 대비)
     public String[] getTypeArr() {
         return type == null ? new String[]{} : type.split("");

@@ -32,22 +32,26 @@ public class FaqController {
 	@Autowired
 	private FaqService service;
 	
-    // 1. FAQ 목록 조회 (LIST)
-    // 기존 경로 유지: GET /faq?pageNum=...
 	@GetMapping("/faq") 
-	public Map<String, Object> getFaqList(Criteria cri) {
+	public ResponseEntity<Map<String, Object>> getFaqList(Criteria cri) { // ⭐️ Map 대신 ResponseEntity 사용 권장
 	    log.info("@# getFaqList() with criteria: {}", cri);
 	    
-	    ArrayList<FaQDTO> list = service.listWithPaging(cri);
-	    int total = service.getTotalCount(cri);
-	    
-	    Map<String, Object> response = new HashMap<>();
-	    response.put("list", list); 
-	    response.put("pageMaker", new PageDTO(total, cri)); 
-	    
-	    return response; // JSON 응답 (목록과 페이징 정보)
+	    try {
+	        java.util.List<FaQDTO> list = service.getList(cri); 
+	        
+	        int total = service.getTotal(cri); 
+	        
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("list", list); 
+	        response.put("pageMaker", new PageDTO(total, cri)); 
+	        
+	        return new ResponseEntity<>(response, HttpStatus.OK);
+	        
+	    } catch (Exception e) {
+	        log.error("FAQ 목록 조회 중 오류 발생", e);
+	        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 	}
-	
     // 2. FAQ 상세 조회 (READ)
     // 프론트엔드 URL 경로에 맞춤: GET /faq/view/{faqNo}
 	@GetMapping("/faq/view/{faqNo}") 
@@ -120,4 +124,6 @@ public class FaqController {
            return new ResponseEntity<>("FAIL: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
        }
     }
+	
+	
 }
