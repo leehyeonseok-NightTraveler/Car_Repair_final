@@ -63,6 +63,9 @@ import AdminPromote from "./pages/promote_admin/AdminPromote.jsx";
 // 11.[검색기능]
 import AutoSearch from "./pages/AutoSearch/autoSearch.jsx";
 
+// 13. [자동차 정비이력/관리]
+import Maintenance from "./pages/maintenance/Maintenance.jsx";
+
 function App() {
     return (
         <Router>
@@ -134,6 +137,7 @@ function App() {
                         {/* 자동검색 */}
                         <Route path="/autoSearch" element={<AutoSearch />} />
 
+                        <Route path="/maintenance" element={<Maintenance />} />
                     </Routes>
                 </main>
 
