@@ -27,5 +27,23 @@
             #{description}
         )
     </insert>
+	
+	<select id="findAllStores" resultType="com.boot.dto.StoreDTO">
+    SELECT 
+        STORE_ID AS storeId, 
+        STORE_NAME AS storeName, 
+        ADDRESS AS address,
+        REG_DATE AS regDate,
+        LATITUDE AS latitude,
+        LONGITUDE AS longitude,
+        STORE_STATUS AS storeStatus,
+        DESCRIPTION AS description,
+        OPENING_HOURS AS openingHours
+        
+        FROM 
+        TBL_STORE
+    WHERE 
+        STORE_STATUS = 'APPROVED' 
+</select>
 
 </mapper>

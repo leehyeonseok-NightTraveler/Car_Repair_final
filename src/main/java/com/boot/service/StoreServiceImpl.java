@@ -1,5 +1,7 @@
 package com.boot.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.security.crypto.password.PasswordEncoder; // 1. PasswordEncoder import 삭제
 import org.springframework.stereotype.Service;
@@ -27,4 +29,9 @@ public class StoreServiceImpl implements StoreService {
         // 8. 폼에서 받은 DTO를 DAO로 그대로 전달하여 DB에 저장
         storeDAO.registerStore(storeDTO);
     }
+
+	@Override
+	public List<StoreDTO> getAllStores() {
+		return storeDAO.findAllStores(); // DAO 메서드 호출
+	}
 }

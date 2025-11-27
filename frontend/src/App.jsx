@@ -64,6 +64,9 @@ import StoreEdit from "./pages/Mypage/StoreEdit.jsx";
 // 12.[검색기능]
 import AutoSearch from "./pages/AutoSearch/autoSearch.jsx";
 
+//13. [예약 페이지]
+import Reservation from './pages/Reservation/Reservation.jsx';
+
 function App() {
     return (
         <Router>
@@ -130,7 +133,9 @@ function App() {
 						
                         {/* 자동검색 */}
                         <Route path="/autoSearch" element={<AutoSearch />} />
-
+                        
+                        {/* 예약 페이지 */} 
+                        <Route path="/reservation" element={<Reservation />} />
                     </Routes>
                 {/* 푸터 */}
                 <Footer />

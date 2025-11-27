@@ -1,10 +1,16 @@
 package com.boot.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam; // [★ 1. import 추가]
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.boot.dto.StoreDTO;
@@ -12,8 +18,10 @@ import com.boot.service.StoreService;
 
 import lombok.extern.slf4j.Slf4j;
 
+@RestController
+@RequestMapping("/api/stores")
 @Slf4j
-@Controller
+@CrossOrigin(origins = "http://localhost:5173")
 public class StoreController {
 
     @Autowired
@@ -59,5 +67,16 @@ public class StoreController {
 
         rttr.addFlashAttribute("success_msg", "업체 회원가입이 완료되었습니다. 로그인해주세요.");
         return "redirect:/login"; 
+    }
+
+    /**
+     * GET /api/stores : 예약 가능한 정비소 목록 조회 (프론트엔드 Reservation 컴포넌트에서 호출)
+     */
+    @GetMapping
+    public ResponseEntity<List<StoreDTO>> getStoreList() {
+        List<StoreDTO> stores = storeService.getAllStores();
+        
+        // 목록이 비어있으면 204 No Content 대신 빈 배열과 200 OK를 반환하여 프론트 처리가 용이하도록 합니다.
+        return ResponseEntity.ok(stores); 
     }
 }

@@ -52,33 +52,12 @@ const Header = () => {
 					<div>
 	                      <AutoSearch placeholder="검색어 입력하세요" />
 	                 </div>
-	
-	                  <ul id="gnb">
-	                      <li><Link to="/guide">꿀팁 가이드</Link></li>
-	                      <li><Link to="/recommend">주변 정비소</Link></li>
-	
-	                      <li className="dropdown-parent">
-	                          <Link to="#">고객센터</Link>
-	                          <ul className="submenu">
-	                              <li>
-	                                  {role === "USER" || role === "STORE" ? (
-	                                      <Link to="/inquiry/history">1:1 문의</Link>
-	                                  ) : role === "ADMIN" ? (
-	                                      <Link to="/inquiry/manage">문의 관리</Link>
-	                                  ) : (
-	                                      <Link to="/login">1:1 문의</Link>
-	                                  )}
-	                              </li>
-	                              <li><Link to="/notice/list">공지사항</Link></li>
-	                              <li><Link to="/faq">FAQ</Link></li>
-	                          </ul>
-	                      </li>
-	                  </ul>
-
                     <ul id="gnb">
                         <li><Link to="/guide">꿀팁 가이드</Link></li>
                         <li><Link to="/recommend">주변 정비소</Link></li>
-
+                        <li>
+                            <Link to={role ? "/Reservation" : "/login"}>예약</Link> 
+                        </li>
                         <li className="dropdown-parent">
                             <Link to="#">고객센터</Link>
                             <ul className="submenu">

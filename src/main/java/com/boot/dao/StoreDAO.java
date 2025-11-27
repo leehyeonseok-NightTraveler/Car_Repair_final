@@ -1,5 +1,7 @@
 package com.boot.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import com.boot.dto.StoreDTO;
 
@@ -11,4 +13,6 @@ public interface StoreDAO {
      * @param storeDTO (암호화된 DTO 객체)
      */
     public void registerStore(StoreDTO storeDTO);
+    
+    List<StoreDTO> findAllStores();
 }
