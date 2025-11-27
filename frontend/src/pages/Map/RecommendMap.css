@@ -58,7 +58,7 @@
 
 /* 좌측 리스트 패널 */
 .list-panel {
-  @apply hidden lg:flex flex-col w-96 border-r border-gray-100 bg-white;
+  @apply hidden lg:flex flex-col w-96 border-r border-gray-100 bg-white h-full min-h-0;
 }
 
 .list-header {
@@ -89,3 +89,81 @@
 .mobile-list-btn {
   @apply w-full bg-white/90 backdrop-blur-md text-gray-800 px-6 py-4 rounded-2xl shadow-xl font-bold flex justify-between items-center border border-gray-200/50 hover:bg-white transition-all active:scale-95;
 }
+
+/* --- 상세 정보 패널 (데스크톱) --- */
+.detail-panel {
+  @apply hidden lg:block absolute top-0 right-0 h-full w-[360px] bg-white border-l border-gray-200 shadow-2xl z-30;
+}
+
+.panel-header {
+  @apply flex items-center justify-between px-5 py-4 border-b border-gray-100;
+}
+
+.panel-title {
+  @apply text-lg font-extrabold text-gray-800;
+}
+
+.panel-close {
+  @apply text-2xl leading-none text-gray-400 hover:text-gray-600 transition;
+}
+
+.panel-body {
+  @apply p-5 space-y-3;
+}
+
+.panel-address {
+  @apply text-sm text-gray-600;
+}
+
+.panel-phone {
+  @apply text-sm font-semibold text-teal-700;
+}
+
+.panel-actions {
+  @apply flex gap-2 pt-2;
+}
+
+.action-btn {
+  @apply px-3 py-2 rounded-lg text-sm font-bold border border-gray-200 shadow-sm hover:shadow transition;
+}
+
+.action-btn.call {
+  @apply bg-teal-50 text-teal-700 hover:bg-teal-100;
+}
+
+.action-btn.route {
+  @apply bg-gray-50 text-gray-700 hover:bg-gray-100;
+}
+
+.action-btn.copy {
+  @apply bg-gray-50 text-gray-700 hover:bg-gray-100;
+}
+
+/* --- 상세 정보 바텀시트 (모바일) --- */
+.detail-sheet {
+  @apply lg:hidden fixed left-0 right-0 bottom-0 bg-white rounded-t-2xl border-t border-gray-200 shadow-2xl z-40 max-h-[50vh] overflow-y-auto;
+}
+
+.sheet-handle {
+  @apply w-12 h-1.5 bg-gray-300 rounded-full mx-auto mt-3;
+}
+
+.sheet-header {
+  @apply flex items-center justify-between px-5 py-3;
+}
+
+.sheet-title {
+  @apply text-base font-extrabold text-gray-800;
+}
+
+.sheet-close {
+  @apply text-sm font-bold text-gray-600 hover:text-gray-800;
+}
+
+.sheet-body {
+  @apply px-5 pb-5 space-y-3;
+}
+
+.sheet-address { @apply text-sm text-gray-600; }
+.sheet-phone { @apply text-sm font-semibold text-teal-700; }
+.sheet-actions { @apply flex gap-2 pt-2; }

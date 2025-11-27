@@ -108,7 +108,7 @@ const Header = () => {
                         {role === "STORE" && (
                             <>
                                 <li><Link to="/mypage/store">업체 마이페이지</Link></li>
-                                <li><Link to="/logout">로그아웃</Link></li>
+                                <li><a href="#" onClick={handleLogout}>로그아웃</a></li>
                             </>
                         )}
                         {role === "ADMIN" && (
