@@ -2,122 +2,132 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.boot.dao.InquiryDAO">
-
-    <!-- 상태 검색 조건 (W: 답변대기, C: 답변완료) -->
     <sql id="statusWhere">
-        <where>
-            <if test="type != null and type != ''">
-                <choose>
-                    <when test="type == 'W'">
-                        AND inquiry_status = '답변대기'
-                    </when>
-                    <when test="type == 'C'">
-                        AND inquiry_status = '답변완료'
-                    </when>
-                </choose>
-            </if>
-        </where>
+        <if test="cri.type != null and cri.type != ''">
+            AND inquiry_status = #{cri.type}
+        </if>
     </sql>
 
-    <!-- 1. 내 문의 내역 -->
-    <select id="inquiryList" resultType="com.boot.dto.InquiryDTO">
+    <select id="getInquiryListWithPaging" resultType="com.boot.dto.InquiryDTO">
         <![CDATA[
-        SELECT
-            inquiry_no,
-            inquiry_title,
-            TO_CHAR(inquiry_created, 'YYYY"년" MM"월" DD"일" HH24"시"MI"분"') AS inquiry_created,
-            inquiry_status
+        SELECT *
         FROM (
-            SELECT
-                inquiry_no,
-                inquiry_title,
-                inquiry_created,
-                inquiry_status,
-                ROWNUM AS rn
+            SELECT ROWNUM AS rn, a.*
             FROM (
                 SELECT
                     inquiry_no,
+                    customer_name,
                     inquiry_title,
-                    inquiry_created,
+                    TO_CHAR(inquiry_created, 'YYYY-MM-DD HH24:MI') AS inquiry_created,
                     inquiry_status
                 FROM tbl_inquiry
                 WHERE customer_id = #{customer_id}
-        ]]>
-        <include refid="statusWhere"/>
-        <![CDATA[
+                ]]>
+                <include refid="statusWhere"/>
+                <![CDATA[
                 ORDER BY inquiry_no DESC
-            )
-            WHERE ROWNUM <= #{pageNum} * #{amount}
+            ) a
+            WHERE ROWNUM <= #{cri.pageNum} * #{cri.amount}
         )
-        WHERE rn > (#{pageNum} - 1) * #{amount}
+        WHERE rn > (#{cri.pageNum} - 1) * #{cri.amount}
         ]]>
     </select>
 
-    <!-- 2. 관리자 문의 목록 -->
-    <select id="inquiryManageList" resultType="com.boot.dto.InquiryDTO">
+    <select id="getTotalUserInquiry" resultType="int">
+        SELECT COUNT(*)
+        FROM tbl_inquiry
+        WHERE customer_id = #{customer_id}
+        <include refid="statusWhere"/>
+    </select>
+
+    <select id="getInquiryManageWithPaging" resultType="com.boot.dto.InquiryDTO">
         <![CDATA[
-        SELECT
-            inquiry_no,
-            inquiry_title,
-            customer_id,
-            TO_CHAR(inquiry_created, 'YYYY"년" MM"월" DD"일" HH24"시"MI"분"') AS inquiry_created,
-            inquiry_status
+        SELECT *
         FROM (
-            SELECT
-                inquiry_no,
-                inquiry_title,
-                customer_id,
-                inquiry_created,
-                inquiry_status,
-                ROWNUM AS rn
+            SELECT ROWNUM AS rn, a.*
             FROM (
                 SELECT
                     inquiry_no,
+                    customer_name,
                     inquiry_title,
-                    customer_id,
-                    inquiry_created,
+                    TO_CHAR(inquiry_created, 'YYYY-MM-DD HH24:MI') AS inquiry_created,
                     inquiry_status
                 FROM tbl_inquiry
-        ]]>
-        <include refid="statusWhere"/>
-        <![CDATA[
+                WHERE 1=1
+                ]]>
+                <include refid="statusWhere"/>
+                <![CDATA[
                 ORDER BY inquiry_no DESC
-            )
-            WHERE ROWNUM <= #{pageNum} * #{amount}
+            ) a
+            WHERE ROWNUM <= #{cri.pageNum} * #{cri.amount}
         )
-        WHERE rn > (#{pageNum} - 1) * #{amount}
+        WHERE rn > (#{cri.pageNum} - 1) * #{cri.amount}
         ]]>
     </select>
 
-    <!-- 3. 상세 조회 -->
-    <select id="inquiryView" parameterType="long" resultType="com.boot.dto.InquiryDTO">
-        SELECT
-        inquiry_no,
-        customer_id,
-        customer_name,
-        customer_phone,
-        customer_email,
-        inquiry_title,
-        inquiry_content,
-        TO_CHAR(inquiry_created, 'YYYY"년" MM"월" DD"일" HH24"시"MI"분"') AS inquiry_created,
-        reply_content,
-        TO_CHAR(reply_created, 'YYYY"년" MM"월" DD"일" HH24"시"MI"분"') AS reply_created,
-        inquiry_status
+    <select id="getTotalAllInquiry" resultType="int">
+        SELECT COUNT(*)
+        FROM tbl_inquiry
+        WHERE 1=1
+        <include refid="statusWhere"/>
+    </select>
+
+    <select id="getInquiryView" resultType="com.boot.dto.InquiryDTO">
+        SELECT *
         FROM tbl_inquiry
         WHERE inquiry_no = #{inquiry_no}
     </select>
 
-    <!-- 4. 전체 개수 (내 문의) -->
-    <select id="TotalInquiryUser" parameterType="string" resultType="int">
-        SELECT COUNT(*) FROM tbl_inquiry
-        WHERE customer_id = #{loginId}
+    <update id="inquiryReplyProcess">
+        UPDATE tbl_inquiry
+        SET
+        reply_content = #{reply_content},
+        inquiry_status = '답변완료',
+        reply_created = SYSDATE
+        WHERE inquiry_no = #{inquiry_no}
+    </update>
+
+    <select id="getUserInfo" resultType="com.boot.dto.InquiryDTO">
+        SELECT
+            user_name AS customer_name,
+            email AS customer_email,
+            phone_number AS customer_phone
+        FROM
+        tbl_account
+        WHERE
+        account_id = #{customer_id}
     </select>
 
-    <!-- 5. 전체 개수 (관리자) -->
-    <select id="TotalInquiry" resultType="int">
-        SELECT COUNT(*) FROM tbl_inquiry
-        <include refid="statusWhere"/>
-    </select>
+    <!-- 초기 상태는 '답변대기'로 설정됩니다. -->
+    <insert id="inquiryWriteProcess" parameterType="com.boot.dto.InquiryDTO">
+        INSERT INTO tbl_inquiry (
+            inquiry_no,
+            customer_id,
+            customer_name,
+            customer_phone,
+            customer_email,
+            inquiry_title,
+            inquiry_content,
+            inquiry_status,
+            inquiry_created
+        ) VALUES (
+            SEQ_INQUIRY_NO.NEXTVAL,
+            #{customer_id},
+            #{customer_name},
+            #{customer_phone},
+            #{customer_email},
+            #{inquiry_title},
+            #{inquiry_content},
+            '답변대기',
+            SYSDATE
+        )
+    </insert>
 
-    <!-- 나머지는 그대로 (writeProcess, replyProcess, deleteInquiries) -->
+    <delete id="inquiryDeleteProcess">
+        DELETE FROM tbl_inquiry
+        WHERE inquiry_no IN
+        <foreach item="no" collection="inquiryNos" open="(" separator="," close=")">
+            #{no}
+        </foreach>
+    </delete>
 </mapper>
