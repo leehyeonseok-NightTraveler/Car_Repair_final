@@ -63,6 +63,9 @@ import AdminPromote from "./pages/promote_admin/AdminPromote.jsx";
 // 11.[검색기능]
 import AutoSearch from "./pages/AutoSearch/autoSearch.jsx";
 
+// 13.[리뷰 페이지]
+import Review from "./pages/Review/review.jsx";
+import StarRating from "./pages/Review/starRating.jsx";
 //13. [예약 페이지]
 import Reservation from './pages/Reservation/Reservation.jsx';
 
@@ -139,6 +142,10 @@ function App() {
 						
                         {/* 자동검색 */}
                         <Route path="/autoSearch" element={<AutoSearch />} />
+						
+                        {/* 리뷰 */}
+                        <Route path="/review" element={<Review />} />
+                        <Route path="/starRating" element={<StarRating />} />
                         
                         {/* 예약 페이지 */} 
                         <Route path="/reservation" element={<Reservation />} />

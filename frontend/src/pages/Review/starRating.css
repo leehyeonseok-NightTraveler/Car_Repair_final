@@ -1,0 +1,33 @@
+/* star-rating.css */
+.sr-star-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+}
+
+.sr-star-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  line-height: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .08s ease;
+}
+.sr-star-btn:active { transform: scale(.85); }
+
+.sr-star {
+  width: 23px;
+  height: 23px;
+  color: #ccc; /* empty color */
+}
+.sr-star-fill { color: gold; } /* filled color (uses currentColor) */
+.sr-star-half { color: white; opacity: .1; } /* visual for half */
+
+.sr-value {
+  margin-left: 8px;
+  font-size: 13px;
+  color: #444;
+}
