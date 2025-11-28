@@ -18,5 +18,10 @@
         <mapper resource="mybatis/mappers/mypage_StoreMapper.xml"/>
         <mapper resource="mybatis/mappers/mypage_UserMapper.xml"/>
         <mapper resource="mybatis/mappers/findAccount.xml"/>
+        <mapper resource="mybatis/mappers/AutoKeywordMapper.xml"/>
+        <mapper resource="mybatis/mappers/reviewMApper.xml"/>
+        <mapper resource="mybatis/mappers/reservationMapper.xml"/>
+        <mapper resource="mybatis/mappers/maintenance.xml"/>
+        <mapper resource="mybatis/mappers/maintenanceFavorite.xml"/>
 	</mappers>
 </configuration>

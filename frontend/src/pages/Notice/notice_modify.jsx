@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import "./notice.css";
+import "./Notice_modify.css";
 
-function NoticeModify() {
+export default function NoticeModify() {
     const { notice_no } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
@@ -14,53 +14,78 @@ function NoticeModify() {
     const [isLoading, setIsLoading] = useState(false);
     const [dataLoading, setDataLoading] = useState(true);
 
-    // 쿼리스트링에서 페이징 정보 추출 (당신 스타일 그대로!)
+    // 당신이 원하는 방식! role 하나로 통일
+    const [role, setRole] = useState(sessionStorage.getItem("ROLE") || "GUEST");
+
+    // role이 "ADMIN"이면 true → 편리하게 사용
+    const isAdmin = role === "ADMIN";
+
     const searchParams = new URLSearchParams(location.search);
-    const pageNum = parseInt(searchParams.get("pageNum") || "1", 10);
+    const pageNum = Math.max(1, parseInt(searchParams.get("pageNum") || "1", 10));
     const amount = parseInt(searchParams.get("amount") || "10", 10);
 
-    // 수정할 공지사항 데이터 불러오기 (당신이 원하는 URL 그대로)
+    // 실시간 ROLE 감지 (storage + 커스텀 이벤트)
     useEffect(() => {
+        const updateRole = () => {
+            const newRole = sessionStorage.getItem("ROLE") || "GUEST";
+            setRole(newRole);
+        };
+
+        updateRole(); // 즉시 반영
+
+        window.addEventListener("storage", updateRole);
+        window.addEventListener("sessionUpdated", updateRole);
+
+        return () => {
+            window.removeEventListener("storage", updateRole);
+            window.removeEventListener("sessionUpdated", updateRole);
+        };
+    }, []);
+
+    // 권한 없으면 차단 (깜짝 alert 없음!)
+    useEffect(() => {
+        if (!isAdmin) {
+            alert("관리자만 공지사항을 수정할 수 있습니다.");
+            navigate("/notice/list", { replace: true });
+        }
+    }, [isAdmin, navigate]);
+
+    // 데이터 불러오기
+    useEffect(() => {
+        if (!isAdmin) return;
+
         const fetchNotice = async () => {
             try {
-                const res = await axios.get(`http://localhost:8484/api/notice/modify/${notice_no}`, {
+                const res = await axios.get(`/api/notice/modify/${notice_no}`, {
                     params: { pageNum, amount },
-                    // withCredentials: true
+                    withCredentials: true,
                 });
 
-                const notice = res.data.notice;
-                setTitle(notice.noticeTitle || "");
-                setContent(notice.noticeContent || "");
-                setDataLoading(false);
+                const { notice_title, notice_content } = res.data.notice;
+                setTitle(notice_title || "");
+                setContent(notice_content || "");
             } catch (err) {
-                if (err.response?.status === 403) {
-                    alert("관리자만 수정할 수 있습니다.");
-                } else if (err.response?.status === 404) {
+                const status = err.response?.status;
+                if (status === 403 || status === 401) {
+                    alert("수정 권한이 없습니다.");
+                } else if (status === 404) {
                     alert("존재하지 않는 공지사항입니다.");
                 } else {
-                    alert("공지사항을 불러오지 못했습니다.");
+                    alert("공지사항을 불러오는 중 오류가 발생했습니다.");
                 }
-                navigate("/notice_list", { replace: true });
+                navigate("/notice/list", { replace: true });
+            } finally {
+                setDataLoading(false);
             }
         };
 
         fetchNotice();
-    }, [notice_no, pageNum, amount, navigate]);
+    }, [notice_no, pageNum, amount, navigate, isAdmin]);
 
-    // 수정 처리 (당신이 원하는 URL 그대로!)
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!title.trim()) {
-            setMessage("제목을 입력해주세요.");
-            document.getElementById("notice-title")?.focus();
-            return;
-        }
-        if (!content.trim()) {
-            setMessage("내용을 입력해주세요.");
-            document.getElementById("notice-content")?.focus();
-            return;
-        }
+        if (!title.trim()) return setMessage("제목을 입력해주세요.");
+        if (!content.trim()) return setMessage("내용을 입력해주세요.");
 
         if (!window.confirm("공지사항을 수정하시겠습니까?")) return;
 
@@ -69,14 +94,13 @@ function NoticeModify() {
 
         try {
             await axios.put(
-                `http://localhost:8484/api/notice_modify/${notice_no}`,  // 당신이 원하는 URL!
-                { noticeTitle: title, noticeContent: content },
+                `/api/notice/modify/${notice_no}`,
+                { notice_title: title, notice_content: content },
                 { withCredentials: true }
             );
 
             alert("공지사항이 성공적으로 수정되었습니다.");
-            // 수정 후 → 당신이 원하는 상세보기 URL로 이동
-            navigate(`/notice_view/${notice_no}?pageNum=${pageNum}&amount=${amount}`);
+            navigate(`/notice/view/${notice_no}?pageNum=${pageNum}&amount=${amount}`);
         } catch (err) {
             setMessage(err.response?.data?.message || "수정 중 오류가 발생했습니다.");
         } finally {
@@ -84,98 +108,77 @@ function NoticeModify() {
         }
     };
 
-    // 취소 → 당신이 원하는 목록 URL
     const goToList = () => {
-        navigate(`/notice_list?pageNum=${pageNum}&amount=${amount}`);
+        navigate(`/notice/list?pageNum=${pageNum}&amount=${amount}`);
     };
 
     // 로딩 중
-    if (dataLoading) {
+    if (dataLoading && isAdmin) {
         return (
-            <div className="loading-container">
-                <div className="spinner"></div>
+            <div className="notice-modify-loading">
+                <div className="notice-modify-spinner"></div>
                 <p>공지사항을 불러오는 중...</p>
             </div>
         );
     }
 
-    return (
-        <main id="notice-modify-container" className="notice-modify-container">
-            <h1 className="notice-write-title">공지사항 수정</h1>
+    // 비관리자는 null → 위에서 리다이렉트 처리
+    if (!isAdmin) return null;
 
-            <form onSubmit={handleSubmit} id="notice-modify-form" className="notice-modify-form">
-                {/* 기존 JSP 테이블 구조 100% 그대로 재현 */}
-                <table id="notice-write-table" className="notice-write-table">
-                    <tbody>
-                    <tr>
-                        <th className="modify-label">제목</th>
-                    </tr>
-                    <tr>
-                        <td className="modify-input">
-                            <input
-                                type="text"
-                                name="notice_title"
-                                className="input-title"
-                                id="notice-title"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                placeholder="제목을 입력하세요"
-                                maxLength="100"
-                                disabled={isLoading}
-                                required
-                            />
-                        </td>
-                    </tr>
-                    <tr>
-                        <th className="write-label">내용</th>
-                    </tr>
-                    <tr>
-                        <td className="write-input">
-                                <textarea
-                                    name="notice_content"
-                                    className="textarea-content"
-                                    id="notice-content"
-                                    rows="18"
-                                    value={content}
-                                    onChange={(e) => setContent(e.target.value)}
-                                    placeholder="내용을 입력하세요"
+    return (
+        <main className="notice-modify-main">
+            <h1 className="notice-modify-title">공지사항 수정</h1>
+
+            <form onSubmit={handleSubmit} className="notice-modify-form">
+                <div className="notice-modify-table-wrapper">
+                    <table className="notice-modify-table">
+                        <tbody>
+                        <tr>
+                            <th>제목</th>
+                            <td>
+                                <input
+                                    type="text"
+                                    id="notice-modify-title"
+                                    className="notice-modify-input-title"
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    placeholder="제목을 입력하세요"
+                                    maxLength="100"
                                     disabled={isLoading}
                                     required
                                 />
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>내용</th>
+                            <td>
+                                    <textarea
+                                        id="notice-modify-content"
+                                        className="notice-modify-textarea"
+                                        rows="18"
+                                        value={content}
+                                        onChange={(e) => setContent(e.target.value)}
+                                        placeholder="내용을 입력하세요"
+                                        disabled={isLoading}
+                                        required
+                                    />
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                {/* JSP 그대로 hidden input */}
-                <input type="hidden" name="notice_no" value={notice_no} />
-                <input type="hidden" name="pageNum" value={pageNum} />
-                <input type="hidden" name="amount" value={amount} />
-
-                {/* 결과 메시지 */}
                 {message && (
-                    <div id="result-message" className={`result-message ${message.includes("성공") ? "success" : "error"}`}>
+                    <div className={`notice-modify-message ${message.includes("성공") ? "success" : "error"}`}>
                         {message}
                     </div>
                 )}
 
-                {/* 버튼 그룹 (JSP 그대로) */}
-                <div id="modify-button-group" className="modify-button-group">
-                    <button
-                        type="submit"
-                        className="btn btn-submit"
-                        id="btn-submit"
-                        disabled={isLoading}
-                    >
-                        {isLoading ? "수정 중..." : "수정"}
+                <div className="notice-modify-buttons">
+                    <button type="submit" className="notice-modify-btn-submit" disabled={isLoading}>
+                        {isLoading ? "수정 중..." : "수정 완료"}
                     </button>
-                    <button
-                        type="button"
-                        className="btn btn-cancel"
-                        id="btn-cancel"
-                        onClick={goToList}
-                        disabled={isLoading}
-                    >
+                    <button type="button" className="notice-modify-btn-cancel" onClick={goToList} disabled={isLoading}>
                         취소
                     </button>
                 </div>
@@ -183,5 +186,3 @@ function NoticeModify() {
         </main>
     );
 }
-
-export default NoticeModify;

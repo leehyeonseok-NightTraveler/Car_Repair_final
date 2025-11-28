@@ -5,9 +5,23 @@
 
     <!-- 차량 등록 -->
     <insert id="insertCar" parameterType="com.boot.dto.MypageDTO">
-        INSERT INTO tbl_mypage (car_number, account_id, car_model, car_type)
-        VALUES (#{car_number}, #{account_id}, #{car_model}, #{car_type})
-    </insert>
+    INSERT INTO tbl_mypage (
+        car_number,
+        account_id,
+        car_model,
+        car_type,
+        car_mileage,
+        model_year
+    ) VALUES (
+        #{car_number},
+        #{account_id},
+        #{car_model},
+        #{car_type},
+        #{car_mileage},
+        #{model_year}
+    )
+</insert>
+
 
     <!-- 내 차량 목록 -->
     <select id="selectCarList" parameterType="string" resultType="com.boot.dto.MypageDTO">

@@ -2,6 +2,7 @@ package com.boot.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ public class FaqServiceImpl implements FaqService{
 	@Autowired
 	private SqlSession sqlSession;
 	
+	@Autowired 
+    private FaQDAO faqDAO;
 
 	@Override
 	public ArrayList<FaQDTO> listWithPaging(Criteria cri) {
@@ -99,7 +102,16 @@ public class FaqServiceImpl implements FaqService{
 
 
 
-	
+	@Override
+	public List<FaQDTO> getList(Criteria cri) {
+		return faqDAO.getFaqList(cri);
+	}
+
+
+	@Override
+	public int getTotal(Criteria cri) {
+		return faqDAO.getTotal(cri);
+	}
 }
 
 

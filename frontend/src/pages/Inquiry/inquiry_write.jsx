@@ -1,23 +1,30 @@
-// src/pages/inquiry/InquiryWrite.jsx
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import InquiryFloating from "../../components/common/InquiryFloating";
-import "./Inquiry.css"
+import "./Inquiry_write.css" // 💡 CSS 파일 경로를 표준 표기법으로 수정 (InquiryWrite.css)
 
 export default function InquiryWrite() {
-    const [role, setRole] = useState("");
+    // 1. 상태 추가: 백엔드에서 받아온 회원 정보를 저장합니다.
+    const [customerInfo, setCustomerInfo] = useState({});
+    const [role, setRole] = useState(sessionStorage.getItem("ROLE") || "");
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     const fetchPage = useCallback(async () => {
         try {
-            const res = await axios.get("/api/inquiry_write", { withCredentials: true });
+            const res = await axios.get("/api/inquiry/write", { withCredentials: true });
+
             if (res.data.redirect) {
                 navigate(res.data.redirect);
                 return;
             }
-            setRole(res.data.role || "");
+
+            // 백엔드에서 받아온 회원 정보를 상태에 저장합니다.
+            if (res.data.customerInfo) {
+                setCustomerInfo(res.data.customerInfo);
+            }
+
         } catch (err) {
             alert("페이지 로드 실패");
         } finally {
@@ -35,53 +42,77 @@ export default function InquiryWrite() {
         const data = Object.fromEntries(formData);
 
         try {
-            await axios.post("/api/writeProcess", new URLSearchParams(data), {
+            // 서버에서 사용자 정보를 재확보하므로, 폼 데이터는 문의 제목/내용에 집중합니다.
+            await axios.post("/api/inquiry/writeProcess", new URLSearchParams(data), {
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 withCredentials: true,
             });
             alert("문의가 등록되었습니다.");
-            navigate("/inquiry_history");
+            navigate("/inquiry/history");
         } catch (err) {
             alert("등록 실패");
         }
     };
 
-    if (loading) return <div>로딩 중...</div>;
+    if (loading) return <div className="inquiry-write-loading">로딩 중...</div>;
 
     return (
-        <main className="content">
+        <main className="inquiry-write-page">
             <InquiryFloating role={role} />
 
-            <form onSubmit={handleSubmit} id="inquiry-form">
-                <h2 className="form-title">문의 등록</h2>
+            <form onSubmit={handleSubmit} className="inquiry-write-form">
+                <h2 className="inquiry-write-title">문의 등록</h2>
 
-                <div className="form-group">
+                {/* --- 읽기 전용 필드: 서버에서 가져온 사용자 정보 --- */}
+                <div className="inquiry-write-group">
                     <label>이름</label>
-                    <input type="text" name="customer_name" required />
+                    <input
+                        type="text"
+                        name="customer_name" // 💡 수정: name 속성은 정적인 바인딩 키를 사용해야 합니다.
+                        required
+                        // value 및 readOnly 적용: 서버에서 결정된 값은 수정 불가능
+                        value={customerInfo.customer_name || ''}
+                        readOnly
+                    />
                 </div>
 
-                <div className="form-group">
+                <div className="inquiry-write-group">
                     <label>연락처</label>
-                    <input type="tel" name="customer_phone" required />
+                    <input
+                        type="tel"
+                        name="customer_phone" // 💡 수정: name 속성은 정적인 바인딩 키를 사용해야 합니다.
+                        required
+                        // value 및 readOnly 적용: 서버에서 결정된 값은 수정 불가능
+                        value={customerInfo.customer_phone || ''}
+                        readOnly
+                    />
                 </div>
 
-                <div className="form-group">
+                <div className="inquiry-write-group">
                     <label>이메일</label>
-                    <input type="email" name="customer_email" required />
+                    <input
+                        type="email"
+                        name="customer_email" // 💡 수정: name 속성은 정적인 바인딩 키를 사용해야 합니다.
+                        required
+                        // value 및 readOnly 적용: 서버에서 결정된 값은 수정 불가능
+                        value={customerInfo.customer_email || ''}
+                        readOnly
+                    />
                 </div>
+                {/* ------------------------------------------- */}
 
-                <div className="form-group">
+                <div className="inquiry-write-group">
                     <label>제목</label>
                     <input type="text" name="inquiry_title" required />
                 </div>
 
-                <div className="form-group">
+                <div className="inquiry-write-group">
                     <label>문의내용</label>
                     <textarea name="inquiry_content" rows="10" required></textarea>
                 </div>
 
-                <div className="form-actions">
-                    <button type="submit" className="submit-button">등록</button>
+                <div className="inquiry-write-actions">
+                    <button type="submit" className="inquiry-write-submit-btn">등록</button>
                 </div>
             </form>
         </main>
