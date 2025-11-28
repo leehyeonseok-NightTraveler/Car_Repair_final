@@ -157,7 +157,22 @@ export default function Maintenance() {
     };
 
     if (loading) return <div className="loading">로딩 중...</div>;
-    if (myCars.length === 0) return <div>등록된 차량이 없습니다.</div>;
+    if (myCars.length === 0) return (
+        <div className="maintenance-no-cars">
+            <div className="icon">Car</div>
+            <h2>등록된 차량이 없습니다</h2>
+            <p>
+                아직 내 차량을 등록하지 않으셨네요!<br />
+                마이페이지에서 차량을 등록하면 정비 이력과 소모품 관리를 시작할 수 있어요.
+            </p>
+            <button
+                className="btn-add-car"
+                onClick={() => window.location.href = '/mypage/user'}  // 마이페이지로 이동
+            >
+                + 내 차량 등록하러 가기
+            </button>
+        </div>
+    );
 
     return (
         <div className="maintenance-app">
