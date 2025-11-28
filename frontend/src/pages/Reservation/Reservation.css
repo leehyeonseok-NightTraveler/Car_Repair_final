@@ -20,30 +20,30 @@
 }
 
 /* 테이블 스타일 */
-.reservation-table {
+.reservation-form-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 30px;
 }
 
-.reservation-table th, 
-.reservation-table td {
+.reservation-form-table th, 
+.reservation-form-table td {
     padding: 12px;
     border-bottom: 1px solid #eee;
     text-align: left;
 }
 
-.reservation-table th {
+.reservation-form-table th {
     background-color: #f8f8f8;
     width: 30%;
     font-weight: 600;
     color: #555;
 }
 
-.reservation-table td input[type="text"],
-.reservation-table td input[type="datetime-local"],
-.reservation-table td select,
-.reservation-table td textarea {
+.reservation-form-table td input[type="text"],
+.reservation-form-table td input[type="datetime-local"],
+.reservation-form-table td select,
+.reservation-form-table td textarea {
     width: 95%;
     padding: 8px;
     border: 1px solid #ccc;
@@ -52,7 +52,7 @@
     font-size: 14px;
 }
 
-.reservation-table td textarea {
+.reservation-form-table td textarea {
     min-height: 100px;
     resize: vertical;
 }
