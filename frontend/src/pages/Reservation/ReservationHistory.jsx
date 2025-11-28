@@ -25,19 +25,21 @@ const translateStatus = (status) => {
 const formatIsoToKSTDisplay = (isoString) => {
     if (!isoString) return '날짜 정보 없음';
 
-    // 문자열에서 YYYY-MM-DD, HH:MM 부분을 추출
     const datePart = isoString.substring(0, 10);  // YYYY-MM-DD
     const timePart = isoString.substring(11, 16); // HH:MM
 
-    // HH:MM을 오전/오후 형식으로 변환
-    const [hour, minute] = timePart.split(':').map(Number);
+    // 시간과 분을 숫자로 분리
+    const [hour, minuteNum] = timePart.split(':').map(Number);
+    
+    // ⭐️ 수정 부분: 분(minute) 값을 문자열로 변환하고, 2자리 수가 되도록 앞에 0을 채웁니다.
+    const paddedMinute = String(minuteNum).padStart(2, '0'); 
+
     const ampm = hour >= 12 ? '오후' : '오전';
     const displayHour = hour % 12 || 12; 
-
-    // YYYY-MM-DD를 YYYY년 MM월 DD일 형식으로 변환
     const [year, month, day] = datePart.split('-');
 
-    return `${year}년 ${month}월 ${day}일 ${ampm} ${displayHour}:${minute}`;
+    // ⭐️ 최종 출력 시 paddedMinute 사용 ⭐️
+    return `${year}년 ${month}월 ${day}일 ${ampm} ${displayHour}:${paddedMinute}`;
 };
 
 

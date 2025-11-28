@@ -11,10 +11,7 @@ import com.boot.dto.Criteria;
 @Mapper
 public interface PageDAO {
 	public ArrayList<FaQDTO> listWithPaging(Criteria cri);
-	int getTotalCount(
-	        @Param("accountId") String accountId, 
-	        @Param("cri") Criteria cri
-	    );	
+	int getTotalCount(@Param("cri") Criteria cri);
 }
 
 
