@@ -1,14 +1,15 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 const ProtectedRoute = () => {
-  const isLoggedIn = sessionStorage.getItem("accountId");
+  // 유저/업체 모두 ACCOUNT_ID로 저장하므로 이것만 체크하면 됨
+  const isLoggedIn = sessionStorage.getItem("ACCOUNT_ID");
 
   if (!isLoggedIn) {
     alert("보안 정책에 의해 보호된 페이지입니다.\n로그인이 필요합니다.");
     return <Navigate to="/login" replace />;
   }
 
-  return <Outlet />;   // ⭐ 이게 있어야 안쪽 Route들이 렌더됨
+  return <Outlet />;
 };
 
 export default ProtectedRoute;
