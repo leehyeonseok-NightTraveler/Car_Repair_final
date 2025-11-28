@@ -125,7 +125,7 @@ const Header = () => {
                         {/* 3. 관리자일 때 (해제 버튼 보여주기) */}
                         {role === "ADMIN" && (
                             <>
-                                <li><Link to="/mypage_admin">관리자 페이지</Link></li>
+                                <li><Link to="/mypage/admin">관리자 페이지</Link></li>
                                 <li><a href="#" onClick={handleLogout}>로그아웃</a></li>
                                 <li className="admin-enter">
                                     <a href="#" onClick={handleExitAdmin} style={{color:'#dc3545', fontWeight:'bold'}}>

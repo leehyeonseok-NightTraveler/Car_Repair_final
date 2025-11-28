@@ -1,5 +1,7 @@
 package com.boot.dto;
 
+import java.sql.Date;
+
 import lombok.Data;
 
 @Data
