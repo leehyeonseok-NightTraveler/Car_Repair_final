@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { MapPin, Search, Phone, Navigation, Filter } from 'lucide-react';
-import './RecommendMap.css'; // 위에서 만든 CSS 파일 연결
+import './RecommendMap.css'; // 수정된 CSS 파일 연결
 
 export default function RecommendMap() {
   const [map, setMap] = useState(null);
@@ -12,6 +12,9 @@ export default function RecommendMap() {
   const mapContainer = useRef(null);
   const infoWindowRef = useRef(null);
   const allMarkersRef = useRef({});
+  // 🚨 JS 수정 필요: 리스트 패널과 항목 참조
+  const listPanelRef = useRef(null); 
+  const itemRefs = useRef({}); 
 
   // ESC로 패널 닫기
   useEffect(() => {
@@ -61,6 +64,23 @@ export default function RecommendMap() {
 
     return () => clearInterval(waitForKakao);
   }, []);
+  
+  // 🚨 JS 수정 필요: 선택된 항목으로 스크롤 이동
+  useEffect(() => {
+      if (selectedLoc && listPanelRef.current) {
+          const key = selectedLoc.storeId;
+          const selectedElement = itemRefs.current[key];
+          
+          if (selectedElement) {
+              // 스크롤 이동 (smooth behavior)
+              selectedElement.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start' // 상단에 맞춤
+              });
+          }
+      }
+  }, [selectedLoc]);
+
 
   // 2. 데이터 불러오기 (Spring Boot API 호출)
   const loadMarkers = async (region) => {
@@ -143,6 +163,29 @@ export default function RecommendMap() {
       iw.open(map, marker);
       infoWindowRef.current = iw;
   };
+  
+  // 길찾기 기능 (실제 카카오맵 길찾기 페이지로 이동)
+  const openDirections = (loc) => {
+      if (!loc.address) {
+          alert("주소 정보가 없어 길찾기를 실행할 수 없습니다.");
+          return;
+      }
+      // 카카오맵 길찾기 URL: https://map.kakao.com/link/to/목적지이름,위도,경도
+      const url = `https://map.kakao.com/link/to/${loc.storeId},${loc.latitude},${loc.longitude}`;
+      window.open(url, '_blank');
+  };
+
+  // 주소 복사 기능
+  const copyAddress = (loc) => {
+      if (loc.address) {
+          navigator.clipboard.writeText(loc.address)
+              .then(() => alert(`주소 복사 완료: ${loc.address}`))
+              .catch(err => console.error('주소 복사 실패:', err));
+      } else {
+          alert("복사할 주소가 없습니다.");
+      }
+  };
+
 
   // 리스트 클릭 시 해당 위치로 지도 이동
   const handleListClick = (loc) => {
@@ -238,6 +281,7 @@ export default function RecommendMap() {
                     </button>
                   )}
               </div>
+              {/* 선택된 항목 요약 정보 (선택된 경우에만 보임) */}
               {selectedLoc && (
                 <div className="p-4 border-b border-gray-50 bg-gray-50/60">
                   <div className="font-bold text-gray-800 text-base flex items-center gap-2">
@@ -249,15 +293,21 @@ export default function RecommendMap() {
                 </div>
               )}
               
-              <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
-                  {(Array.isArray(recommendList) ? recommendList.length : 0) === 0 ? (
+              {/* 🚨 JS 수정 필요: 스크롤 영역에 ref와 클래스 적용 */}
+              <div ref={listPanelRef} className="flex-1 min-h-0 overflow-y-auto custom-scrollbar"> 
+                  {listLen === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center text-gray-400 p-10 space-y-4">
                           <Search size={48} className="text-gray-200"/>
                           <p className="text-lg font-medium">검색 결과가 없습니다.</p>
                       </div>
                   ) : (
                       (Array.isArray(recommendList) ? recommendList : []).map((item, idx) => (
-                          <div key={idx} onClick={() => handleListClick(item)} className="list-item group">
+                          <div 
+                              key={idx} 
+                              ref={el => itemRefs.current[item.storeId] = el}
+                              onClick={() => handleListClick(item)} 
+                              className={`list-item group ${selectedLoc && selectedLoc.storeId === item.storeId ? 'is-selected' : ''}`}
+                          >
                               <h4 className="store-name">{item.storeId}</h4>
                               <div className="mt-3 space-y-1.5">
                                   <p className="text-sm text-gray-500 flex items-start gap-2.5">
