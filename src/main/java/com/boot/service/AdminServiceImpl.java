@@ -46,4 +46,8 @@ public class AdminServiceImpl implements AdminService {
             return false; // DB 오류 시 실패
         }
     }
+    @Override
+    public void downgradeToUser(String accountId) {
+        adminDAO.downgradeToUser(accountId);
+    }
 }
