@@ -49,6 +49,8 @@ import StoreMypage from "./pages/Mypage/StoreMypage";
 import StoreEdit from "./pages/Mypage/StoreEdit";
 import AdminMypage from "./pages/Mypage/AdminMypage";
 
+import Maintenance from "./pages/Maintenance/Maintenance";
+
 // 관리자
 import AdminPromote from "./pages/promote_admin/AdminPromote";
 
