@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;    // 🔐 추가됨
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,9 @@ public class LoginController {
     
     @Autowired
     private LoginService loginService;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;   // 🔐 추가됨
 	
     @PostMapping("/login")
     public HashMap<String, Object> login(
@@ -46,7 +50,6 @@ public class LoginController {
         // 조회
         HashMap<String, String> param = new HashMap<>();
         param.put("accountId", accountId);
-        param.put("password", password);
 
         // 실패 횟수 확인
         Integer failCount = (Integer) session.getAttribute("loginFailCount");
@@ -107,9 +110,9 @@ public class LoginController {
         }
 
         // -----------------------------
-        // ✔ 비밀번호 일치
+        // ✔ 비밀번호 일치 (암호화 비교)
         // -----------------------------
-        if (password.equals(dto.getPassword())) {
+        if (passwordEncoder.matches(password, dto.getPassword())) {
 
             // 아이디 저장 쿠키 처리
             if (saveId) {

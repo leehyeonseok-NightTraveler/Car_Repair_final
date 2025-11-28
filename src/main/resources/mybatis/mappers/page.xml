@@ -35,10 +35,15 @@
                        AND (#{pageNum} * #{amount})
         ]]>
 </select>
-    <select id="getTotalCount" resultType="int">
-		select count(*) from TBL_FAQ
-		<include refid="criteria"></include>	  
-    </select>
+  <select id="getTotalCount" resultType="int">
+    SELECT 
+        COUNT(*) 
+    FROM 
+        TBL_RESERVATION -- ⭐️ 예약 테이블을 COUNT 하도록 설정
+    WHERE 
+        ACCOUNT_ID = #{accountId} -- ⭐️ accountId로 필터링 추가
+        
+        </select>
     
 
 </mapper>

@@ -56,8 +56,8 @@ function Login() {
 
             if (res.data.success) {
 				
-				sessionStorage.setItem("ROLE", res.data.role);
-			    sessionStorage.setItem("ACCOUNT_ID", accountId)
+				sessionStorage.setItem("role", res.data.role);
+			    sessionStorage.setItem("accountId", accountId)
 				
                 if (saveId) setCookie("savedId", accountId, 7);
                 else deleteCookie("savedId");

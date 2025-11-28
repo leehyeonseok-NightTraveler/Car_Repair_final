@@ -2,18 +2,9 @@ package com.boot.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam; // [★ 1. import 추가]
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController // (또는 @Controller)
-@RequestMapping("/api/stores") // ⭐️ 최종 주소: /api/stores
+@RequestMapping("/api") // ⭐️ 최종 주소: /api/stores
 @Slf4j // ⭐️ 로깅 사용
 @RequiredArgsConstructor // ⭐️ 생성자 주입을 위한 Lombok 어노테이션
 @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"}, allowCredentials = "true")
@@ -51,7 +42,7 @@ public class StoreController {
     /**
      * GET /api/stores : 예약 가능한 정비소 목록 조회 (프론트엔드 Reservation 컴포넌트에서 호출)
      */
-    @GetMapping
+    @GetMapping("/stores")
     public ResponseEntity<List<StoreDTO>> getStoreList() {
         List<StoreDTO> stores = storeService.getAllStores();
         
