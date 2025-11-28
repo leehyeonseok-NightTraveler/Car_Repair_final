@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import "./axiosGlobal";
 
-// 공통 컴포넌트
+// 공통
 import Header from "./components/common/Header";
 import Footer from "./components/common/Footer";
 import ChatWidget from "./components/common/ChatWidget";
@@ -24,7 +24,7 @@ import FaqView from "./pages/faq/faq_view";
 import FaqWrite from "./pages/faq/faq_write";
 import FaqModify from "./pages/faq/faq_modify";
 
-// 1:1 문의
+// 문의
 import InquiryWrite from "./pages/inquiry/inquiry_write";
 import InquiryHistory from "./pages/inquiry/Inquiry_history";
 import InquiryView from "./pages/inquiry/inquiry_view";
@@ -37,19 +37,19 @@ import StoreLogin from "./pages/Login/storeLogin";
 import Register from "./pages/Register/Register";
 import RegisterStore from "./pages/Register/RegisterStore";
 
-// 계정 찾기
+// 계정찾기
 import FindAccount from "./pages/FindAccount/findAccount";
 import FindPW from "./pages/FindAccount/findPW";
 import FindOK from "./pages/FindAccount/findOK";
 
-// 마이페이지 (유저/업체/관리자)
+// 마이페이지
 import UserMypage from "./pages/Mypage/UserMypage";
 import UserEdit from "./pages/Mypage/UserEdit";
 import StoreMypage from "./pages/Mypage/StoreMypage";
 import StoreEdit from "./pages/Mypage/StoreEdit";
 import AdminMypage from "./pages/Mypage/AdminMypage";
 
-// 관리자 승급
+// 관리자
 import AdminPromote from "./pages/promote_admin/AdminPromote";
 
 // 검색
@@ -57,10 +57,11 @@ import AutoSearch from "./pages/AutoSearch/autoSearch";
 
 // 예약/정비
 import Reservation from "./pages/Reservation/Reservation";
-import Maintenance from "./pages/maintenance/Maintenance";
 import ReservationHistory from "./pages/Reservation/ReservationHistory";
+import ReservationDetail from "./pages/Reservation/ReservationDetail";
+import ReservationModify from "./pages/Reservation/ReservationModify";
 
-// 리뷰 (추가된 공개 페이지)
+// 리뷰
 import Review from "./pages/Review/review";
 import StarRating from "./pages/Review/starRating";
 
@@ -81,10 +82,7 @@ function App() {
         <main className="flex-grow">
           <Routes>
 
-            {/* ========================================= */}
             {/* 🔓 공개 페이지 */}
-            {/* ========================================= */}
-
             <Route path="/" element={<MainPage />} />
             <Route path="/recommend" element={<RecommendMap />} />
 
@@ -96,7 +94,7 @@ function App() {
             <Route path="/faq" element={<FaqList />} />
             <Route path="/faq/view/:faqNo" element={<FaqView />} />
 
-            {/* 리뷰/평점 → 공개 */}
+            {/* 리뷰 */}
             <Route path="/review" element={<Review />} />
             <Route path="/starRating" element={<StarRating />} />
 
@@ -106,7 +104,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/registerstore" element={<RegisterStore />} />
 
-            {/* 계정 찾기 */}
+            {/* 계정찾기 */}
             <Route path="/findAccount" element={<FindAccount />} />
             <Route path="/findPW" element={<FindPW />} />
             <Route path="/findOK" element={<FindOK />} />
@@ -122,20 +120,18 @@ function App() {
             <Route path="/autoSearch" element={<AutoSearch />} />
 
 
-            {/* ========================================= */}
-            {/* 🔐 보호된 페이지 (ProtectedRoute) */}
-            {/* ========================================= */}
+            {/* 🔐 보호된 페이지 */}
             <Route element={<ProtectedRoute />}>
 
-              {/* 공지사항 쓰기/수정 */}
+              {/* 공지사항 관리 */}
               <Route path="/notice/write" element={<NoticeWrite />} />
               <Route path="/notice/modify/:notice_no" element={<NoticeModify />} />
 
-              {/* FAQ 쓰기/수정 */}
+              {/* FAQ 관리 */}
               <Route path="/faq/write" element={<FaqWrite />} />
               <Route path="/faq/modify/:faqNo" element={<FaqModify />} />
 
-              {/* 1:1 문의 */}
+              {/* 문의 */}
               <Route path="/inquiry/write" element={<InquiryWrite />} />
               <Route path="/inquiry/history" element={<InquiryHistory />} />
               <Route path="/inquiry/view/:inquiry_no" element={<InquiryView />} />
@@ -154,12 +150,13 @@ function App() {
               <Route path="/mypage/admin" element={<AdminMypage />} />
               <Route path="/admin/promote" element={<AdminPromote />} />
 
-              {/* 예약/정비 */}
+              {/* 예약 */}
               <Route path="/reservation" element={<Reservation />} />
-              <Route path="/maintenance" element={<Maintenance />} />
-
-              {/* 예약 내역 → 보호 */}
               <Route path="/reservation/history" element={<ReservationHistory />} />
+              <Route path="/reservation/details/:rsvNo" element={<ReservationDetail />} />
+              <Route path="/reservation/modify/:rsvNo" element={<ReservationModify />} />
+
+              <Route path="/maintenance" element={<Maintenance />} />
 
             </Route>
 

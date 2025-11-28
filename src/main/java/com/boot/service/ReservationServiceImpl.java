@@ -33,10 +33,6 @@ public class ReservationServiceImpl implements ReservationService{
 		return reservationDAO.getListByAccountId(accountId);
 	}
 
-	@Override
-	public ReservationDTO getReservation(int rsvNo) {
-        return reservationDAO.getReservationDetail(rsvNo);
-	}
 
 	@Override
 	public boolean modifyReservation(ReservationDTO reservationDto) {
@@ -51,5 +47,13 @@ public class ReservationServiceImpl implements ReservationService{
         reservationDAO.updateReservationStatus(rsvNo, "CANCELED");
         return true; 
 	}
+
+	@Override
+	public ReservationDTO getReservationDetail(int rsvNo) {
+		return reservationDAO.getReservationByRsvNo(rsvNo);
+	}
+
+
+
 
 }

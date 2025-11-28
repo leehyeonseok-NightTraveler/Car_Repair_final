@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-// src/common/Header.jsx
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
