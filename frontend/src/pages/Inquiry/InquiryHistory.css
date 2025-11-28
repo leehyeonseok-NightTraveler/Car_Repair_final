@@ -1,408 +1,210 @@
-/* InquiryHistory.css - 완전 독립형 스타일 (수정됨) */
+/* InquiryHistory.css */
 
+/* 페이지 전체 */
 .history-page {
+    padding: 40px 20px;
+    background-color: #f9fafb;
     min-height: 100vh;
-    background: #fff;
-    /* 상하 패딩 조정 */
-    padding: 50px 20px;
-    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .history-container {
-    /* 최대 너비 추가 및 최소 너비 조정 */
-    max-width: 70%;
+    max-width: 1000px;
     margin: 0 auto;
-    background: #ffffff;
-    /* 라운딩 조정 */
-    border-radius: 16px;
-    /* 그림자 강화 */
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
-    border: none;
-    overflow: hidden;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 20px 30px;
 }
 
+/* 헤더 */
 .history-header {
-    text-align: center;
-    /* 패딩 조정 */
-    padding: 50px 20px 30px;
-    background: #ffffff;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
 }
 
 .history-title {
-    /* 폰트 사이즈 조정 */
-    font-size: 32px;
-    /* 폰트 굵기 조정 */
-    font-weight: 700;
-    color: #2c3e50;
-    margin: 0;
-    position: relative;
-    /* 패딩 조정 */
-    padding-bottom: 14px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
 }
 
-.history-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    /* 길이 조정 */
-    width: 60px;
-    /* 두께 조정 */
-    height: 3px;
-    background: #3498db;
-    border-radius: 3px;
-}
-
+/* 필터 */
 .history-filter {
-    /* 좌우 패딩 증가 */
-    padding: 0 50px 30px;
+    margin-bottom: 20px;
     text-align: right;
 }
 
 .history-filter select {
-    margin-top: 15px;
-    /* 수직 패딩 증가, 수평 패딩 미세 조정 */
-    padding: 11px 18px;
-    border: 1px solid #dcdfe6;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 500;
-    background: #ffffff;
-    min-width: 160px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    background-color: #fff;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    transition: all 0.25s;
-    color: #333333;
 }
 
-.history-filter select:hover {
-    border-color: #a0cfff;
-}
-
-.history-filter select:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.15);
-}
-
+/* 로딩 / 빈 상태 */
 .history-loading,
 .history-empty {
     text-align: center;
-    padding: 120px 20px;
-    color: #95a5a6;
-    font-size: 17px;
-    background: #ecf0f1;
-    border-radius: 16px;
-    /* 좌우 패딩 증가 */
-    margin: 30px 50px;
-    font-weight: 500;
+    padding: 30px;
+    font-size: 1rem;
+    color: #666;
 }
 
+/* 테이블 */
 .history-table-wrapper {
     overflow-x: auto;
-    min-height: 10px;
-    /* 좌우 패딩 증가 및 하단 여백 조정 */
-    margin: 0 50px 35px;
-    /* 라운딩 조정 */
-    border-radius: 12px;
-    /* 그림자 강화 */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e0e0e0;
 }
 
 .history-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 0;
-    margin-bottom: 0;
-    min-width: 800px; /* 최소 너비 증가 */
-    background: #ffffff;
+    margin-bottom: 20px;
 }
 
-/* 테이블 헤더 스타일 */
-.history-table thead {
-    border-bottom: 2px solid #3498db;
+.history-table th,
+.history-table td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
 }
 
 .history-table th {
-    background: #3498db;
-    color: #ffffff;
-    /* 패딩 증가 */
-    padding: 18px 15px;
-    text-align: center;
+    background-color: #f3f4f6;
     font-weight: 600;
-    font-size: 15px;
-    letter-spacing: 0.5px; /* 자간 미세 조정 */
-}
-.history-table th:first-child {
-    /* 라운딩 조정 */
-    border-top-left-radius: 11px;
-    width: 100px;
-}
-.history-table th:last-child {
-    /* 라운딩 조정 */
-    border-top-right-radius: 11px;
+    color: #444;
 }
 
-/* 테이블 바디 스타일 */
 .history-table td {
-    /* 수직 패딩 감소, 수평 패딩 증가 */
-    padding: 16px 15px;
-    text-align: center;
-    /* border-bottom: 1px solid #f0f0f0; */ /* 테이블 선은 호버와 충돌할 수 있어 주석 처리 유지 */
-    vertical-align: middle;
-    line-height: 1.4;
-    font-size: 15px;
-    color: #444444;
-}
-
-.history-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-.history-table tbody tr:hover {
-    /* 호버 색상 미세 조정 */
-    background: #eef4ff;
-    transition: background 0.2s ease-in-out;
-}
-
-/* 체크박스 정렬을 위해 플렉스 컨테이너인 td 내부의 div/span 스타일링 필요 */
-.history-col-no {
-    width: 100px;
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    gap: 8px;
-    /* transform 제거 (패딩으로 간격 제어 권장) */
-    transform: none;
-}
-
-.history-col-title {
-    /* 왼쪽 정렬로 변경하여 가독성 향상 */
-    text-align: left !important;
-    padding-left: 20px !important; /* 왼쪽 패딩 조정 */
-    font-weight: 500;
+    color: #555;
 }
 
 .history-col-title a {
-    color: #2c3e50;
+    color: #0077cc;
     text-decoration: none;
     font-weight: 500;
-    display: block;
-    transition: color 0.2s;
 }
 
 .history-col-title a:hover {
-    color: #3498db;
     text-decoration: underline;
 }
 
-.history-col-name {
-    width: 120px;
-    color: #7f8c8d;
-}
-
-.history-col-date {
-    width: 150px;
-    white-space: nowrap;
-    color: #7f8c8d;
-    font-size: 14px;
-}
-
-.history-col-status {
-    width: 120px;
-}
-
-/* 체크박스 스타일링 */
-.history-table input[type="checkbox"] {
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 2px solid #95a5a6;
-    border-radius: 5px;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.2s;
-}
-
-.history-table input[type="checkbox"]:checked {
-    background-color: #3498db;
-    border-color: #3498db;
-}
-
-.history-table input[type="checkbox"]:checked::after {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-
-/* 액션 버튼 그룹 */
-.history-actions {
-    /* 좌우 패딩 증가 및 하단 여백 조정 */
-    padding: 0 50px 40px;
-    text-align: right;
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.history-actions button {
-    /* 패딩 증가 */
-    padding: 12px 26px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    border: 1px solid;
-}
-
-.btn-outline {
-    background: #ffffff;
-    border-color: #bdc3c7;
-    color: #34495e;
-}
-
-.btn-outline:hover {
-    background: #ecf0f1;
-    border-color: #95a5a6;
-    color: #2c3e50;
-}
-
-.btn-danger {
-    background: #e74c3c;
-    color: white;
-    border-color: #e74c3c;
-    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
-}
-
-.btn-danger:hover {
-    background: #c0392b;
-    border-color: #c0392b;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 15px rgba(231, 76, 60, 0.35);
-}
-
-.history-pagination {
-    /* 좌우 패딩 증가 */
-    padding: 0 50px 50px;
-    display: flex;
-    justify-content: center;
-}
-
-/* 공통 상태 뱃지 (History용) */
+/* 상태 뱃지 */
 .status-badge {
     display: inline-block;
-    /* 패딩 조정 */
-    padding: 6px 14px;
-    border-radius: 20px;
-    /* 폰트 사이즈 조정 */
-    font-size: 12.5px;
-    font-weight: 700;
-    min-width: 85px;
-    text-align: center;
-    line-height: 1.2;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
 .status-badge.waiting {
-    background: #fff3e0;
-    color: #f57c00;
-    border: 1px solid #ffcc80;
+    background-color: #fff3cd;
+    color: #856404;
 }
 
 .status-badge.completed {
-    background: #e1f5fe;
-    color: #0288d1;
-    border: 1px solid #81d4fa;
+    background-color: #d4edda;
+    color: #155724;
 }
 
-/* 반응형 */
-@media (max-width: 768px) {
-    .history-page {
-        /* 상하 패딩 조정 */
-        padding: 30px 10px;
-        background: #ffffff;
-    }
+/* 액션 버튼 */
+.history-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
 
-    .history-container {
-        border-radius: 0;
-        box-shadow: none;
-    }
+.btn-outline {
+    padding: 8px 16px;
+    border: 1px solid #0077cc;
+    background: #fff;
+    color: #0077cc;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
 
-    .history-header {
-        padding: 30px 15px 20px;
-    }
+.btn-outline:hover {
+    background: #0077cc;
+    color: #fff;
+}
 
-    .history-title {
-        font-size: 24px;
-        padding-bottom: 12px;
-    }
+.btn-danger {
+    padding: 8px 16px;
+    border: none;
+    background: #dc3545;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
 
-    .history-title::after {
-        width: 40px; /* 모바일 제목 강조선 길이 감소 */
-    }
+.btn-danger:hover {
+    background: #c82333;
+}
 
-    .history-filter {
-        padding: 0 15px 20px;
-        text-align: center;
-    }
+/* 페이지네이션 */
+.history-pagination {
+    margin-top: 20px;
+    text-align: center;
+}
 
-    .history-filter select {
-        width: 100%;
-        max-width: none;
-    }
+/* Pagination.css */
 
-    .history-table-wrapper {
-        /* 좌우 패딩 확보를 위해 마진 조정 */
-        margin: 0 10px 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
 
-    .history-actions, .history-pagination {
-        padding: 0 15px 20px;
-        justify-content: center;
-    }
+.pagination-list {
+    list-style: none;
+    display: flex;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+}
 
-    .history-actions button {
-        /* 버튼 2개씩 한 줄에 (49%로 미세 조정) */
-        flex-grow: 1;
-        max-width: 49%;
-        padding: 10px 15px;
-    }
+.pagination-item button {
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    color: #333;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
 
-    .history-table th, .history-table td {
-        /* 패딩 미세 조정 */
-        padding: 12px 8px;
-        font-size: 13.5px;
-    }
+.pagination-item button:hover {
+    background-color: #0077cc;
+    color: #fff;
+    border-color: #0077cc;
+}
 
-    .history-col-no {
-        min-width: 80px;
-    }
+/* 활성화된 페이지 */
+.pagination-item.active button {
+    background-color: #0077cc;
+    color: #fff;
+    font-weight: bold;
+    border-color: #0077cc;
+}
 
-    .history-col-title {
-        /* 모바일에서 왼쪽 정렬 유지 */
-        text-align: left !important;
-        padding-left: 10px !important;
-        font-size: 14px;
-    }
+/* 이전/다음 버튼 */
+.pagination-item.prev button,
+.pagination-item.next button {
+    font-weight: 600;
+    background-color: #f3f4f6;
+    border-color: #ccc;
+}
 
-    .history-col-date {
-        min-width: 120px;
-        font-size: 13px;
-    }
-
-    .status-badge {
-        font-size: 12.5px;
-        padding: 6px 12px;
-    }
+.pagination-item.prev button:hover,
+.pagination-item.next button:hover {
+    background-color: #0077cc;
+    color: #fff;
+    border-color: #0077cc;
 }

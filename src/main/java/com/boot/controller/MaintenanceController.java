@@ -23,8 +23,8 @@ public class MaintenanceController {
 
     @GetMapping("/cars")
     public ResponseEntity<List<MypageDTO>> getMyCars(HttpSession session) {
-        String accountId = (String) session.getAttribute("accountId");
-        return ResponseEntity.ok(maintenanceService.getMyCars(accountId));
+        String account_id = (String) session.getAttribute("accountId");
+        return ResponseEntity.ok(maintenanceService.getMyCars(account_id));
     }
 
     @GetMapping("/repairHistory/{car_number}")
@@ -50,7 +50,10 @@ public class MaintenanceController {
 
     @PostMapping("/consumable/log")
     public ResponseEntity<ConsumableLogDTO> addConsumableLog(@RequestBody ConsumableLogDTO consumableLogDTO) {
-        return ResponseEntity.ok(maintenanceService.addConsumableLog(consumableLogDTO));
+
+        ConsumableLogDTO result = maintenanceService.addConsumableLog(consumableLogDTO);
+        maintenanceService.addRepairHistoryFromConsumableLog(consumableLogDTO);
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("/delete/repairHistory/{repair_id}")
@@ -59,9 +62,9 @@ public class MaintenanceController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/delete/consumableLog/{repair_id}")
-    public ResponseEntity<Void> deleteConsumableLog(@PathVariable int repair_id) {
-        maintenanceService.deleteConsumableLog(repair_id);
+    @DeleteMapping("/delete/consumableLog/{replace_id}")
+    public ResponseEntity<Void> deleteConsumableLog(@PathVariable int replace_id) {
+        maintenanceService.deleteConsumableLog(replace_id);
         return ResponseEntity.ok().build();
     }
 

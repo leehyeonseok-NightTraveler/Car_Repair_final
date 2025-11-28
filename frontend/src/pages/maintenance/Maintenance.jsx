@@ -227,7 +227,6 @@ export default function Maintenance() {
                                                             ? <p><strong>{remainKm.toLocaleString()}km 남음</strong></p>
                                                             : <p className="over"><strong>{Math.abs(remainKm).toLocaleString()}km 초과!</strong></p>
                                                     )}
-                                                    <p className="detail-hint">클릭 → 상세 이력</p>
                                                 </>
                                             ) : (
                                                 <p className="no-record">교체 이력 없음</p>

@@ -12,5 +12,5 @@ public class MypageDTO {
     private String car_type;
     private int car_mileage;
     private String model_year;
-    private String regi_date;
+    private Date regi_date;
 }

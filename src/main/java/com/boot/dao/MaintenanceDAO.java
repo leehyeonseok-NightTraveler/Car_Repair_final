@@ -9,12 +9,17 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface MaintenanceDAO {
-    List<MypageDTO> getMyCars(@Param("accountId") String accountId);
+    // 조회 메서드 (List, DTO 반환은 OK)
+    List<MypageDTO> getMyCars(@Param("account_id") String account_id);
     List<RepairHistoryDTO> getRepairHistory(@Param("car_number") String car_number);
-    RepairHistoryDTO addRepairHistory(RepairHistoryDTO repairHistoryDTO);
     List<ConsumableItemDTO> getAllConsumableItems();
     List<ConsumableLogDTO> getConsumableLogs(@Param("car_number") String car_number);
-    ConsumableLogDTO addConsumableLog(ConsumableLogDTO consumableLogDTO);
-    void deleteRepairHistory(@Param("repair_no") int repair_id);
-    void deleteConsumableLog(@Param("repair_no") int repair_id);
+
+    // INSERT 메서드 (반환 타입 int로 수정)
+    public int addRepairHistory(RepairHistoryDTO repairHistoryDTO);
+    public int addConsumableLog(ConsumableLogDTO consumableLogDTO);
+    void addRepairHistoryFromConsumableLog(ConsumableLogDTO consumableLogDTO);
+    // DELETE 메서드 (void 반환은 OK)
+    void deleteRepairHistory(@Param("repair_id") int repair_id);
+    void deleteConsumableLog(@Param("replace_id") int replace_id);
 }
