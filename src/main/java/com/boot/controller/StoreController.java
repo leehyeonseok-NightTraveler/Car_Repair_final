@@ -23,6 +23,7 @@ import com.boot.dto.StoreDTO;
 import com.boot.service.StoreService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController // (또는 @Controller)
 @RequestMapping("/api/stores") // ⭐️ 최종 주소: /api/stores

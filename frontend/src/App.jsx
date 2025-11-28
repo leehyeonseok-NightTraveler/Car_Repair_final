@@ -66,6 +66,8 @@ import AutoSearch from "./pages/AutoSearch/autoSearch.jsx";
 // 13.[리뷰 페이지]
 import Review from "./pages/Review/review.jsx";
 import StarRating from "./pages/Review/starRating.jsx";
+import ReviewList from "./pages/Review/reviewList.jsx";
+
 //13. [예약 페이지]
 import Reservation from './pages/Reservation/Reservation.jsx';
 
@@ -146,6 +148,7 @@ function App() {
                         {/* 리뷰 */}
                         <Route path="/review" element={<Review />} />
                         <Route path="/starRating" element={<StarRating />} />
+                        <Route path="/reviewList" element={<ReviewList />} />
                         
                         {/* 예약 페이지 */} 
                         <Route path="/reservation" element={<Reservation />} />

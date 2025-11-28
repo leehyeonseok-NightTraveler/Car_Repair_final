@@ -7,8 +7,8 @@ export default function ReviewForm() {
   const [rating, setRating] = useState(0);
   const [content, setContent] = useState("");
 
-  const rsvNo = 3;
-  const storeId = "yyy";
+  const rsvNo = 2;
+  const storeId = "33";
 
   // ⭐ 테스트용 자동 로그인
   useEffect(() => {

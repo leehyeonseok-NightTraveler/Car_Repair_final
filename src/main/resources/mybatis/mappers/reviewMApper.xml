@@ -29,7 +29,7 @@
 	        #{storeId},
 	        #{rating},
 	        #{content, jdbcType=CLOB},
-	        SYSDATE
+	        SYSTIMESTAMP
 	    )
 	</insert>
 
@@ -38,8 +38,7 @@
         UPDATE TBL_REVIEW
         SET
             rating = #{rating},
-            content = #{content},
-            updated_date = SYSDATE
+            content = #{content}
         WHERE review_no = #{reviewNo}
           AND account_id = #{accountId}  <!-- 본인 리뷰인지 검증 -->
     </update>
@@ -53,8 +52,7 @@
             store_id AS storeId,
             rating,
             content,
-            created_date AS createdDate,
-            updated_date AS updatedDate
+            to_char(created_date, 'YYYY.MM.DD HH24:MI') AS createdDate
         FROM TBL_REVIEW
         WHERE store_id = #{storeId}
         ORDER BY created_date DESC
@@ -69,8 +67,7 @@
             store_id AS storeId,
             rating,
             content,
-            created_date AS createdDate,
-            updated_date AS updatedDate
+            created_date AS createdDate
         FROM TBL_REVIEW
         WHERE review_no = #{reviewNo}
     </select>
@@ -88,5 +85,19 @@
         FROM TBL_RESERVATION
         WHERE rsv_no = #{rsvNo, jdbcType=NUMERIC}
     </select>
+    
+    <!-- 8. 별점 평균 구하기 -->
+    <select id="getAverageRating" parameterType="string" resultType="double">
+	    SELECT 
+	        SUM(rating) / COUNT(*) AS avgRating
+	    FROM TBL_REVIEW
+	    WHERE store_id = #{storeId}
+	</select>
+	
+	<!-- 9. 리뷰 삭제 -->
+	<delete id="deleteReview">
+	    DELETE FROM TBL_REVIEW
+	    WHERE review_no = #{reviewNo}
+	</delete>
 
 </mapper>

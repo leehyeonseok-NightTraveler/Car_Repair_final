@@ -1,0 +1,99 @@
+.review-table-container {
+  margin-top: 20px;
+}
+
+.avg-rating-box {
+  margin-bottom: 20px;
+}
+
+.avg-star-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.avg-rating-number {
+  font-size: 16px;
+  color: #555;
+}
+
+.review-table {
+  border-collapse: collapse;
+  position: relative;
+  left: 100px;
+}
+
+.review-table th,
+.review-table td {
+  padding: 6px;
+  border: 1px solid #ddd;
+  font-size: 13px;
+}
+
+.star-row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.rating-number {
+  margin-left: 5px;
+  font-size: 14px;
+  color: #555;
+}
+
+.sr-star {
+  width: 20px;
+  height: 20px;
+}
+
+.review-table td:nth-child(1),
+.review-table th:nth-child(1) {
+  width: 200px;
+}
+
+.review-table td:nth-child(2),
+.review-table th:nth-child(2) {
+  width: 100px;
+}
+
+.review-table td:nth-child(3),
+.review-table th:nth-child(3) {
+  width: 300px;
+  padding-right: 60px;
+}
+
+.review-table td:nth-child(4),
+.review-table th:nth-child(4) {
+  width: 200px;
+}
+
+.star-row {
+  display: flex;
+  align-items: center;
+  gap: 0px; /* 별 사이 간격도 제거 가능 (원하면 2~3px로 바꿔도 됨) */
+}
+
+.rating-number {
+  margin-left: 3px; /* 별과 숫자 간 최소 간격 */
+  font-size: 14px;
+  color: #555;
+}
+
+.star-with-score {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* 별과 점수 간 거리 */
+}
+
+.review-content-cell {
+  position: relative;
+  padding-right: 60px; /* 버튼 공간 확보 */
+}
+
+.edit-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}

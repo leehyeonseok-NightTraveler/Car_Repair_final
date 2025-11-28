@@ -9,8 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.boot.dto.ReviewDTO;
@@ -41,16 +43,61 @@ public class ReviewController {
 	    return ResponseEntity.ok("리뷰 등록 완료");
 	}
 
-    @PostMapping("/update")
-    public ResponseEntity<?> updateReview(@RequestBody ReviewDTO dto, HttpSession session) {
-        String accountId = (String) session.getAttribute("accountId");
-        service.updateReview(dto, accountId);
-        return ResponseEntity.ok("리뷰 수정 완료");
-    }
+	@PutMapping("/{reviewNo}")
+	public ResponseEntity<?> updateReview(
+	        @PathVariable Integer reviewNo,
+	        @RequestBody ReviewDTO dto,
+	        HttpSession session) {
 
+	    String sessionAccountId = (String) session.getAttribute("accountId");
+	    if (sessionAccountId == null) {
+	        return ResponseEntity.status(401).body("로그인 필요");
+	    }
+
+	    dto.setReviewNo(reviewNo);          // reviewNo 세팅
+	    dto.setAccountId(sessionAccountId); // 작성자 세팅
+
+	    try {
+	        service.updateReview(dto, sessionAccountId);
+	        return ResponseEntity.ok("success");
+	    } catch (RuntimeException e) {
+	        return ResponseEntity.status(403).body(e.getMessage());
+	    }
+	}
+
+	
     @GetMapping("/store/{storeId}")
-    public List<ReviewDTO> getStoreReviews(@PathVariable String storeId) {
-        return service.getStoreReviews(storeId);
+    public List<ReviewDTO> findByStoreId(@PathVariable String storeId) {
+        return service.findByStoreId(storeId);
+    }
+    
+    //평균 별점 구하는 메서드
+    @GetMapping("/store/{storeId}/average")
+    public Double getAverageRating(@PathVariable String storeId) {
+        return service.getAverageRating(storeId);
+    }
+    
+    @GetMapping("/session/user")
+    public ResponseEntity<?> getSessionUser(HttpSession session) {
+        String accountId = (String) session.getAttribute("accountId");
+
+        if (accountId == null) {
+            return ResponseEntity.status(401).body("로그인 안됨");
+        }
+
+        return ResponseEntity.ok(accountId);
+    }
+    
+    @PostMapping("/delete")
+    public ResponseEntity<?> deleteReview(@RequestParam("reviewNo") Integer reviewNo) {
+
+        int result = service.deleteReview(reviewNo);
+
+        if (result > 0) {
+            return ResponseEntity.ok("success");
+        } else {
+            return ResponseEntity.badRequest().body("fail");
+        }
     }
     
 }
