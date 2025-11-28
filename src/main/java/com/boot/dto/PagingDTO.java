@@ -1,4 +1,3 @@
-// PagingDTO.java  ← 당신이 주신 코드 100% 그대로 사용
 package com.boot.dto;
 
 import lombok.Data;

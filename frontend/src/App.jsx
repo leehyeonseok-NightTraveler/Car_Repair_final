@@ -66,14 +66,16 @@ import AutoSearch from "./pages/AutoSearch/autoSearch.jsx";
 // 13.[리뷰 페이지]
 import Review from "./pages/Review/review.jsx";
 import StarRating from "./pages/Review/starRating.jsx";
+
 //13. [예약 페이지]
 import Reservation from './pages/Reservation/Reservation.jsx';
+import ReservationHistory from './pages/Reservation/ReservationHistory.jsx';
+import ReservationDetail from './pages/Reservation/ReservationDetail.jsx';
+import ReservationModify from './pages/Reservation/ReservationModify.jsx';
 
 // 14. [자동차 정비이력/관리]
 import Maintenance from "./pages/maintenance/Maintenance.jsx";
 
-//15. [예약 내역 조회 페이지]
-import ReservationHistory from './pages/Reservation/ReservationHistory.jsx';
 
 function App() {
     return (
@@ -152,11 +154,12 @@ function App() {
                         
                         {/* 예약 페이지 */} 
                         <Route path="/reservation" element={<Reservation />} />
-
-                        <Route path="/maintenance" element={<Maintenance />} />
-                        
-                        {/* 예약 내역 조회 페이지 */}
                         <Route path="/reservation/history" element={<ReservationHistory />} />
+                        <Route path="/reservation/details/:rsvNo" element={<ReservationDetail />} />
+                        <Route path="/reservation/modify/:rsvNo" element={<ReservationModify />} />
+                        
+                        <Route path="/maintenance" element={<Maintenance />} />
+                
                     </Routes>
                 </main>
 

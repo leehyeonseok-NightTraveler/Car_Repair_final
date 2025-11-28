@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './reservationhistory.css'; 
+import './reservation.css'; 
 
-// ⭐️ 예약 상태 코드를 한국어로 변환하는 함수 추가
+// ⭐️ 예약 상태 코드를 한국어로 변환하는 함수
 const translateStatus = (status) => {
     switch (status) {
         case 'PENDING':
@@ -21,48 +21,71 @@ const translateStatus = (status) => {
     }
 };
 
+// ⭐️ Timezone 변환 없이 KST 문자열을 한국어 형식으로 포맷하는 유틸리티 함수 (시간 오류 해결)
+const formatIsoToKSTDisplay = (isoString) => {
+    if (!isoString) return '날짜 정보 없음';
+
+    // 문자열에서 YYYY-MM-DD, HH:MM 부분을 추출
+    const datePart = isoString.substring(0, 10);  // YYYY-MM-DD
+    const timePart = isoString.substring(11, 16); // HH:MM
+
+    // HH:MM을 오전/오후 형식으로 변환
+    const [hour, minute] = timePart.split(':').map(Number);
+    const ampm = hour >= 12 ? '오후' : '오전';
+    const displayHour = hour % 12 || 12; 
+
+    // YYYY-MM-DD를 YYYY년 MM월 DD일 형식으로 변환
+    const [year, month, day] = datePart.split('-');
+
+    return `${year}년 ${month}월 ${day}일 ${ampm} ${displayHour}:${minute}`;
+};
+
 
 const ReservationHistory = () => {
     const navigate = useNavigate();
     
-    // 🔑 예약 목록 상태
     const [reservations, setReservations] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    // 🌟 사용자 ID 가져오기 (로그인 상태 확인)
     const accountId = sessionStorage.getItem('ACCOUNT_ID');
 
+    // 🌟 예약 목록을 불러오는 함수
+    const fetchReservations = async () => {
+        if (!accountId) return; 
+        
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await axios.get(`http://localhost:8484/api/reservation/user/${accountId}`);
+            setReservations(response.data);
+            
+        } catch (err) {
+            console.error("예약 내역 조회 실패:", err);
+            setError("예약 내역을 불러오는 중 서버 오류가 발생했습니다.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
-        // 1. 로그인 체크: ID가 없으면 로그인 페이지로 리다이렉트
         if (!accountId) {
             alert("예약 내역을 조회하려면 로그인이 필요합니다.");
             navigate('/login');
             return;
         }
-
-        const fetchReservations = async () => {
-            try {
-                // ⭐️ 백엔드 API 호출: GET /api/reservation/user/{accountId}
-                const response = await axios.get(`http://localhost:8484/api/reservation/user/${accountId}`);
-                
-                setReservations(response.data);
-                setIsLoading(false);
-            } catch (err) {
-                console.error("예약 내역 조회 실패:", err);
-                // 500 에러 등의 경우 메시지 표시
-                setError("예약 내역을 불러오는 중 서버 오류가 발생했습니다.");
-                setIsLoading(false);
-            }
-        };
-
         fetchReservations();
     }, [accountId, navigate]);
+
+
+    // ⭐️ 상세보기 페이지로 이동하는 함수
+    const handleViewDetails = (rsvNo) => {
+        navigate(`/reservation/details/${rsvNo}`); 
+    };
 
     // ----------------------
     // 뷰 렌더링 로직
     // ----------------------
-    if (isLoading) {
+    if (isLoading && reservations.length === 0) {
         return <div className="history-container"><h2>예약 내역</h2><p>예약 내역을 불러오는 중...</p></div>;
     }
 
@@ -86,29 +109,30 @@ const ReservationHistory = () => {
                             <th>차량 모델</th>
                             <th>서비스 종류</th>
                             <th>상태</th>
-                            <th>관리</th>
+                            <th>관리</th> 
                         </tr>
                     </thead>
                     <tbody>
-                        {reservations.map((rsv, index) => (
+                        {reservations.map((rsv) => (
                             <tr key={rsv.rsvNo}> 
                                 <td>{rsv.rsvNo}</td>
                                 <td>{rsv.storeName || '정보 없음'}</td> 
-                                <td>{new Date(rsv.rsvDate).toLocaleString('ko-KR')}</td>
+                                
+                                {/* ⭐️ 시간 포맷 함수 적용 */}
+                                <td>{formatIsoToKSTDisplay(rsv.rsvDate)}</td> 
+                                
                                 <td>{rsv.carModel}</td>
                                 <td>{rsv.serviceType}</td>
-                                
-                                {/* ⭐️ 상태를 한글로 변환하여 표시 */}
                                 <td>{translateStatus(rsv.status)}</td> 
                                 
                                 <td>
-                                    {/* ⭐️ 버튼 표시 조건도 한글 함수를 사용하거나 PENDING 상태를 그대로 사용 */}
-                                    {rsv.status === 'PENDING' && ( 
-                                        <>
-                                            <button className="btn-modify">수정</button>
-                                            <button className="btn-cancel">취소</button>
-                                        </>
-                                    )}
+                                    {/* ⭐️ 상세보기 버튼만 남깁니다. */}
+                                    <button 
+                                        className="btn-detail" 
+                                        onClick={() => handleViewDetails(rsv.rsvNo)}
+                                    >
+                                        상세보기
+                                    </button>
                                 </td>
                             </tr>
                         ))}
