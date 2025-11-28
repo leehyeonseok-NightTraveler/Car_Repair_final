@@ -28,7 +28,7 @@ public class MypageStoreRestController {
     }
 
     /** 업체 정보 수정 */
-    @PostMapping("/updateInfo")
+    @PostMapping("/update")
     public Map<String, Object> updateInfo(@RequestBody StoreDTO dto, HttpSession session) {
 
         String storeId = (String) session.getAttribute("storeId");

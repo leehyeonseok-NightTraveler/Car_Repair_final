@@ -37,12 +37,14 @@ public class SessionAuthFilter extends OncePerRequestFilter {
         }
 
         HttpSession session = req.getSession(false);
+
         Object accountId = (session != null ? session.getAttribute("accountId") : null);
+        Object storeId = (session != null ? session.getAttribute("storeId") : null);
 
-        log.info("   ▶ 세션 accountId={}", accountId);
+        log.info("   ▶ 세션 accountId={}, storeId={}", accountId, storeId);
 
-        // 세션 없으면 차단
-        if (accountId == null) {
+        // ★ 여기만 새로 추가됨 ★
+        if (accountId == null && storeId == null) {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             res.setContentType("application/json;charset=UTF-8");
             res.getWriter().write("{\"success\":false,\"message\":\"로그인이 필요합니다.\"}");
@@ -54,9 +56,7 @@ public class SessionAuthFilter extends OncePerRequestFilter {
 
     private boolean isExcluded(String uri) {
 
-        // ---------------------------
-        // 1) 정적 리소스 + 에러
-        // ---------------------------
+        // (기존 코드 그대로 유지)
         if (uri.startsWith("/css/") ||
             uri.startsWith("/js/") ||
             uri.startsWith("/images/") ||
@@ -65,9 +65,6 @@ public class SessionAuthFilter extends OncePerRequestFilter {
             return true;
         }
 
-        // ---------------------------
-        // 2) React 공개 라우트
-        // ---------------------------
         if (uri.equals("/") ||
             uri.startsWith("/recommend") ||
 
@@ -83,16 +80,13 @@ public class SessionAuthFilter extends OncePerRequestFilter {
             uri.startsWith("/notice/list") ||
             uri.startsWith("/notice/view") ||
 
-            uri.startsWith("/faq") && !uri.contains("write") && !uri.contains("modify") && !uri.contains("delete") ||
+            (uri.startsWith("/faq") && !uri.contains("write") && !uri.contains("modify") && !uri.contains("delete")) ||
 
             uri.startsWith("/guide") ||
             uri.startsWith("/autoSearch")) {
             return true;
         }
 
-        // ---------------------------
-        // 3) API 공개 엔드포인트
-        // ---------------------------
         if (uri.startsWith("/api/login") ||
             uri.startsWith("/api/storeLogin") ||
             uri.startsWith("/api/logout") ||
@@ -105,17 +99,10 @@ public class SessionAuthFilter extends OncePerRequestFilter {
             return true;
         }
 
-        // ---------------------------
-        // 그 외 /api/* 는 모두 보호
-        // ---------------------------
         if (uri.startsWith("/api/")) {
             return false;
         }
 
-        // ---------------------------
-        // React 페이지 → 기본적으로 허용
-        // 여기서 보호 판정은 프론트 ProtectedRoute가 담당
-        // ---------------------------
         return true;
     }
 }
