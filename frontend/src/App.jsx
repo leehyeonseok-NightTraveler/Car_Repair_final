@@ -167,6 +167,8 @@ function App() {
               {/* 업체 예약 내역 관리 페이지 */}
               {/* 1. 지금 스크린샷 주소 (로그인 세션으로 들어갈 때) */}
               <Route path="/mypage/store/reservations" element={<StoreReservation />} />
+
+              <Route path="/mypage/store/reservations/:storeId" element={<StoreReservation />} />
             </Route>
 
           </Routes>
