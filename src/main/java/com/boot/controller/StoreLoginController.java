@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;   // 🔐 추가
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +27,9 @@ public class StoreLoginController {
     @Autowired
     private StoreLoginService storeLoginService;
 
-    // 로그인 처리
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;   // 🔐 추가됨
+
     @PostMapping("/storeLogin")
     public HashMap<String, Object> login(@RequestBody HashMap<String, String> req,
                                          HttpSession session,
@@ -59,7 +62,6 @@ public class StoreLoginController {
         // DB 조회
         HashMap<String, String> param = new HashMap<>();
         param.put("storeId", storeId);
-        param.put("password", password);
 
         ArrayList<StoreLoginDTO> list = storeLoginService.storeLoginYn(param);
 
@@ -79,7 +81,10 @@ public class StoreLoginController {
         }
 
         StoreLoginDTO dto = list.get(0);
-        if (!password.equals(dto.getPassword())) {
+
+        // ❌ 기존: !password.equals()
+        // ✔ 변경: !passwordEncoder.matches()
+        if (!passwordEncoder.matches(password, dto.getPassword())) {
             failCount++;
             session.setAttribute("loginFailCount", failCount);
 
@@ -99,7 +104,7 @@ public class StoreLoginController {
         session.setAttribute("ROLE", "STORE");
 
         // 아이디 저장
-        if (saveId != null && saveId.equals("true")) {
+        if ("true".equals(saveId)) {
             Cookie cookie = new Cookie("storeSavedId", storeId);
             cookie.setMaxAge(60 * 60 * 24 * 7);
             cookie.setPath("/");

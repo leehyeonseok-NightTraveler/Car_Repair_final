@@ -5,21 +5,21 @@
 <mapper namespace="com.boot.dao.StoreLoginDAO">
 
     <select id="storeLoginYn" parameterType="map" resultType="com.boot.dto.StoreLoginDTO">
-        SELECT 
-            store_id AS storeId,
-            password,
-            email,
-            phone_number AS phoneNumber,
-            reg_date AS regDate,
-            address,
-            latitude,
-            longitude,
-            description,
-            opening_hours AS openingHours,
-            store_status AS storeStatus  <!-- 추가 -->
-        FROM tbl_store
-        WHERE store_id = #{storeId}
-          AND password = #{password}
-    </select>
+	    SELECT 
+	        store_id AS storeId,
+	        password,
+	        email,
+	        phone_number AS phoneNumber,
+	        reg_date AS regDate,
+	        address,
+	        latitude,
+	        longitude,
+	        description,
+	        opening_hours AS openingHours,
+	        store_status AS storeStatus
+	    FROM tbl_store
+	    WHERE store_id = #{storeId}
+	</select>
+
 
 </mapper>
