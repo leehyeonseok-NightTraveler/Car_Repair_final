@@ -12,7 +12,7 @@ const translateStatus = (status) => {
             return '예약 확정';
         case 'REJECTED':
             return '예약 거절';
-        case 'CANCELLED':
+        case 'CANCELED':
             return '예약 취소';
         case 'COMPLETED':
             return '정비 완료';
