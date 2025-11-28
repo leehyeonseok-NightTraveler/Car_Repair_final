@@ -1,4 +1,4 @@
-/* RecommendMap.css */
+/* RecommendMap.css - 완벽 수정판 (스크롤+지도 문제 100% 해결) */
 
 /* 전체 페이지 배경 및 레이아웃 */
 .map-page-container {
@@ -51,14 +51,31 @@
   @apply h-12 bg-teal-500 hover:bg-teal-600 text-white px-8 rounded-xl font-bold flex items-center gap-2 transition shadow-md hover:shadow-lg active:scale-95;
 }
 
-/* 3. 메인 카드 (지도 + 리스트) */
+/* 3. 메인 카드 (지도 + 리스트) - 핵심 수정 */
 .main-card {
-  @apply bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row h-[600px] lg:h-[700px] border border-gray-100;
+  @apply bg-white rounded-3xl shadow-xl flex flex-col lg:flex-row h-[600px] lg:h-[700px] border border-gray-100;
+  /* overflow-hidden 삭제 → 지도가 자유롭게 드래그/줌 되게 함 */
 }
 
-/* 좌측 리스트 패널 */
+/* 좌측 리스트 패널 - 스크롤만 여기서! */
 .list-panel {
-  @apply hidden lg:flex flex-col w-96 border-r border-gray-100 bg-white h-full min-h-0;
+  @apply hidden lg:flex flex-col w-96 border-r border-gray-100 bg-white;
+  height: 100%;           /* 필수 */
+  min-height: 0;          /* 스크롤 제대로 먹히게 */
+  overflow-y: auto;       /* 왼쪽만 스크롤 */
+  flex-shrink: 0;
+}
+
+/* 우측 지도 영역 - 스크롤 절대 금지 */
+.map-section {
+  @apply flex-1 relative bg-gray-100;
+  height: 100%;           /* 필수! 지도가 꽉 차게 */
+}
+
+/* 지도 컨테이너 100% 채우기 */
+.map-section > div {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .list-header {
@@ -75,11 +92,6 @@
 
 .store-name {
   @apply font-bold text-gray-800 flex items-center gap-2 text-lg group-hover:text-teal-600 transition-colors;
-}
-
-/* 우측 지도 영역 */
-.map-section {
-  @apply flex-1 relative h-full bg-gray-100;
 }
 
 .mobile-list-btn-wrapper {

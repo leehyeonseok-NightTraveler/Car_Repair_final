@@ -1,9 +1,7 @@
 package com.boot.controller;
 
-import com.boot.dto.ConsumableItemDTO;
-import com.boot.dto.ConsumableLogDTO;
-import com.boot.dto.MypageDTO;
-import com.boot.dto.RepairHistoryDTO;
+import com.boot.dto.*;
+import com.boot.service.MaintenanceFavoritesService;
 import com.boot.service.MaintenanceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -20,11 +19,12 @@ import java.util.List;
 public class MaintenanceController {
 
     private final MaintenanceService maintenanceService;
+    private final MaintenanceFavoritesService maintenanceFavoritesService;
 
     @GetMapping("/cars")
     public ResponseEntity<List<MypageDTO>> getMyCars(HttpSession session) {
-        String accountId = (String) session.getAttribute("accountId");
-        return ResponseEntity.ok(maintenanceService.getMyCars(accountId));
+        String account_id = (String) session.getAttribute("accountId");
+        return ResponseEntity.ok(maintenanceService.getMyCars(account_id));
     }
 
     @GetMapping("/repairHistory/{car_number}")
@@ -50,7 +50,10 @@ public class MaintenanceController {
 
     @PostMapping("/consumable/log")
     public ResponseEntity<ConsumableLogDTO> addConsumableLog(@RequestBody ConsumableLogDTO consumableLogDTO) {
-        return ResponseEntity.ok(maintenanceService.addConsumableLog(consumableLogDTO));
+
+        ConsumableLogDTO result = maintenanceService.addConsumableLog(consumableLogDTO);
+        maintenanceService.addRepairHistoryFromConsumableLog(consumableLogDTO);
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("/delete/repairHistory/{repair_id}")
@@ -59,10 +62,31 @@ public class MaintenanceController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/delete/consumableLog/{repair_id}")
-    public ResponseEntity<Void> deleteConsumableLog(@PathVariable int repair_id) {
-        maintenanceService.deleteConsumableLog(repair_id);
+    @DeleteMapping("/delete/consumableLog/{replace_id}")
+    public ResponseEntity<Void> deleteConsumableLog(@PathVariable int replace_id) {
+        maintenanceService.deleteConsumableLog(replace_id);
         return ResponseEntity.ok().build();
+    }
+
+    // 수정 (한글 100% 해결!)
+    @GetMapping("/{car_number:.+}")
+    public Map<String, Integer> getFavoriteMap(@PathVariable String car_number) {
+        log.info("즐겨찾기 목록 요청 - 차량번호: {}", car_number);
+        return maintenanceFavoritesService.getFavoriteMap(car_number);
+    }
+
+
+    @PostMapping("/toggle")
+    public ResponseEntity<String> toggleFavorite(@RequestBody MaintenanceFavoritesDTO dto) {
+        log.info("즐겨찾기 토글 요청 - 차량: {}, 항목: {}", dto.getCar_number(), dto.getConsumable_key());
+
+        try {
+            maintenanceFavoritesService.toggleFavorite(dto.getCar_number(), dto.getConsumable_key());
+            return ResponseEntity.ok("success");
+        } catch (Exception e) {
+            log.error("즐겨찾기 처리 실패", e);
+            return ResponseEntity.status(500).body("fail");
+        }
     }
 
 }

@@ -19,9 +19,9 @@ public class MaintenanceServiceImpl implements MaintenanceService {
     private final SqlSession sqlSession;
 
     @Override
-    public List<MypageDTO> getMyCars(String accountId) {
+    public List<MypageDTO> getMyCars(String account_id) {
         MaintenanceDAO dao = sqlSession.getMapper(MaintenanceDAO.class);
-        return dao.getMyCars(accountId);
+        return dao.getMyCars(account_id);
     }
 
     @Override
@@ -33,7 +33,8 @@ public class MaintenanceServiceImpl implements MaintenanceService {
     @Override
     public RepairHistoryDTO addRepairHistory(RepairHistoryDTO repairHistoryDTO) {
         MaintenanceDAO dao = sqlSession.getMapper(MaintenanceDAO.class);
-        return dao.addRepairHistory(repairHistoryDTO);
+        dao.addRepairHistory(repairHistoryDTO);
+        return repairHistoryDTO;
     }
 
     @Override
@@ -51,7 +52,8 @@ public class MaintenanceServiceImpl implements MaintenanceService {
     @Override
     public ConsumableLogDTO addConsumableLog(ConsumableLogDTO consumableLogDTO) {
         MaintenanceDAO dao = sqlSession.getMapper(MaintenanceDAO.class);
-        return dao.addConsumableLog(consumableLogDTO);
+        dao.addConsumableLog(consumableLogDTO);
+        return consumableLogDTO;
     }
 
     @Override
@@ -61,8 +63,14 @@ public class MaintenanceServiceImpl implements MaintenanceService {
     }
 
     @Override
-    public void deleteConsumableLog(int repair_id) {
+    public void deleteConsumableLog(int replace_id) {
         MaintenanceDAO dao = sqlSession.getMapper(MaintenanceDAO.class);
-        dao.deleteConsumableLog(repair_id);
+        dao.deleteConsumableLog(replace_id);
+    }
+
+    @Override
+    public void addRepairHistoryFromConsumableLog(ConsumableLogDTO consumableLogDTO) {
+        MaintenanceDAO dao = sqlSession.getMapper(MaintenanceDAO.class);
+        dao.addRepairHistoryFromConsumableLog(consumableLogDTO);
     }
 }
