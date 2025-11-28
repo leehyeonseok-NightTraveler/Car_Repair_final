@@ -89,7 +89,7 @@ const Header = () => {
                         {role === "USER" || !role ? (
                             // 1. 일반 유저 (USER) 또는 비로그인 상태일 때: 서브 메뉴 드롭다운 표시
                             <li className="dropdown-parent">
-                                <Link to="#">예약</Link> 
+                                <Link to="#">예약</Link>
                                 <ul className="submenu">
                                     <li>
                                         {/* 예약 신청: 로그인 시 /Reservation, 비로그인 시 /login */}

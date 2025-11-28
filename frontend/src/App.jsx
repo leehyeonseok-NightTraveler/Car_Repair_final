@@ -75,6 +75,10 @@ import Maintenance from "./pages/maintenance/Maintenance.jsx";
 //15. [예약 내역 조회 페이지]
 import ReservationHistory from './pages/Reservation/ReservationHistory.jsx';
 
+//16. [업체 예약 관리 페이지]
+import StoreReservation from './pages/Reservation/StoreReservation';
+
+
 function App() {
     return (
         <Router>
@@ -157,6 +161,14 @@ function App() {
                         
                         {/* 예약 내역 조회 페이지 */}
                         <Route path="/reservation/history" element={<ReservationHistory />} />
+
+                        {/* 업체 예약 내역 관리 페이지 */}
+                        {/* 1. 지금 스크린샷 주소 (로그인 세션으로 들어갈 때) */}
+       <Route path="/mypage/store/reservations" element={<StoreReservation />} />
+
+       {/* 2. 주소 뒤에 아이디를 붙여서 들어갈 때 (테스트용) */}
+       <Route path="/mypage/store/reservations/:storeId" element={<StoreReservation />} />
+
                     </Routes>
                 </main>
 
