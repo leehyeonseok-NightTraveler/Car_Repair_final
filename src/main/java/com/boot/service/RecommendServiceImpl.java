@@ -39,7 +39,7 @@ public class RecommendServiceImpl implements RecommendService {
             String urlStr = String.format("%s?serviceKey=%s&pageNo=1&numOfRows=1000&type=json", API_URL, SERVICE_KEY);
             URI uri = new URI(urlStr);
 
-            RestTemplate restTemplate = new RestTemplate();
+            RestTemplate restTemplate = new RestTemplate(); 
             String response = restTemplate.getForObject(uri, String.class);
 
             // 🚨 [중요] 공공데이터가 뭐라고 대답했는지 콘솔에 찍어봅니다!

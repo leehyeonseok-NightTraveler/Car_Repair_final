@@ -9,7 +9,7 @@ public class ConsumableLogDTO {
     private int replace_id;
     private String car_number;
     private String consumable_key;
-    private Date replacement_date;
+    private String replacement_date;
     private int replacement_mileage;
     private String shop_name;
     private int cost;

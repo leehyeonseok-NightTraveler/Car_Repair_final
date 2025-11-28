@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import "./axiosGlobal";
 
-
 // 공통 컴포넌트
 import Header from "./components/common/Header";
 import Footer from "./components/common/Footer";
@@ -53,12 +52,17 @@ import AdminMypage from "./pages/Mypage/AdminMypage";
 // 관리자 승급
 import AdminPromote from "./pages/promote_admin/AdminPromote";
 
-// AutoSearch
+// 검색
 import AutoSearch from "./pages/AutoSearch/autoSearch";
 
-// 예약/정비이력
+// 예약/정비
 import Reservation from "./pages/Reservation/Reservation";
 import Maintenance from "./pages/maintenance/Maintenance";
+import ReservationHistory from "./pages/Reservation/ReservationHistory";
+
+// 리뷰 (추가된 공개 페이지)
+import Review from "./pages/Review/review";
+import StarRating from "./pages/Review/starRating";
 
 // 가이드
 import Guide from "./pages/Gaide/Gaide";
@@ -67,16 +71,13 @@ import Guide2 from "./pages/Gaide/Gaide-2";
 import Guide3 from "./pages/Gaide/Gaide-3";
 import Guide4 from "./pages/Gaide/Gaide-4";
 
-
 function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-50 flex flex-col">
 
-        {/* Header */}
         <Header />
 
-        {/* Main */}
         <main className="flex-grow">
           <Routes>
 
@@ -84,7 +85,6 @@ function App() {
             {/* 🔓 공개 페이지 */}
             {/* ========================================= */}
 
-            {/* 메인 */}
             <Route path="/" element={<MainPage />} />
             <Route path="/recommend" element={<RecommendMap />} />
 
@@ -95,6 +95,10 @@ function App() {
             {/* FAQ */}
             <Route path="/faq" element={<FaqList />} />
             <Route path="/faq/view/:faqNo" element={<FaqView />} />
+
+            {/* 리뷰/평점 → 공개 */}
+            <Route path="/review" element={<Review />} />
+            <Route path="/starRating" element={<StarRating />} />
 
             {/* 로그인/회원가입 */}
             <Route path="/login" element={<Login />} />
@@ -119,15 +123,15 @@ function App() {
 
 
             {/* ========================================= */}
-            {/* 🔐 로그인 필요한 보호 페이지 (ProtectedRoute) */}
+            {/* 🔐 보호된 페이지 (ProtectedRoute) */}
             {/* ========================================= */}
             <Route element={<ProtectedRoute />}>
 
-              {/* 공지사항 관리 */}
+              {/* 공지사항 쓰기/수정 */}
               <Route path="/notice/write" element={<NoticeWrite />} />
               <Route path="/notice/modify/:notice_no" element={<NoticeModify />} />
 
-              {/* FAQ 관리 */}
+              {/* FAQ 쓰기/수정 */}
               <Route path="/faq/write" element={<FaqWrite />} />
               <Route path="/faq/modify/:faqNo" element={<FaqModify />} />
 
@@ -150,19 +154,20 @@ function App() {
               <Route path="/mypage/admin" element={<AdminMypage />} />
               <Route path="/admin/promote" element={<AdminPromote />} />
 
-              {/* 예약/정비이력 */}
+              {/* 예약/정비 */}
               <Route path="/reservation" element={<Reservation />} />
               <Route path="/maintenance" element={<Maintenance />} />
+
+              {/* 예약 내역 → 보호 */}
+              <Route path="/reservation/history" element={<ReservationHistory />} />
 
             </Route>
 
           </Routes>
         </main>
 
-        {/* Footer + Chat */}
         <Footer />
         <ChatWidget />
-
       </div>
     </Router>
   );

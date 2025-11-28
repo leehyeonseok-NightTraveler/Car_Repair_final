@@ -19,4 +19,5 @@ public interface ReservationService {
     
     // 취소 (상태 변경)
     public boolean cancelReservation(int rsvNo);
+    
 }
