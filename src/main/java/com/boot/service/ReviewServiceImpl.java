@@ -83,5 +83,15 @@ public class ReviewServiceImpl implements ReviewService{
 	public Integer deleteReview(Integer reviewNo) {
 		return dao.deleteReview(reviewNo);
 	}
+
+	@Override
+	public List<ReviewDTO> findByStoreIdPaged(String storeId, int pageNum, int amount) {
+		return dao.findByStoreIdPaged(storeId, pageNum, amount);
+	}
+
+	@Override
+	public int countByStoreId(String storeId) {
+		return dao.countByStoreId(storeId);
+	}
     
 }

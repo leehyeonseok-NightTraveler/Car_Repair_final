@@ -57,7 +57,7 @@ function renderStars(rating) {
   return <div className="star-row">{stars}</div>;
 }
 
-export default function ReviewList({ storeId = 33 }) {
+export default function ReviewList({ storeId = "yyy" }) {
   const [reviews, setReviews] = useState([]);
   const [avgRating, setAvgRating] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -68,21 +68,45 @@ export default function ReviewList({ storeId = 33 }) {
   const [editContent, setEditContent] = useState("");
   const [editRating, setEditRating] = useState(5);
 
+  // ⭐ 페이징
+  const [pageNum, setPageNum] = useState(1);
+  const [amount] = useState(10);
+  const [total, setTotal] = useState(0);
+
+  // ⭐ 서버에서 리뷰 한번에 불러오는 함수
+  const loadReviews = async () => {
+    try {
+      const listRes = await axios.get(
+        `http://localhost:8484/api/review/store/${storeId}/paged`,
+        {
+          params: { pageNum, amount },
+          withCredentials: true,
+        }
+      );
+
+      setReviews(listRes.data.list);
+      setTotal(listRes.data.total);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // ⭐ 페이지 변화 / 스토어 변화 시 로딩
   useEffect(() => {
     async function load() {
       try {
-        const listRes = await axios.get(
-          `http://localhost:8484/api/review/store/${storeId}`,
-          { withCredentials: true }
-        );
-        setReviews(listRes.data);
+        setLoading(true);
 
+        await loadReviews();
+
+        // 평균 평점
         const avgRes = await axios.get(
           `http://localhost:8484/api/review/store/${storeId}/average`,
           { withCredentials: true }
         );
         setAvgRating(avgRes.data);
 
+        // 로그인 유저
         const userRes = await axios.get(
           "http://localhost:8484/api/review/session/user",
           { withCredentials: true }
@@ -94,8 +118,9 @@ export default function ReviewList({ storeId = 33 }) {
         setLoading(false);
       }
     }
+
     load();
-  }, [storeId]);
+  }, [storeId, pageNum]);
 
   const openEdit = (r) => {
     setEditOpen(r.reviewNo);
@@ -103,6 +128,7 @@ export default function ReviewList({ storeId = 33 }) {
     setEditRating(r.rating);
   };
 
+  // ⭐ 수정 후 자동 새로고침
   const submitEdit = async (reviewNo) => {
     try {
       await axios.put(
@@ -111,39 +137,36 @@ export default function ReviewList({ storeId = 33 }) {
         { withCredentials: true }
       );
 
-      alert("수정 완료!");
-
-      // ✔ reload 없이 상태에서 수정 적용
-      setReviews((prev) =>
-        prev.map((rev) =>
-          rev.reviewNo === reviewNo
-            ? { ...rev, content: editContent, rating: editRating }
-            : rev
-        )
-      );
-
+      alert("수정 완료");
       setEditOpen(null);
+
+      // ⭐ 서버에서 새로 다시 가져오기
+      loadReviews();
     } catch (e) {
       console.error(e);
       alert("수정 실패");
     }
   };
 
-  // ⭐⭐⭐ 삭제 기능 추가
+  // ⭐ 삭제 후 자동 새로고침
   const deleteReview = async (reviewNo) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
-	try {
-	    await axios.post(
-	      "http://localhost:8484/api/review/delete",
-	      new URLSearchParams({ reviewNo }),
-	      { withCredentials: true }
-	    );
+    try {
+      await axios.post(
+        "http://localhost:8484/api/review/delete",
+        new URLSearchParams({ reviewNo }),
+        { withCredentials: true }
+      );
 
-      alert("삭제 완료!");
+      // 마지막 1개라 페이지 Index 조정
+      if (reviews.length === 1 && pageNum > 1) {
+        setPageNum(pageNum - 1);
+        return;
+      }
 
-      // ✔ reload 없이 리스트에서 제거
-      setReviews((prev) => prev.filter((r) => r.reviewNo !== reviewNo));
+      // ⭐ 그냥 새로 불러오기
+      loadReviews();
     } catch (e) {
       console.error(e);
       alert("삭제 실패");
@@ -152,6 +175,13 @@ export default function ReviewList({ storeId = 33 }) {
 
   if (loading) return <div className="review-message">불러오는 중...</div>;
 
+  // ⭐ 페이징 계산
+  const totalPage = Math.ceil(total / amount);
+  const pageGroupSize = 5;
+  const currentGroup = Math.ceil(pageNum / pageGroupSize);
+  const startPage = (currentGroup - 1) * pageGroupSize + 1;
+  const endPage = Math.min(currentGroup * pageGroupSize, totalPage);
+
   return (
     <div className="review-table-container">
       <div className="avg-rating-box">
@@ -159,7 +189,9 @@ export default function ReviewList({ storeId = 33 }) {
         {avgRating ? (
           <div className="avg-star-row">
             {renderStars(avgRating)}
-            <span className="avg-rating-number">{avgRating.toFixed(1)} / 5.0</span>
+            <span className="avg-rating-number">
+              {avgRating.toFixed(1)} / 5.0
+            </span>
           </div>
         ) : (
           <p>평균 별점 없음</p>
@@ -202,6 +234,7 @@ export default function ReviewList({ storeId = 33 }) {
                     {currentUser && r.accountId === currentUser && (
                       <>
                         <button
+                          type="button"
                           className="edit-btn"
                           onClick={() => openEdit(r)}
                         >
@@ -209,6 +242,7 @@ export default function ReviewList({ storeId = 33 }) {
                         </button>
 
                         <button
+                          type="button"
                           className="delete-btn"
                           onClick={() => deleteReview(r.reviewNo)}
                         >
@@ -244,6 +278,7 @@ export default function ReviewList({ storeId = 33 }) {
                         />
 
                         <button
+                          type="button"
                           className="save-btn"
                           onClick={() => submitEdit(r.reviewNo)}
                         >
@@ -251,6 +286,7 @@ export default function ReviewList({ storeId = 33 }) {
                         </button>
 
                         <button
+                          type="button"
                           className="cancel-btn"
                           onClick={() => setEditOpen(null)}
                         >
@@ -265,6 +301,33 @@ export default function ReviewList({ storeId = 33 }) {
           )}
         </tbody>
       </table>
+
+      {/* ⭐ 페이지 네비게이션 */}
+      <div className="pagination">
+
+        {/* 이전 그룹 */}
+        {startPage > 1 && (
+          <button onClick={() => setPageNum(startPage - 1)}>&lt;</button>
+        )}
+
+        {[...Array(endPage - startPage + 1)].map((_, idx) => {
+          const page = startPage + idx;
+          return (
+            <button
+              key={page}
+              className={pageNum === page ? "active-page" : ""}
+              onClick={() => setPageNum(page)}
+            >
+              {page}
+            </button>
+          );
+        })}
+
+        {/* 다음 그룹 */}
+        {endPage < totalPage && (
+          <button onClick={() => setPageNum(endPage + 1)}>&gt;</button>
+        )}
+      </div>
     </div>
   );
 }

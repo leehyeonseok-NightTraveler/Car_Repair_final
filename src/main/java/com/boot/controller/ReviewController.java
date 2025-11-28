@@ -1,6 +1,8 @@
 package com.boot.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -98,6 +100,22 @@ public class ReviewController {
         } else {
             return ResponseEntity.badRequest().body("fail");
         }
+    }
+    
+    @GetMapping("/store/{storeId}/paged")
+    public Map<String, Object> getReviewList(
+    		@PathVariable  String storeId,
+            @RequestParam int pageNum,
+            @RequestParam int amount) {
+
+        List<ReviewDTO> list = service.findByStoreIdPaged(storeId, pageNum, amount);
+        int total = service.countByStoreId(storeId);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", list);
+        result.put("total", total);
+
+        return result;
     }
     
 }

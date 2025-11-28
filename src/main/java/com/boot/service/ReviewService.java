@@ -2,6 +2,8 @@ package com.boot.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.boot.dto.ReviewDTO;
 
 public interface ReviewService {
@@ -25,4 +27,12 @@ public interface ReviewService {
 	
 	// 별점
 	Double getAverageRating(String storeId);
+	
+	// 페이징
+    List<ReviewDTO> findByStoreIdPaged(@Param("storeId") String storeId,
+            @Param("pageNum") int pageNum,
+            @Param("amount") int amount);
+
+    //전체 개수 조회
+    int countByStoreId(String storeId);
 }
