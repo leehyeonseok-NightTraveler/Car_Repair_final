@@ -24,4 +24,7 @@ public interface ReservationDAO {
     
  // 5. 예약 정보 수정 (날짜, 메모, 차종 등)
     public int modifyReservation(ReservationDTO reservationDto);
+
+    //예약 조회
+    List<ReservationDTO> findByAccountId(String accountId);
 }

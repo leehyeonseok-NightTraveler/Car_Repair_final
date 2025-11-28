@@ -26,7 +26,11 @@ public class ReservationServiceImpl implements ReservationService{
 
 	@Override
 	public List<ReservationDTO> getReservationsByAccountId(String accountId) {
-        return reservationDAO.getListByAccountId(accountId);
+		if (accountId == null || accountId.isEmpty()) {
+            // 빈 목록 반환 또는 예외 발생
+            return List.of(); 
+        }
+		return reservationDAO.getListByAccountId(accountId);
 	}
 
 	@Override

@@ -22,4 +22,25 @@
     )
 </insert>
 
+<select id="getListByAccountId" resultType="com.boot.dto.ReservationDTO">
+    SELECT
+        R.RSV_NO AS rsvNo,                  
+        R.RSV_DATE AS rsvDate,              
+        R.CAR_MODEL AS carModel,           
+        R.SERVICE_TYPE AS serviceType,      
+        R.REQUEST_MEMO AS requestMemo,      
+        R.STATUS,                           
+        R.ACCOUNT_ID AS accountId,          -- ⭐️ JOIN을 통해 업체 정보 조회 ⭐️
+        S.STORE_NAME AS storeName,          
+        S.ADDRESS AS storeAddress           
+    FROM
+        TBL_RESERVATION R
+	JOIN
+    	TBL_STORE S ON R.STORE_ID = S.STORE_ID 
+    WHERE
+    	R.ACCOUNT_ID = #{accountId}             
+    ORDER BY
+    	R.RSV_DATE DESC                         
+</select>
+
 </mapper>
