@@ -72,6 +72,9 @@ import Reservation from './pages/Reservation/Reservation.jsx';
 // 14. [자동차 정비이력/관리]
 import Maintenance from "./pages/maintenance/Maintenance.jsx";
 
+//15. [예약 내역 조회 페이지]
+import ReservationHistory from './pages/Reservation/ReservationHistory.jsx';
+
 function App() {
     return (
         <Router>
@@ -151,6 +154,9 @@ function App() {
                         <Route path="/reservation" element={<Reservation />} />
 
                         <Route path="/maintenance" element={<Maintenance />} />
+                        
+                        {/* 예약 내역 조회 페이지 */}
+                        <Route path="/reservation/history" element={<ReservationHistory />} />
                     </Routes>
                 </main>
 

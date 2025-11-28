@@ -269,9 +269,12 @@ section.features .inner .wrap article p {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 은은한 그림자 */
     list-style: none;     /* 목록 점 제거 */
     padding: 0;
-    
     display: none;        /* 핵심: 평소에는 메뉴를 숨김 */
     z-index: 10;          /* 다른 요소 위에 보이도록 설정 */
+}
+
+.submenu li {
+    width: 100%; 
 }
 
 /* 3. 부모 li에 마우스를 올렸을 때, 숨겨뒀던 하위 메뉴를 보여줌 */

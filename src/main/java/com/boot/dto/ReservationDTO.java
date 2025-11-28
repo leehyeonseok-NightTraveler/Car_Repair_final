@@ -13,6 +13,8 @@ public class ReservationDTO {
 	// TBL_RESERVATION PK (DB에서 자동 생성)
     private Integer rsvNo;
     
+    private String storeName;
+    
     // ⭐️ FK: TBL_ACCOUNT (예약자)
     private String accountId;
     
