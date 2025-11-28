@@ -128,7 +128,7 @@ const Reservation = () => {
         <div className="reservation-container">
             <h2>정비 예약하기</h2>
             <form onSubmit={handleSubmit}>
-                <table className="reservation-table">
+                <table className="reservation-form-table">
                     <tbody>
                         {/* 1. 정비소 선택 (⭐️ SELECT 드롭다운 내부에서 상태 처리) */}
                         <tr>
