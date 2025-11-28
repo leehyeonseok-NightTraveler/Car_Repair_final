@@ -62,20 +62,7 @@ public class ReservationController {
         }
     }
     
-    // 3. 상세 조회 (R): GET /api/reservation/{rsvNo}
-    @GetMapping("/{rsvNo}")
-    public ResponseEntity<ReservationDTO> getReservationDetail(@PathVariable("rsvNo") int rsvNo) {
-        log.info("Fetching reservation detail: {}", rsvNo);
-        ReservationDTO detail = reservationService.getReservation(rsvNo);
-        
-        if (detail == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        // 🚨 보안: 이 예약 건의 accountId가 현재 사용자와 일치하는지 확인해야 함
-        return new ResponseEntity<>(detail, HttpStatus.OK);
-    }
-
-    // 4. 수정 (U): PUT /api/reservation/{rsvNo}
+    // 3. 수정 (U): PUT /api/reservation/{rsvNo}
     @PutMapping("/{rsvNo}")
     public ResponseEntity<String> modifyReservation(@PathVariable("rsvNo") int rsvNo, @RequestBody ReservationDTO reservationDto) {
         log.info("Request to modify reservation: {}", rsvNo);
@@ -94,7 +81,7 @@ public class ReservationController {
         }
     }
 
-    // 5. 취소 (D): DELETE /api/reservation/{rsvNo} (상태 변경)
+    // 4. 취소 (D): DELETE /api/reservation/{rsvNo} (상태 변경)
     @DeleteMapping("/{rsvNo}")
     public ResponseEntity<String> cancelReservation(@PathVariable("rsvNo") int rsvNo) {
         log.info("Request to cancel reservation: {}", rsvNo);
@@ -105,6 +92,23 @@ public class ReservationController {
             return new ResponseEntity<>("Cancellation failed (Invalid status or data)", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             log.error("Error during cancellation: {}", rsvNo, e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    // 상세보기
+    @GetMapping("/{rsvNo}") 
+    public ResponseEntity<ReservationDTO> getReservationDetail(@PathVariable("rsvNo") int rsvNo) {
+        try {
+            ReservationDTO reservation = reservationService.getReservationDetail(rsvNo);
+            if (reservation != null) {
+                return new ResponseEntity<>(reservation, HttpStatus.OK);
+            } else {
+                // 해당 예약 번호가 없을 경우
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+            }
+        } catch (Exception e) {
+            log.error("Error fetching reservation detail: {}", rsvNo, e); 
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

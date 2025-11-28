@@ -43,4 +43,44 @@
     	R.RSV_DATE DESC                         
 </select>
 
+<select id="getReservationByRsvNo" resultType="com.boot.dto.ReservationDTO">
+    SELECT
+        R.RSV_NO AS rsvNo,
+        R.ACCOUNT_ID AS accountId,     
+        R.STORE_ID AS storeId,
+        R.RSV_DATE AS rsvDate,
+        R.CAR_MODEL AS carModel,       
+        R.SERVICE_TYPE AS serviceType,
+        
+        R.REQUEST_MEMO AS requestMemo,  
+        R.STATUS,
+        S.STORE_NAME AS storeName,
+        S.ADDRESS AS storeAddress
+    FROM
+        TBL_RESERVATION R
+    JOIN
+        TBL_STORE S ON R.STORE_ID = S.STORE_ID
+    WHERE
+        R.RSV_NO = #{rsvNo}
+</select>
+
+<update id="modifyReservation" parameterType="com.boot.dto.ReservationDTO">
+    UPDATE TBL_RESERVATION
+    SET 
+        RSV_DATE = #{rsvDate},
+        CAR_MODEL = #{carModel},
+        SERVICE_TYPE = #{serviceType},
+        REQUEST_MEMO = #{requestMemo},
+        STATUS = 'PENDING'  WHERE 
+        RSV_NO = #{rsvNo}
+        AND STATUS = 'PENDING'  
+</update>
+
+<update id="updateReservationStatus">
+    UPDATE TBL_RESERVATION
+    SET 
+        STATUS = #{status}  WHERE 
+        RSV_NO = #{rsvNo}   AND STATUS = 'PENDING' 
+</update>
+
 </mapper>

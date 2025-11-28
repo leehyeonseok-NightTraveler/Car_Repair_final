@@ -23,5 +23,6 @@
         <mapper resource="mybatis/mappers/reservationMapper.xml"/>
         <mapper resource="mybatis/mappers/maintenance.xml"/>
         <mapper resource="mybatis/mappers/storereservationMapper.xml"/>
+        <mapper resource="mybatis/mappers/maintenanceFavorite.xml"/>
 	</mappers>
 </configuration>

@@ -2,6 +2,7 @@ package com.boot.service;
 
 import java.util.List;
 
+import com.boot.dto.Criteria;
 import com.boot.dto.ReservationDTO;
 
 public interface ReservationService {
@@ -11,13 +12,13 @@ public interface ReservationService {
     // 조회 (사용자별 목록)
     public List<ReservationDTO> getReservationsByAccountId(String accountId);
     
-    // 상세 조회
-    public ReservationDTO getReservation(int rsvNo);
-    
     // 수정
     public boolean modifyReservation(ReservationDTO reservationDto);
     
     // 취소 (상태 변경)
     public boolean cancelReservation(int rsvNo);
     
+    // 상세보기
+    public ReservationDTO getReservationDetail(int rsvNo);
+            
 }

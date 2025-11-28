@@ -10,21 +10,21 @@ export default function Maintenance() {
     const [repairs, setRepairs] = useState([]);
     const [consumableLogs, setConsumableLogs] = useState([]);
     const [consumableItems, setConsumableItems] = useState([]);
+    const [favoriteOrder, setFavoriteOrder] = useState({}); // 즐겨찾기 순서 상태
     const [modal, setModal] = useState(null);
     const [selectedItem, setSelectedItem] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // 날짜 포맷 유틸리티 (한 곳에 모아서 재사용)
+    // 날짜 포맷
     const formatDate = (dateString) => {
         if (!dateString) return '-';
-        // Oracle에서 넘어오는 모든 형태 지원
         const date = new Date(dateString);
-        if (isNaN(date.getTime())) return dateString; // 안전장치
+        if (isNaN(date.getTime())) return dateString;
         return date.toLocaleDateString('ko-KR', {
             year: 'numeric',
             month: '2-digit',
             day: '2-digit'
-        }).replace(/\. /g, '-').replace(/\.$/, ''); // "2025-04-15" 형식
+        }).replace(/\. /g, '-').replace(/\.$/, '');
     };
 
     // 초기 데이터 로드
@@ -48,20 +48,26 @@ export default function Maintenance() {
         loadInitialData();
     }, []);
 
-    // 차량 선택 시 데이터 로드
+    // 차량 바뀔 때마다 모든 데이터 + 즐겨찾기 불러오기
     useEffect(() => {
         if (!selectedCar) return;
 
         const loadCarData = async () => {
             try {
-                const repairRes = await axios.get(`/api/maintenance/repairHistory/${selectedCar.car_number}`);
-                setRepairs(repairRes.data);
+                const [repairRes, logRes, favRes] = await Promise.all([
+                    axios.get(`/api/maintenance/repairHistory/${selectedCar.car_number}`),
+                    axios.get(`/api/maintenance/consumable/log/${selectedCar.car_number}`),
+                    axios.get(`/api/maintenance/${encodeURIComponent(selectedCar.car_number)}`)
+                ]);
 
-                const logRes = await axios.get(`/api/maintenance/consumable/log/${selectedCar.car_number}`);
+                setRepairs(repairRes.data);
                 setConsumableLogs(logRes.data);
+                setFavoriteOrder(favRes.data || {}); // 즐겨찾기 순서 적용
             } catch (err) {
+                console.error(err);
                 setRepairs([]);
                 setConsumableLogs([]);
+                setFavoriteOrder({});
             }
         };
         loadCarData();
@@ -75,6 +81,30 @@ export default function Maintenance() {
             .sort((a, b) => new Date(b.replacement_date) - new Date(a.replacement_date))[0];
     };
 
+    // 즐겨찾기 토글 함수
+    const toggleFavorite = async (consumable_key) => {
+        try {
+            await axios.post('/api/maintenance/toggle', {
+                car_number: selectedCar.car_number,      // ← car_number → carNumber
+                consumable_key: consumable_key           // ← consumable_key → consumableKey
+            });
+
+            setFavoriteOrder(prev => {
+                const newOrder = { ...prev };
+                if (newOrder[consumable_key]) {
+                    delete newOrder[consumable_key]; // 해제
+                } else {
+                    const nextOrder = Object.keys(newOrder).length + 1;
+                    newOrder[consumable_key] = nextOrder; // 맨 위로 추가
+                }
+                return newOrder;
+            });
+        } catch (err) {
+            alert('즐겨찾기 처리 실패');
+        }
+    };
+
+    // 정비 이력 추가
     const handleAddRepair = async () => {
         const payload = {
             car_number: selectedCar.car_number,
@@ -95,6 +125,7 @@ export default function Maintenance() {
         }
     };
 
+    // 소모품 교체 추가
     const handleAddConsumableLog = async () => {
         const payload = {
             car_number: selectedCar.car_number,
@@ -126,7 +157,22 @@ export default function Maintenance() {
     };
 
     if (loading) return <div className="loading">로딩 중...</div>;
-    if (myCars.length === 0) return <div>등록된 차량이 없습니다.</div>;
+    if (myCars.length === 0) return (
+        <div className="maintenance-no-cars">
+            <div className="icon">Car</div>
+            <h2>등록된 차량이 없습니다</h2>
+            <p>
+                아직 내 차량을 등록하지 않으셨네요!<br />
+                마이페이지에서 차량을 등록하면 정비 이력과 소모품 관리를 시작할 수 있어요.
+            </p>
+            <button
+                className="btn-add-car"
+                onClick={() => window.location.href = '/mypage/user'}  // 마이페이지로 이동
+            >
+                + 내 차량 등록하러 가기
+            </button>
+        </div>
+    );
 
     return (
         <div className="maintenance-app">
@@ -199,47 +245,61 @@ export default function Maintenance() {
                         <>
                             <button className="maintenance-btn" onClick={() => setModal('consumable')}>+ 소모품 교체 추가</button>
                             <div className="maintenance-grid">
-                                {consumableItems.map(item => {
-                                    const latest = getLatestLog(item.consumable_key);
-                                    const kmSince = latest ? currentMileage - latest.replacement_mileage : null;
-                                    const remainKm = latest && item.standard_cycle_km ? item.standard_cycle_km - kmSince : null;
-                                    const isWarning = remainKm !== null && remainKm < 3000;
-                                    const isOver = remainKm !== null && remainKm <= 0;
+                                {[...consumableItems]
+                                    .sort((a, b) => (favoriteOrder[a.consumable_key] || 999) - (favoriteOrder[b.consumable_key] || 999))
+                                    .map(item => {
+                                        const latest = getLatestLog(item.consumable_key);
+                                        const kmSince = latest ? currentMileage - latest.replacement_mileage : null;
+                                        const remainKm = latest && item.standard_cycle_km ? item.standard_cycle_km - kmSince : null;
+                                        const isWarning = remainKm !== null && remainKm < 3000;
+                                        const isOver = remainKm !== null && remainKm <= 0;
 
-                                    const allLogs = consumableLogs
-                                        .filter(l => l.consumable_key === item.consumable_key)
-                                        .sort((a, b) => new Date(b.replacement_date) - new Date(a.replacement_date));
+                                        const allLogs = consumableLogs
+                                            .filter(l => l.consumable_key === item.consumable_key)
+                                            .sort((a, b) => new Date(b.replacement_date) - new Date(a.replacement_date));
 
-                                    return (
-                                        <div
-                                            key={item.consumable_key}
-                                            className={`maintenance-card ${isWarning ? 'warning' : isOver ? 'danger' : ''}`}
-                                            onClick={() => setSelectedItem({ ...item, logs: allLogs })}
-                                        >
-                                            <h3>{item.name}</h3>
-                                            {latest ? (
-                                                <>
-                                                    <p>최근: {formatDate(latest.replacement_date)}<br />
-                                                        ({latest.replacement_mileage?.toLocaleString()}km)</p>
-                                                    {item.standard_cycle_km > 0 && <p>주기: {item.standard_cycle_km.toLocaleString()}km</p>}
-                                                    {remainKm !== null && (
-                                                        remainKm > 0
-                                                            ? <p><strong>{remainKm.toLocaleString()}km 남음</strong></p>
-                                                            : <p className="over"><strong>{Math.abs(remainKm).toLocaleString()}km 초과!</strong></p>
-                                                    )}
-                                                </>
-                                            ) : (
-                                                <p className="no-record">교체 이력 없음</p>
-                                            )}
-                                        </div>
-                                    );
-                                })}
+                                        return (
+                                            <div
+                                                key={item.consumable_key}
+                                                className={`maintenance-card ${isWarning ? 'warning' : isOver ? 'danger' : ''}`}
+                                                onClick={() => setSelectedItem({ ...item, logs: allLogs })}
+                                            >
+                                                {/* 즐겨찾기 별 버튼 */}
+                                                <button
+                                                    className="favorite-star"
+                                                    data-favorite={!!favoriteOrder[item.consumable_key]}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleFavorite(item.consumable_key);
+                                                    }}
+                                                >
+                                                    {favoriteOrder[item.consumable_key] ? '★' : '☆'}
+                                                </button>
+
+                                                <h3>{item.name}</h3>
+                                                {latest ? (
+                                                    <>
+                                                        <p>최근: {formatDate(latest.replacement_date)}<br />
+                                                            ({latest.replacement_mileage?.toLocaleString()}km)</p>
+                                                        {item.standard_cycle_km > 0 && <p>주기: {item.standard_cycle_km.toLocaleString()}km</p>}
+                                                        {remainKm !== null && (
+                                                            remainKm > 0
+                                                                ? <p><strong>{remainKm.toLocaleString()}km 남음</strong></p>
+                                                                : <p className="over"><strong>{Math.abs(remainKm).toLocaleString()}km 초과!</strong></p>
+                                                        )}
+                                                    </>
+                                                ) : (
+                                                    <p className="no-record">교체 이력 없음</p>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
                             </div>
                         </>
                     )}
                 </div>
 
-                {/* 모달들 (날짜 표시 부분만 formatDate 적용) */}
+                {/* 소모품 상세 모달 */}
                 {selectedItem && (
                     <div className="maintenance-modal active" onClick={() => setSelectedItem(null)}>
                         <div className="maintenance-modal-content" onClick={e => e.stopPropagation()}>
@@ -278,7 +338,7 @@ export default function Maintenance() {
                     </div>
                 )}
 
-                {/* 나머지 모달들은 그대로 (입력은 input type="date"라서 문제 없음) */}
+                {/* 정비 이력 추가 모달 */}
                 {modal === 'repair' && (
                     <div className="maintenance-modal active" onClick={() => setModal(null)}>
                         <div className="maintenance-modal-content" onClick={e => e.stopPropagation()}>
@@ -297,6 +357,7 @@ export default function Maintenance() {
                     </div>
                 )}
 
+                {/* 소모품 교체 등록 모달 */}
                 {modal === 'consumable' && (
                     <div className="maintenance-modal active" onClick={() => setModal(null)}>
                         <div className="maintenance-modal-content" onClick={e => e.stopPropagation()}>
