@@ -22,7 +22,7 @@ public class SessionAuthFilter extends OncePerRequestFilter {
         String uri = req.getRequestURI();
         String method = req.getMethod();
 
-        // OPTIONS → 무조건 통과
+        // OPTIONS preflight → 무조건 통과
         if ("OPTIONS".equalsIgnoreCase(method)) {
             chain.doFilter(req, res);
             return;
@@ -30,12 +30,13 @@ public class SessionAuthFilter extends OncePerRequestFilter {
 
         log.info("🔥 SessionAuthFilter 실행됨: {} {}", method, uri);
 
-        // 공개 URL은 필터 제외
+        // 제외 URL이면 보안 검사 없이 통과
         if (isExcluded(uri)) {
             chain.doFilter(req, res);
             return;
         }
 
+        // 보호 URL → 세션 필요
         HttpSession session = req.getSession(false);
 
         Object accountId = (session != null ? session.getAttribute("accountId") : null);
@@ -43,7 +44,6 @@ public class SessionAuthFilter extends OncePerRequestFilter {
 
         log.info("   ▶ 세션 accountId={}, storeId={}", accountId, storeId);
 
-        // ★ 여기만 새로 추가됨 ★
         if (accountId == null && storeId == null) {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             res.setContentType("application/json;charset=UTF-8");
@@ -56,7 +56,7 @@ public class SessionAuthFilter extends OncePerRequestFilter {
 
     private boolean isExcluded(String uri) {
 
-        // (기존 코드 그대로 유지)
+        // 1) 정적 리소스
         if (uri.startsWith("/css/") ||
             uri.startsWith("/js/") ||
             uri.startsWith("/images/") ||
@@ -65,6 +65,7 @@ public class SessionAuthFilter extends OncePerRequestFilter {
             return true;
         }
 
+        // 2) JSP 접근 허용 (기존 기능 유지)
         if (uri.equals("/") ||
             uri.startsWith("/recommend") ||
 
@@ -80,29 +81,33 @@ public class SessionAuthFilter extends OncePerRequestFilter {
             uri.startsWith("/notice/list") ||
             uri.startsWith("/notice/view") ||
 
-            (uri.startsWith("/faq") && !uri.contains("write") && !uri.contains("modify") && !uri.contains("delete")) ||
+            (uri.startsWith("/faq") && 
+             !uri.contains("write") && 
+             !uri.contains("modify") && 
+             !uri.contains("delete")) ||
 
             uri.startsWith("/guide") ||
             uri.startsWith("/autoSearch")) {
             return true;
         }
 
-        if (uri.startsWith("/api/login") ||
-            uri.startsWith("/api/storeLogin") ||
-            uri.startsWith("/api/logout") ||
-
-            uri.startsWith("/api/notice/list") ||
-            uri.startsWith("/api/notice/view") ||
-
-            uri.startsWith("/api/faq/list") ||
-            uri.startsWith("/api/faq/view")) {
+        // 3) React API용 공개 URL
+        if (uri.startsWith("/api/register") ||        // 일반 회원가입
+            uri.startsWith("/api/registerstore") ||   // 업체 회원가입
+            uri.startsWith("/api/login") ||           // 로그인
+            uri.startsWith("/api/storeLogin") ||      // 업체 로그인
+            uri.startsWith("/api/findAccount") ||     // 아이디 찾기
+            uri.startsWith("/api/findPW") ||          // 비번찾기
+            uri.startsWith("/api/logout")) {          // 로그아웃
             return true;
         }
 
+        // 4) 나머지 /api/** 는 보호 URL
         if (uri.startsWith("/api/")) {
             return false;
         }
 
+        // 5) 기타 요청은 기본적으로 열어둠
         return true;
     }
 }

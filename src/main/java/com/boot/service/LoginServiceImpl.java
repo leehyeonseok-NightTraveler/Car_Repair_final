@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;   // 🔐 추가
 import org.springframework.stereotype.Service;
 
 import com.boot.dao.LoginDAO;
@@ -19,9 +20,18 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private SqlSession sqlSession;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;   // 🔐 추가
+
     @Override
     public void register(LoginDTO accountDTO) {
-        log.info("암호화 없이 원본 DTO를 DB로 전달합니다.");
+
+        // 🔐 비밀번호 암호화
+        String encPw = passwordEncoder.encode(accountDTO.getPassword());
+        accountDTO.setPassword(encPw);
+
+        log.info("회원가입 - 암호화된 비밀번호 저장: {}", encPw);
+
         LoginDAO dao = sqlSession.getMapper(LoginDAO.class);
         dao.register(accountDTO);
     }
@@ -36,24 +46,20 @@ public class LoginServiceImpl implements LoginService {
             return null;
         }
 
-        LoginDTO user = list.get(0); // 첫 번째 결과 사용
+        LoginDTO user = list.get(0);
 
-        // 상태값 체크 - 예외 대신 상태값 유지
         if ("PENDING".equalsIgnoreCase(user.getAccountStatus())) {
-            log.warn("로그인 차단: 승인 대기 중인 계정");
             user.setAccountStatus("PENDING");
         } else if ("SUSPENDED".equalsIgnoreCase(user.getAccountStatus())) {
-            log.warn("로그인 차단: 정지된 계정");
             user.setAccountStatus("SUSPENDED");
         } else if ("DELETED".equalsIgnoreCase(user.getAccountStatus())) {
-            log.warn("로그인 차단: 탈퇴된 계정");
             user.setAccountStatus("DELETED");
         }
 
         log.info("로그인 시도 결과: {}, 상태 = {}", user.getAccountId(), user.getAccountStatus());
         return list;
     }
-    
+
     @Override
     public LoginDTO findByAccountId(String accountId) {
         LoginDAO dao = sqlSession.getMapper(LoginDAO.class);
