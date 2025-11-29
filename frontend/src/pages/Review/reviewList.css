@@ -4,8 +4,12 @@
 
 .avg-rating-box {
   margin-bottom: 20px;
+  position: relative;
+  right: 315px;
+  width: fit-content;  /* 가운데 기준점 잡기 */
+  margin-left: auto;
+  margin-right: auto;
 }
-
 .avg-star-row {
   display: flex;
   align-items: center;
@@ -20,7 +24,7 @@
 .review-table {
   border-collapse: collapse;
   position: relative;
-  left: 100px;
+  margin: 0 auto;
 }
 
 .review-table th,
@@ -230,9 +234,6 @@
 .edit-box button {
   align-self: flex-start;
 }
-
-
-
 
 /* 기본 버튼 */
 .pagination button {

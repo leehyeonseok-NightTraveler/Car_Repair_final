@@ -1,7 +1,7 @@
 /* 리뷰 전체 감싸는 영역 */
 .review-container {
   width: 100%;
-  max-width: 600px;
+  max-width: 800px;
   margin: 20px auto;
 }
 
@@ -52,7 +52,7 @@
 
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;   /* 기존 16px → 8px */
 }
 
 .review-label {
