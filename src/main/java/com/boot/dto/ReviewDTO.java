@@ -1,7 +1,5 @@
 package com.boot.dto;
 
-import java.util.Date;
-
 import lombok.Data;
 
 @Data
@@ -13,7 +11,7 @@ public class ReviewDTO {
 	private String storeId; // 가게 ID 
 	private Double rating; // 별점 
 	private String content; // 내용 
-	private Date createdDate; // 작성일
+	private String createdDate; // 작성일
 	
 	//예약 정보 
 	private String reservationStatus; // PENDING / CONFIRMED / COMPLETED / etc

@@ -64,8 +64,10 @@ import ReservationDetail from "./pages/Reservation/ReservationDetail";
 import ReservationModify from "./pages/Reservation/ReservationModify";
 
 // 리뷰
+import ReviewPage from "./pages/Review/reviewPage";
 import Review from "./pages/Review/review";
 import StarRating from "./pages/Review/starRating";
+import ReviewList from "./pages/Review/reviewList";
 
 // 가이드
 import Guide from "./pages/Gaide/Gaide";
@@ -101,8 +103,10 @@ function App() {
             <Route path="/faq/view/:faqNo" element={<FaqView />} />
 
             {/* 리뷰 */}
-            <Route path="/review" element={<Review />} />
+			<Route path="/review/:storeId/:rsvNo" element={<ReviewPage />} />
+            <Route path="/review/:storeId/:rsvNo" element={<Review />} />
             <Route path="/starRating" element={<StarRating />} />
+            <Route path="/reviewList/:storeId" element={<ReviewList />} />
 
             {/* 로그인/회원가입 */}
             <Route path="/login" element={<Login />} />

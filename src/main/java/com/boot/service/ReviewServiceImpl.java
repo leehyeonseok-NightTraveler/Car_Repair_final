@@ -1,6 +1,5 @@
 package com.boot.service;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -42,7 +41,6 @@ public class ReviewServiceImpl implements ReviewService{
         }
 
         dto.setAccountId(sessionAccountId);
-        dto.setCreatedDate(new Date());
 
         return dao.insertReview(dto);
     }
@@ -50,17 +48,24 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public int updateReview(ReviewDTO dto, String sessionAccountId) {
 
-        // 리뷰 가져와서 작성자 확인
+        // 리뷰가 존재하는지 확인
         ReviewDTO origin = dao.findById(dto.getReviewNo());
+        if (origin == null) {
+            throw new RuntimeException("리뷰가 존재하지 않습니다.");
+        }
+
+        // 작성자 본인인지 검증
         if (!origin.getAccountId().equals(sessionAccountId)) {
             throw new RuntimeException("본인의 리뷰만 수정할 수 있습니다.");
         }
 
+        // 수정 처리
         return dao.updateReview(dto);
     }
 
+
     @Override
-    public List<ReviewDTO> getStoreReviews(String storeId) {
+    public List<ReviewDTO> findByStoreId(String storeId) {
         return dao.findByStoreId(storeId);
     }
 
@@ -68,5 +73,25 @@ public class ReviewServiceImpl implements ReviewService{
     public ReviewDTO getReview(Integer reviewNo) {
         return dao.findById(reviewNo);
     }
+
+	@Override
+	public Double getAverageRating(String storeId) {
+		return dao.getAverageRating(storeId);
+	}
+
+	@Override
+	public Integer deleteReview(Integer reviewNo) {
+		return dao.deleteReview(reviewNo);
+	}
+
+	@Override
+	public List<ReviewDTO> findByStoreIdPaged(String storeId, int pageNum, int amount) {
+		return dao.findByStoreIdPaged(storeId, pageNum, amount);
+	}
+
+	@Override
+	public int countByStoreId(String storeId) {
+		return dao.countByStoreId(storeId);
+	}
     
 }

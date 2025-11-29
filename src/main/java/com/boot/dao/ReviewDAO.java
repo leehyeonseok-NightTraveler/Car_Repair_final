@@ -3,6 +3,7 @@ package com.boot.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.boot.dto.ReviewDTO;
 
@@ -17,6 +18,9 @@ public interface ReviewDAO {
 
     // 리뷰 수정
     int updateReview(ReviewDTO dto);
+    
+    // 리뷰 삭제
+    Integer deleteReview(Integer reviewNo);
 
     // 특정 가게 리뷰 리스트
     List<ReviewDTO> findByStoreId(String storeId);
@@ -29,5 +33,16 @@ public interface ReviewDAO {
 
     // 예약자 ID 검증
     String findAccountIdByRsvNo(Integer rsvNo);
+    
+    // 별점 평균
+    Double getAverageRating(String storeId);
+    
+    // 페이징
+    List<ReviewDTO> findByStoreIdPaged(@Param("storeId") String storeId,
+            @Param("pageNum") int pageNum,
+            @Param("amount") int amount);
 
+    //전체 개수 조회
+    int countByStoreId(String storeId);
+    
 }
