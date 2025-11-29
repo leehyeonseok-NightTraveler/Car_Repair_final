@@ -88,14 +88,57 @@
 
 .review-content-cell {
   position: relative;
-  padding-right: 60px; /* 버튼 공간 확보 */
+}
+
+.review-content-text {
+  display: block;
+  max-width: calc(100% - 32px); /* 버튼 영역 제외 (수정 + 삭제) */
+  white-space: normal;
+  word-break: break-word;
 }
 
 .edit-btn {
+  font-size: 12px;
+  width: 30px;
+  height: 23px;
+  position: absolute;
+  right: 45px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  background: #3b82f6; /* 산뜻한 파란색 */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  
+  line-height: 1;
+}
+
+.edit-btn:hover {
+  background: #2563eb; /* hover 시 진한 파랑 */
+}
+
+.delete-btn {
+  font-size: 12px;
+  width: 30px;
+  height: 23px;
   position: absolute;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
+
+  background: #ef4444; /* 선명한 빨강 */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  
+  line-height: 1;
+}
+
+.delete-btn:hover {
+  background: #dc2626; /* hover 시 더 진한 빨강 */
 }
 
 .pagination {
@@ -104,6 +147,92 @@
   justify-content: center;
   margin-top: 20px;
 }
+
+
+/* 수정 행 전체 */
+.edit-row td {
+  background: #f9f9f9;
+  padding: 15px;
+  border-top: 1px solid #ddd;
+}
+
+/* 수정 박스 카드 스타일 */
+.edit-box {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 10px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 제목 */
+.edit-box h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* 입력 라벨 */
+.edit-box label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 숫자 입력 */
+.edit-box input[type="number"] {
+  width: 100px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+/* 내용 textarea */
+.edit-box textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+  font-size: 14px;
+  line-height: 1.4;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* 버튼 영역 */
+.save-btn,
+.cancel-btn {
+  width: 70px;
+  padding: 6px 0;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+}
+
+/* 저장 버튼 (파란색) */
+.save-btn {
+  background: #4A90E2;
+}
+
+/* 취소 버튼 (회색) */
+.cancel-btn {
+  background: #777;
+}
+
+/* 버튼을 가로로 정렬 */
+.edit-box button {
+  align-self: flex-start;
+}
+
+
+
 
 /* 기본 버튼 */
 .pagination button {

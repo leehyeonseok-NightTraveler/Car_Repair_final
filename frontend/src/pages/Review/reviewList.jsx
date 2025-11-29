@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";   // ⭐ 추가
 import axios from "axios";
 import "./reviewList.css";
 
@@ -57,7 +58,9 @@ function renderStars(rating) {
   return <div className="star-row">{stars}</div>;
 }
 
-export default function ReviewList({ storeId = "yyy" }) {
+export default function ReviewList() {
+  const { storeId } = useParams();  // ⭐ 여기서 storeId 자동 획득
+
   const [reviews, setReviews] = useState([]);
   const [avgRating, setAvgRating] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -73,7 +76,7 @@ export default function ReviewList({ storeId = "yyy" }) {
   const [amount] = useState(10);
   const [total, setTotal] = useState(0);
 
-  // ⭐ 서버에서 리뷰 한번에 불러오는 함수
+  // ⭐ 리뷰 로더
   const loadReviews = async () => {
     try {
       const listRes = await axios.get(
@@ -91,7 +94,7 @@ export default function ReviewList({ storeId = "yyy" }) {
     }
   };
 
-  // ⭐ 페이지 변화 / 스토어 변화 시 로딩
+  // ⭐ storeId / pageNum 변경 시 재로드
   useEffect(() => {
     async function load() {
       try {
@@ -99,14 +102,12 @@ export default function ReviewList({ storeId = "yyy" }) {
 
         await loadReviews();
 
-        // 평균 평점
         const avgRes = await axios.get(
           `http://localhost:8484/api/review/store/${storeId}/average`,
           { withCredentials: true }
         );
         setAvgRating(avgRes.data);
 
-        // 로그인 유저
         const userRes = await axios.get(
           "http://localhost:8484/api/review/session/user",
           { withCredentials: true }
@@ -128,7 +129,6 @@ export default function ReviewList({ storeId = "yyy" }) {
     setEditRating(r.rating);
   };
 
-  // ⭐ 수정 후 자동 새로고침
   const submitEdit = async (reviewNo) => {
     try {
       await axios.put(
@@ -140,15 +140,20 @@ export default function ReviewList({ storeId = "yyy" }) {
       alert("수정 완료");
       setEditOpen(null);
 
-      // ⭐ 서버에서 새로 다시 가져오기
-      loadReviews();
+      await loadReviews();
+
+      const avgRes = await axios.get(
+        `http://localhost:8484/api/review/store/${storeId}/average`,
+        { withCredentials: true }
+      );
+      setAvgRating(avgRes.data);
+
     } catch (e) {
       console.error(e);
       alert("수정 실패");
     }
   };
 
-  // ⭐ 삭제 후 자동 새로고침
   const deleteReview = async (reviewNo) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
@@ -159,13 +164,11 @@ export default function ReviewList({ storeId = "yyy" }) {
         { withCredentials: true }
       );
 
-      // 마지막 1개라 페이지 Index 조정
       if (reviews.length === 1 && pageNum > 1) {
         setPageNum(pageNum - 1);
         return;
       }
 
-      // ⭐ 그냥 새로 불러오기
       loadReviews();
     } catch (e) {
       console.error(e);
@@ -175,7 +178,6 @@ export default function ReviewList({ storeId = "yyy" }) {
 
   if (loading) return <div className="review-message">불러오는 중...</div>;
 
-  // ⭐ 페이징 계산
   const totalPage = Math.ceil(total / amount);
   const pageGroupSize = 5;
   const currentGroup = Math.ceil(pageNum / pageGroupSize);
@@ -229,7 +231,7 @@ export default function ReviewList({ storeId = "yyy" }) {
                   <td className="review-accountId-cell">{r.accountId}</td>
 
                   <td className="review-content-cell">
-                    {r.content}
+                    <span className="review-content-text">{r.content}</span>
 
                     {currentUser && r.accountId === currentUser && (
                       <>
@@ -302,10 +304,7 @@ export default function ReviewList({ storeId = "yyy" }) {
         </tbody>
       </table>
 
-      {/* ⭐ 페이지 네비게이션 */}
       <div className="pagination">
-
-        {/* 이전 그룹 */}
         {startPage > 1 && (
           <button onClick={() => setPageNum(startPage - 1)}>&lt;</button>
         )}
@@ -323,7 +322,6 @@ export default function ReviewList({ storeId = "yyy" }) {
           );
         })}
 
-        {/* 다음 그룹 */}
         {endPage < totalPage && (
           <button onClick={() => setPageNum(endPage + 1)}>&gt;</button>
         )}
