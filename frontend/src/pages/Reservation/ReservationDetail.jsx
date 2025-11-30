@@ -137,6 +137,16 @@ function ReservationDetail() {
                     className="btn-back">
                     목록으로 돌아가기
                 </button>
+				
+				{reservation.status === 'COMPLETED' && (
+				        <button
+				            onClick={() => navigate(`/review/${reservation.storeId}/${reservation.rsvNo}`)}
+				            className="btn-review"
+				        >
+				            리뷰 작성
+				        </button>
+				    )}
+
             </div>
         </div>
     );
