@@ -11,6 +11,9 @@ public class Mypage_StoreServiceImpl implements Mypage_StoreService {
     @Autowired
     private Mypage_StoreDAO dao;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     @Override
     public StoreDTO getStoreInfo(String storeId) {
         return dao.getStoreInfo(storeId);
@@ -23,11 +26,19 @@ public class Mypage_StoreServiceImpl implements Mypage_StoreService {
 
     @Override
     public boolean updatePassword(String storeId, String currentPw, String newPw) {
+
         String dbPw = dao.getPasswordById(storeId);
-        if (dbPw != null && dbPw.equals(currentPw)) {
-            dao.updatePassword(storeId, newPw);
-            return true;
+        if (dbPw == null) return false;
+
+        // bcrypt 비교
+        if (!passwordEncoder.matches(currentPw, dbPw)) {
+            return false;
         }
-        return false;
+
+        // bcrypt 암호화 저장
+        String encodedPw = passwordEncoder.encode(newPw);
+        dao.updatePassword(storeId, encodedPw);
+
+        return true;
     }
 }
