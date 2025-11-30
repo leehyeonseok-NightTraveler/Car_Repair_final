@@ -52,11 +52,10 @@ public class MypageStoreRestController {
         String currentPw = req.get("currentPw");
         String newPw = req.get("newPw");
 
-        boolean pwChanged = service.updatePassword(storeId, currentPw, newPw);
+        boolean ok = service.updatePassword(storeId, currentPw, newPw);
 
         Map<String, Object> res = new HashMap<>();
-        res.put("success", pwChanged);
-
+        res.put("success", ok);
         return res;
     }
 }

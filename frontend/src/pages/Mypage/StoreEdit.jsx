@@ -42,27 +42,54 @@ function StoreEdit() {
         setStore(prev => ({ ...prev, [name]: value }));
     };
 
-    // 저장 요청
     const onSubmit = async (e) => {
-        e.preventDefault();
+    e.preventDefault();
 
-        if (store.newPw !== store.confirmPw) {
-            alert("새 비밀번호가 일치하지 않습니다.");
-            return;
+    try {
+        // ======================
+        // (1) 비밀번호 변경 처리
+        // ======================
+        if (store.newPw) {
+            if (store.newPw !== store.confirmPw) {
+                alert("새 비밀번호가 일치하지 않습니다.");
+                return;
+            }
+
+            const pwRes = await axios.post(
+                "http://localhost:8484/api/mypage/store/updatePassword",
+                {
+                    currentPw: store.currentPw,
+                    newPw: store.newPw
+                },
+                { withCredentials: true }
+            );
+
+            if (!pwRes.data.success) {
+                alert("현재 비밀번호가 틀렸습니다.");
+                return;
+            }
         }
 
-        try {
-			await axios.post("http://localhost:8484/api/mypage/store/update", store, {
-			               withCredentials: true
-			           });
-            alert("수정이 완료되었습니다.");
-            window.location.href = "/mypage/store";
+        // ======================
+        // (2) 업체 정보 수정
+        // ======================
+        const { currentPw, newPw, confirmPw, ...storeInfo } = store;
+
+        await axios.post(
+            "http://localhost:8484/api/mypage/store/update",
+            storeInfo,
+            { withCredentials: true }
+        );
+
+        alert("수정이 완료되었습니다.");
+        window.location.href = "/mypage/store";
 
         } catch (err) {
             console.error("업체 정보 수정 실패:", err);
             alert("수정 중 오류가 발생했습니다.");
         }
     };
+
 
     return (
         <>
