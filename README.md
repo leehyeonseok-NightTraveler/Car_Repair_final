@@ -1,4 +1,4 @@
-# 🛠 Tech Stack
+# 🛠 기술 스택
 
 ### 📱 Communication & Collaboration
 <p align="left">
