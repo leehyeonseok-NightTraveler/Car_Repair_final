@@ -17,7 +17,7 @@ MyCar_Repair는 카카오지도 API와 공공데이터를 활용해 전국 정�
 
 | 이름   | 역할                                                                                           | GitHub |
 |--------|------------------------------------------------------------------------------------------------|--------|
-| 이현석 | **팀장** · 기능을 통합, React 전환, Spring Boot와 BCrypt 기반 보안 적용, <br>브랜치·Jira 구성, 전반적인 프로젝트 관리 | [![GitHub](https://img.shields.io/badge/GitHub-000000?style=flat&logo=github&logoColor=white)](https://github.com/leehyeonseok-NightTraveler) |
+| 이현석 | **팀장** · 기능을 통합, 마이페이지 React 전환, Spring Security와 BCrypt 기반 보안 적용, <br>브랜치·Jira 구성, 전반적인 프로젝트 관리 | [![GitHub](https://img.shields.io/badge/GitHub-000000?style=flat&logo=github&logoColor=white)](https://github.com/leehyeonseok-NightTraveler) |
 | 정태규 | 공지사항 및 1대1문의 페이지 제작, React 기반으로 전환하여 관련 기능을 구현, <br>정비 이력과 소모품 관리 페이지를 포함한 관리 기능 전반 개발 | [![GitHub](https://img.shields.io/badge/GitHub-000000?style=flat&logo=github&logoColor=white)](https://github.com/KANASIEL) |
 | 김주현 | 회원가입 페이지와 관리자 전환 기능을 구현하고 메인 페이지 및 데이터베이스를 설계, <br>FAQ 페이지를 React 기반으로 전환, 정비소 예약 및 예약 조회, 수정, 취소 구현 | [![GitHub](https://img.shields.io/badge/GitHub-000000?style=flat&logo=github&logoColor=white)](https://github.com/jh0317) |
 | 김지호 | 회원가입 페이지를 React 기반으로 전환하고 관리자 전환 기능을 구현, <br>업체 예약 승인·거절 관리와 처리 결과에 따른 사용자 예약 조회 기능 개발  | [![GitHub](https://img.shields.io/badge/GitHub-000000?style=flat&logo=github&logoColor=white)](https://github.com/jiho6670) |
